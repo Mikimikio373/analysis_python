@@ -1,0 +1,131 @@
+import numpy as np
+import sys
+import os
+import matplotlib.pyplot as plt
+import matplotlib.cm as cm
+import json
+import pandas as pn
+
+
+working_directory = '../original_data'
+os.chdir(working_directory)
+directory = os.getcwd()
+print('directory changed, current directory =', directory)
+
+folder = 'hist_z'
+
+if os.path.exists(folder):
+    print("This folder already exists. Can I overwrite it? Press \'y\' as Yes or \'n\' as No")
+    answer = input()
+    if answer == "y":
+        os.makedirs(folder, exist_ok=True)
+    else:
+        print("this program ended")
+        sys.exit()
+
+else:
+    os.makedirs(folder)
+
+x_size = 18     # x方向の大きさ
+y_size = 72     # y方向の大きさ
+n = 0
+x = np.arange(x_size + 1)
+y = np.arange(y_size + 1)
+L0_thick = []
+L1_thick = []
+base_thick = []
+L0z_bottom = []
+L1z_top = []
+
+for i in range(0, y_size):
+    L0z_bottom.append([])
+    L1z_top.append([])
+
+
+n_sum = x_size * y_size * 2
+while n < n_sum:
+    for vy in range(0, y_size):
+        for layer in range(0, 2):
+            for vx in range(0, x_size):
+                json_file = open('../IMAGE00_AREA-1/V{0:08}_L{1}_VX{2:04}_VY{3:04}_0_024.json'.format(n, layer, vx, vy), 'r')
+                j = json.load(json_file)
+                n += 1
+
+                if layer == 0:
+                    last = j["Last"]
+                    first = last - 15
+                    z_top = round(j["Images"][first]["z"], 5)
+                    z_bottom = round(j["Images"][last]["z"], 5)
+                    thick = z_top - z_bottom
+                    L0z_bottom[vy].append(z_bottom)
+                    L0_thick.append(thick)
+                else:
+                    first = j["First"]
+                    last = first + 15
+                    z_top = round(j["Images"][first]["z"], 5)
+                    z_bottom = round(j["Images"][last]["z"], 5)
+                    thick = z_top - z_bottom
+                    L1z_top[vy].append(z_top)
+                    L1_thick.append(thick)
+
+                print('V{0:08}_L{1}_VX{2:04}_VY{3:04}.json ended'.format(n - 1, layer, vx, vy))
+                json_file.close()
+
+for vx in range(0, x_size):
+    for vy in range(0, y_size):
+        base = L0z_bottom[vy][vx] - L1z_top[vy][vx]
+        base_thick.append(base)
+
+# plt.hist(L0_thick, bins=21, range=(0.058, 0.064))
+# plt.title('L0 thickness (histogram)', fontsize=20)
+# plt.xlabel('Emulsion thickness [mm]', fontsize=16)
+# plt.ylabel('Entries', fontsize=16)
+# # plt.show()
+# plt.savefig(os.path.join(folder, 'L0_thick_hist.png'))
+# plt.clf()
+#
+# plt.hist(L1_thick, bins=21, range=(0.058, 0.064))
+# plt.title('L1 thickness (histogram)', fontsize=20)
+# plt.xlabel('Emulsion thickness [mm]', fontsize=16)
+# plt.ylabel('Entries', fontsize=16)
+# # plt.show()
+# plt.savefig(os.path.join(folder, 'L1_thick_hist.png'))
+# plt.clf()
+#
+# plt.hist(base_thick, bins=36, range=(0.135, 0.175))
+# plt.title('base thickness (histogram)', fontsize=20)
+# plt.xlabel('base thickness [mm]', fontsize=16)
+# plt.ylabel('Entries', fontsize=16)
+# # plt.show()
+# plt.savefig(os.path.join(folder, 'base_thick_hist_b.png'))
+# plt.clf()
+#
+# plt.hist(L0_thick, bins=21, range=(0.058, 0.064), log=True)
+# plt.title('L0 thickness (histogram)', fontsize=20)
+# plt.xlabel('Emulsion thickness [mm]', fontsize=16)
+# plt.ylabel('Entries', fontsize=16)
+# # plt.show()
+# plt.savefig(os.path.join(folder, 'L0_thick_hist_log.png'))
+# plt.clf()
+#
+# plt.hist(L1_thick, bins=21, range=(0.058, 0.064), log=True)
+# plt.title('L1 thickness (histogram)', fontsize=20)
+# plt.xlabel('Emulsion thickness [mm]', fontsize=16)
+# plt.ylabel('Entries', fontsize=16)
+# # plt.show()
+# plt.savefig(os.path.join(folder, 'L1_thick_hist_log.png'))
+# plt.clf()
+#
+# plt.hist(base_thick, bins=36, range=(0.135, 0.175), log=True)
+# plt.title('base thickness (histogram)', fontsize=20)
+# plt.xlabel('base thickness [mm]', fontsize=16)
+# plt.ylabel('Entries', fontsize=16)
+# # plt.show()
+# plt.savefig(os.path.join(folder, 'base_thick_hist_log_b.png'))
+# plt.clf()
+
+# base_panda = pn.DataFrame(base_thick)
+# base_panda.columns = ['line', 'base_thick']
+# base_panda.to_csv('../base.csv')
+
+np.savetxt('../base.txt', base_thick)
