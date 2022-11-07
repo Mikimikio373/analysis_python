@@ -5,14 +5,14 @@ import sys
 import os
 import yaml
 
-basepath = 'R:\\minami\\202211102_zabuton'
-mode = 1  # 0:最後だけ、1:全画像 2:最初の画像
+basepath = 'R:\\minami\\202211103_zabuton'
+mode = 0  # 0:最後だけ、1:全画像 2:最初の画像
 
 image = 'IMAGE00_AREA-1'
 
 for n_t in range(1, 3):
-    for n_m in range(1, 2):
-        for n_v in range(1, 2):
+    for n_m in range(1, 3):
+        for n_v in range(1, 6):
             type = 'type{}'.format(n_t)
             module = 'Module{}'.format(n_m)
             version = 'ver-{}'.format(n_v)

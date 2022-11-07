@@ -8,12 +8,12 @@ import math
 import yaml
 
 # pythonpath = 'R:\\minami\\20220921_forGrainMaching0.025\\analysis_python'
-basepath = 'R:\\minami\\20220921_forGrainMaching0.025'
+basepath = 'R:\\minami\\20221103_zabuton'
 # exepath = 'C:\\Users\\flab\\source\\repos\\myproject\\x64\\Release\\GrainMatching_r.exe'
 # rootpath = 'R:\\minami\\20220921_forGrainMaching0.025\\root\\cut_fit.C'
 type_max = 1 + 1
-module_max = 1 + 1
-ver_max = 1 + 1
+module_max = 2 + 1
+ver_max = 5 + 1
 
 for n_t in range(1, type_max):
     for n_m in range(1, module_max):
@@ -33,7 +33,7 @@ for n_t in range(1, type_max):
             fit_csv = os.path.join(areapath, 'GrainMatching_loop/fitdata.csv')
 
             fit_pn = pn.read_csv(fit_csv, header=0)
-            fit_pn = fit_pn.drop(columns='entriesY')
+            # fit_pn = fit_pn.drop(columns='entriesY')
             # print(fit_pn)
             print(len(fit_pn))
             # 統計数の少ないデータ(うまくフィッティングできていないデータ)の削除
