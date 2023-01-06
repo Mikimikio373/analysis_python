@@ -10,6 +10,8 @@ from matplotlib import pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 from sklearn import linear_model
 
+entries_cut = 200
+sigma_cut = 0.25
 
 def plot_data(fig, pndata, pdfdata, shihtX, shihtY, title):
     ax = fig.add_subplot(111)
@@ -220,17 +222,18 @@ plot_data(fig, fit_pn, out_pdf, view_x, view_y, '')
 # フィッティングできていなさそうなところをカット
 drop_line = []
 for j in range(0, len(fit_pn)):
-    if fit_pn['Entries'][j] < 150:
+    if fit_pn['Entries'][j] < entries_cut:
         drop_line.append(j)
-    if abs(fit_pn['sigmapx'][j]) > 0.5:
+    if abs(fit_pn['sigmapx'][j]) > sigma_cut:
         drop_line.append(j)
-    if abs(fit_pn['sigmapy'][j]) > 0.5:
+    if abs(fit_pn['sigmapy'][j]) > sigma_cut:
         drop_line.append(j)
 fit_pn = fit_pn.drop(fit_pn.index[drop_line])
 fit_pn = fit_pn.reset_index(drop=True)
 n_cut1 = len(fit_pn)
 print(len(fit_pn))
 
+fit_pn.to_csv(os.path.join(areapath, 'GrainMatching_loop', 'fitdata_firstcut.csv'))
 # 簡単処理後のplot
 plot_data(fig, fit_pn, out_pdf, view_x, view_y, '  first cut')
 
