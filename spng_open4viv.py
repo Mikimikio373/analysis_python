@@ -5,7 +5,6 @@ import sys
 import os
 import yaml
 
-basepath = 'R:\\minami\\20221212_test'
 mode = 1  # 0:最後だけ、1:全画像 2:最初の画像
 
 image = 'IMAGE00_AREA-1'

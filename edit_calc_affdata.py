@@ -60,7 +60,7 @@ def plot_data(fig, pndata, pdfdata, shihtX, shihtY, title):
     fig.clf()
 
 
-def line_fit(pndata, pdfdata, fig):
+def line_fit(pndata, pdfdata, fig):  #px pyの絶対値が200以上のものを使ってfittingするといいかも
     # x fit and plot
     clf = linear_model.LinearRegression(fit_intercept=False)
     X = pndata[['dsx']].values
