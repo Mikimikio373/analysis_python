@@ -11,8 +11,8 @@ mode = 0  # 0:最後だけ、1:全画像 2:最初の画像
 image = 'IMAGE00_AREA-1'
 
 # for n_time in range(1, 5):
-for n_m in range(0, 1):
-    for n_s in range(11, 12):
+for n_m in range(0, 2):
+    for n_s in range(1, 13):
         module = 'Module{}'.format(n_m)
         # module = 'Module{}-{}'.format(n_m, n_time)
         pair = 'sensor-1_{}'.format(n_s)

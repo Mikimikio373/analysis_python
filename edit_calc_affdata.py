@@ -10,8 +10,6 @@ from matplotlib import pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 from sklearn import linear_model
 
-entries_cut = 200
-sigma_cut = 0.25
 
 def plot_data(fig, pndata, pdfdata, shihtX, shihtY, title):
     ax = fig.add_subplot(111)
@@ -58,6 +56,26 @@ def plot_data(fig, pndata, pdfdata, shihtX, shihtY, title):
     ax.set_ylabel('dx [pixel]')
     pdfdata.savefig()
     fig.clf()
+
+
+def find_entry_cut(fig, pndata, pdfdata):
+    hist = np.histogram(pndata["Entries"].values, bins=200)
+    hist_min = min(hist[0])
+    min_list = []
+    for i in range(1, len(hist[0])):
+        if hist[0][i] == hist_min:
+            min_list.append(i)
+    cut = hist[1][min(min_list) + 1]
+    print('entries cut is : ', cut)
+    ax = fig.add_subplot(111)
+    ax.hist(pndata["Entries"], bins=200)
+    ax.vlines(cut, 0, max(hist[0]), "red")
+    ax.set_title('Number of grains used for fitting')
+    pdfdata.savefig()
+    fig.clf()
+
+    return cut
+
 
 
 def line_fit(pndata, pdfdata, fig):  #px pyの絶対値が200以上のものを使ってfittingするといいかも
@@ -219,14 +237,11 @@ fig = plt.figure(tight_layout=True)
 # 処理なしのplot
 plot_data(fig, fit_pn, out_pdf, view_x, view_y, '')
 
+entries_cut = find_entry_cut(fig, fit_pn, out_pdf)
 # フィッティングできていなさそうなところをカット
 drop_line = []
 for j in range(0, len(fit_pn)):
     if fit_pn['Entries'][j] < entries_cut:
-        drop_line.append(j)
-    if abs(fit_pn['sigmapx'][j]) > sigma_cut:
-        drop_line.append(j)
-    if abs(fit_pn['sigmapy'][j]) > sigma_cut:
         drop_line.append(j)
 fit_pn = fit_pn.drop(fit_pn.index[drop_line])
 fit_pn = fit_pn.reset_index(drop=True)
