@@ -4,9 +4,9 @@ import subprocess
 basepath = 'R:\\minami\\20221228_aff'
 python_path = 'c:\\Users\\flab\\analysis_python\\do_calc_aff.py'
 minus = 45
-option = '111'
+option = '001'
 ori_path = os.getcwd()
-for i in range(1, 2):
+for i in range(0, 2):
     for j in range(1, 13):
         module = 'Module{}'.format(i)
         sensor = 'sensor-{}'.format(j)

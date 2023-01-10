@@ -61,11 +61,22 @@ def plot_data(fig, pndata, pdfdata, shihtX, shihtY, title):
 def find_entry_cut(fig, pndata, pdfdata):
     hist = np.histogram(pndata["Entries"].values, bins=200)
     hist_min = min(hist[0])
+    hist_max = max(hist[0])
     min_list = []
+    #最小値のbin番号リストを取得
     for i in range(1, len(hist[0])):
         if hist[0][i] == hist_min:
             min_list.append(i)
-    cut = hist[1][min(min_list) + 1]
+    #最大値のbin番号を取得
+    max_num = 0
+    for i in range(1, len(hist[0])):
+        if hist[0][i] == hist_max:
+            max_num = i
+            break
+    if min(min_list) > max_num:
+        cut = hist[1][min_list[0] + 1]
+    else:
+        cut = hist[1][min_list[1] + 1]
     print('entries cut is : ', cut)
     ax = fig.add_subplot(111)
     ax.hist(pndata["Entries"], bins=200)
@@ -214,6 +225,9 @@ for i in range(0, len(fit_pn)):
 
     dsX = sX - base_sX
     dsY = sY - base_sY
+    # dsX = base_sX - sX
+    # dsY = base_sY - sY
+
     # print(dsX, dsY)
 
     dsX_all.append(dsX)
