@@ -10,7 +10,7 @@ import datetime
 from matplotlib.backends.backend_pdf import PdfPages
 import shutil
 
-cut_mode = 1
+cut_mode = 0
 cut_time = datetime.datetime(2023, 4, 29, hour=9, minute=0, second=0)
 
 
@@ -204,5 +204,5 @@ input = input.drop(columns=droplist)
 input.to_csv(edit_path, index=False)
 
 # rootマクロの実行
-root_command = 'root -q {}\\(\\\"{}\\\"\\)'.format(root_path, edit_path)
+root_command = 'root -q {}(\\\"{}\\\")'.format(root_path, edit_path)
 subprocess.run(root_command, shell=True)
