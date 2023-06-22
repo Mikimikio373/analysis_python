@@ -8,8 +8,8 @@ import shutil
 
 basepath = 'R:\\minami\\20230531_aff\\Module1\\sensor-7'
 outpath_name = 'check_StartPoint'
-GBexe_path = 'C:\\Users\\flab\\source\\repos\\myproject\\x64\\Release\\GrainMatching.exe'
-root_macro_path = 'C:\\Users\\flab\\cpp_project\\root\\cut_fit_GB.C'
+GMexe_path = 'C:\\Users\\flab\\source\\repos\\myproject\\x64\\Release\\GrainMatching.exe'
+root_macro_path = 'C:\\Users\\flab\\cpp_project\\root\\cut_fit_GM.C'
 outpath = os.path.join(basepath, outpath_name)
 editdata_path = os.path.join(basepath, 'check_StartPoint', 'encode.csv')
 
@@ -38,7 +38,7 @@ if mode[0] == '1':
         dist_name = 'L0_VX0000_VY0000_{:03}vs{:03}'.format(start, i)
         minus = 50
 
-        command = '{} {} {} {} {} -COBname {} {} -minus {} -skip'.format(GBexe_path, ref_path, comp_path, outpath, dist_name, ref_name, comp_name, minus)
+        command = '{} {} {} {} {} -COBname {} {} -minus {} -skip'.format(GMexe_path, ref_path, comp_path, outpath, dist_name, ref_name, comp_name, minus)
         subprocess.run(command)
 
 #fit
@@ -57,14 +57,14 @@ if mode[1] == '1':
 #data edit
 if mode[2] == '1':
     stat_dir = os.path.join(outpath, 'stats_CenterOfBrightness')
-    GB_dir = os.path.join(outpath, 'GB_data')
+    GM_dir = os.path.join(outpath, 'GM_data')
     root_dir = os.path.join(outpath, 'root_data')
     plot_dir = os.path.join(outpath, 'plot_data')
 
     if not os.path.exists(stat_dir):
         os.makedirs(stat_dir)
-    if not os.path.exists(GB_dir):
-        os.makedirs(GB_dir)
+    if not os.path.exists(GM_dir):
+        os.makedirs(GM_dir)
     if not os.path.exists(root_dir):
         os.makedirs(root_dir)
     if not os.path.exists(plot_dir):
@@ -129,9 +129,9 @@ if mode[2] == '1':
         stat_path = os.path.join(outpath, 'L0_VX0000_VY0000_{}_stats.csv'.format(i))
         if os.path.exists(stat_path):
             shutil.move(stat_path, stat_dir)
-        GB_path = os.path.join(outpath, 'L0_VX0000_VY0000_{:03}vs{:03}.csv'.format(start, i))
-        if os.path.exists(GB_path):
-            shutil.move(GB_path, GB_dir)
+        GM_path = os.path.join(outpath, 'L0_VX0000_VY0000_{:03}vs{:03}.csv'.format(start, i))
+        if os.path.exists(GM_path):
+            shutil.move(GM_path, GM_dir)
         root_path = os.path.join(outpath, 'L0_VX0000_VY0000_{:03}vs{:03}.root'.format(start, i))
         if os.path.exists(root_path):
             shutil.move(root_path, root_dir)

@@ -7,8 +7,8 @@ import pandas as pn
 import json
 
 basepath = 'R:\\minami\\20230621_xybas\\20230621_yonly_abs\\Module1\\sensor-7'
-GBexe_path = 'C:\\Users\\flab\\source\\repos\\myproject\\x64\\Release\\GrainMatching.exe'
-root_macro_path = 'C:\\Users\\flab\\cpp_project\\root\\cut_fit_GB.C'
+GMexe_path = 'C:\\Users\\flab\\source\\repos\\myproject\\x64\\Release\\GrainMatching.exe'
+root_macro_path = 'C:\\Users\\flab\\cpp_project\\root\\cut_fit_GM.C'
 out_path_name = 'GrainMatching_loop'
 out_path = os.path.join(basepath, out_path_name)
 editdata_path = os.path.join(basepath, out_path_name, 'fitdata.csv')
@@ -24,7 +24,7 @@ plate_sum = layer * x_size * y_size
 
 mode = '001'
 
-#GB
+#GM
 if mode[0] == '1':
     ref_path = os.path.join(basepath, 'IMAGE00_AREA-1', 'png', 'L0_VX0000_VY0000', 'L0_VX0000_VY0000_{}.png'.format(npicture-1))
     ref_name = 'L0_VX0000_VY0000'
@@ -35,7 +35,7 @@ if mode[0] == '1':
         comp_name = 'L0_VX0000_VY{:04}'.format(i)
         dist_name = 'L0_VX0000_VY0000vs{:04}'.format(i)
 
-        command = '{} {} {} {} {} -COBname {} {} -autominus {} {} -skip'.format(GBexe_path, ref_path, comp_path, out_path,
+        command = '{} {} {} {} {} -COBname {} {} -autominus {} {} -skip'.format(GMexe_path, ref_path, comp_path, out_path,
                                                                          dist_name, ref_name, comp_name, target_max, target_min)
         subprocess.run(command)
 
@@ -57,14 +57,14 @@ if mode[1] == '1':
 #data edit
 if mode[2] == '1':
     stat_dir = os.path.join(out_path, 'stats_CenterOfBrightness')
-    GB_dir = os.path.join(out_path, 'GB_data')
+    GM_dir = os.path.join(out_path, 'GM_data')
     root_dir = os.path.join(out_path, 'root_data')
     plot_dir = os.path.join(out_path, 'plot_data')
 
     if not os.path.exists(stat_dir):
         os.makedirs(stat_dir)
-    if not os.path.exists(GB_dir):
-        os.makedirs(GB_dir)
+    if not os.path.exists(GM_dir):
+        os.makedirs(GM_dir)
     if not os.path.exists(root_dir):
         os.makedirs(root_dir)
     if not os.path.exists(plot_dir):
@@ -124,9 +124,9 @@ if mode[2] == '1':
         stat_path = os.path.join(out_path, 'L0_VX0000_VY{:04}_stats.csv'.format(i))
         if os.path.exists(stat_path):
             shutil.move(stat_path, stat_dir)
-        GB_path = os.path.join(out_path, 'L0_VX0000_VY0000vs{:04}.csv'.format(i))
-        if os.path.exists(GB_path):
-            shutil.move(GB_path, GB_dir)
+        GM_path = os.path.join(out_path, 'L0_VX0000_VY0000vs{:04}.csv'.format(i))
+        if os.path.exists(GM_path):
+            shutil.move(GM_path, GM_dir)
         root_path = os.path.join(out_path, 'L0_VX0000_VY0000vs{:04}.root'.format(i))
         if os.path.exists(root_path):
             shutil.move(root_path, root_dir)
