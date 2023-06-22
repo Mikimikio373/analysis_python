@@ -11,8 +11,8 @@ outpath_name = 'check_StartPoint'
 GBexe_path = 'C:\\Users\\flab\\source\\repos\\myproject\\x64\\Release\\GrainMatching.exe'
 root_macro_path = 'C:\\Users\\flab\\cpp_project\\root\\cut_fit_GB.C'
 outpath = os.path.join(basepath, outpath_name)
-
 editdata_path = os.path.join(basepath, 'check_StartPoint', 'encode.csv')
+
 yaml_path = os.path.join(basepath, 'AreaScan4Param.yml')
 with open(yaml_path, 'rb') as yml:
     param = yaml.safe_load(yml)
