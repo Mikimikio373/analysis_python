@@ -5,7 +5,11 @@ import sys
 import os
 import yaml
 
-basepath = 'R:\\minami\\20220921_forGrainMaching0.025\\type1\\Module1\\ver-2\\E'
+# basepath = 'R:\\minami\\20230603_ali-z\\Module0\\sensor-6'
+if len(sys.argv) != 2:
+    exit('command line error. please \"basepath\"')
+
+basepath = sys.argv[1]
 image = 'IMAGE00_AREA-1'
 areapath = os.path.join(basepath, image)
 os.chdir(basepath)
