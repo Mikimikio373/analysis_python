@@ -5,8 +5,8 @@ import sys
 import yaml
 
 args = sys.argv
-if not len(args)== 3:
-    sys.exit('command line error, please input \"minus option\"')
+if not len(args) == 3:
+    sys.exit('command line error, please input \"minus, option\"')
 
 current_path = os.getcwd()
 minus = args[1]
@@ -30,7 +30,7 @@ elif option[0] == '0':
 else:
     sys.exit('option error, first number must be 0 or 1')
 
-command_fitting = 'root -l -q -b c:\\Users\\flab\\cpp_project\\root\\cut_fit_cutRead.C+({},{})'.format(vx, vy)
+command_fitting = 'root -l -q -b c:\\Users\\flab\\cpp_project\\root\\cut_fit_FastReadCSV.C+({},{})'.format(vx, vy)
 if option[1] == '1':
     subprocess.run(command_fitting)
 elif option[1] == '0':
@@ -38,7 +38,7 @@ elif option[1] == '0':
 else:
     sys.exit('option error, second number must be 0 or 1')
 
-command_edit_calc_aff = 'python c:\\Users\\flab\\analysis_python\\edit_calc_affdata.py {} {} {} {}'.format(current_path, vx, vy, npicture)
+command_edit_calc_aff = 'python c:\\Users\\flab\\analysis_python\\hts2\\edit_calc_affdata.py {} {} {} {}'.format(current_path, vx, vy, npicture)
 if option[2] == '1':
     subprocess.run(command_edit_calc_aff)
 elif option[2] == '0':

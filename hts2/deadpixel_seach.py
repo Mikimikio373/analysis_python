@@ -1,11 +1,12 @@
-import cv2
-import numpy as np
-import json
 import sys
+
+import cv2
 import os
 import yaml
+import numpy as np
 
-basedir = 'R:\\minami\\20230213_Reversal\\1-7\\PL006'
+# basedir = 'R:\\minami\\20230213_Reversal\\1-7\\PL006'
+basedir = 'R:\\minami\\20230213_Reversal\\4-6\\PL006'
 
 yml_path = os.path.join(basedir, 'AreaScan4Param.yml')
 if not os.path.exists(yml_path):
@@ -23,7 +24,8 @@ first_png = os.path.join(basedir, 'IMAGE00_AREA-1', 'png', 'L0_VX0000_VY0000', '
 if not os.path.exists(first_png):
     exit('there is no file: {}'.format(first_png))
 img_first = cv2.imread(first_png, 0)
-ret, img_plus = cv2.threshold(img_first, 0, 0, cv2.THRESH_BINARY)
+height, width = img_first.shape[:2]
+img_plus = np.zeros((height, width), np.uint16)
 
 
 
@@ -34,19 +36,15 @@ for layer in range(0, layer):
             if not os.path.exists(path):
                 exit('there is no file: {}'.format(path))
             img_read = cv2.imread(path, 0)
-            img_read = cv2.adaptiveThreshold(img_read, 1, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 15, 7)
-            img_plus = cv2.add(img_plus, img_read)
-            print(path, 'ended')
+            img_read = cv2.adaptiveThreshold(img_read, 1, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 15, 14)
+            # img_read = cv2.adaptiveThreshold(img_read, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 15, 14)
+            # cv2.imshow('test', img_read)
+            # cv2.waitKey(0)
+            # sys.exit()
+            img_plus += np.array(img_read)
+            if vy == y_size - 1:
+                print(path, 'ended')
 
-cv2.imshow('test', img_plus)
-cv2.waitKey(0)
-write_path = os.path.join(basedir, 'deadpixel_test.png')
+print(img_plus)
+write_path = os.path.join(basedir, 'deadpixel_test.tif')
 cv2.imwrite(write_path, img_plus)
-
-# img = Image.open('../16bit_search.png')
-# print(img)
-# print(img.getextrema())
-# numpy_img = np.array(img)
-# print(numpy_img)
-# nLabels, labelImages, data, center = cv2.connectedComponentsWithStats(img)
-# print(data)

@@ -32,7 +32,7 @@ def plot_data(fig, pndata, pdfdata, shihtX, shihtY, title):
     fig.clf()
 
     ax = fig.add_subplot(111)
-    ax.scatter(x=pndata["dpx"], y=pndata["dpy"], marker='o', color='none', edgecolors="g", lw=0.5)
+    ax.scatter(x=pndata["meanX"], y=pndata["meanY"], marker='o', color='none', edgecolors="g", lw=0.5)
     ax.set_title('pixel dx dy' + title)
     ax.set_xlabel('dx [pixel]')
     ax.set_ylabel('dy [pixel]')
@@ -40,7 +40,7 @@ def plot_data(fig, pndata, pdfdata, shihtX, shihtY, title):
     fig.clf()
 
     ax = fig.add_subplot(111)
-    ax.errorbar(x=pndata["dsx"], y=pndata["dpx"], xerr=np.full(len(pndata['dsx']), 0.005), yerr=pndata["delta_px"],
+    ax.errorbar(x=pndata["dsx"], y=pndata["meanX"], xerr=np.full(len(pndata['dsx']), 0.005), yerr=pndata["delta_px"],
                 marker='o', color='none', markeredgecolor="b", ecolor="b", lw=0.5)
     ax.set_title('distance x (stage X vs pixel x)' + title)
     ax.set_xlabel('dX [mm]')
@@ -49,7 +49,7 @@ def plot_data(fig, pndata, pdfdata, shihtX, shihtY, title):
     fig.clf()
 
     ax = fig.add_subplot(111)
-    ax.errorbar(x=pndata["dsy"], y=pndata["dpy"], xerr=np.full(len(pndata['dsx']), 0.005), yerr=pndata["delta_py"],
+    ax.errorbar(x=pndata["dsy"], y=pndata["meanY"], xerr=np.full(len(pndata['dsx']), 0.005), yerr=pndata["delta_py"],
                 marker='o', color='none', markeredgecolor="r", ecolor="r", lw=0.5)
     ax.set_title('distance y (stage Y vs pixel y)' + title)
     ax.set_xlabel('dY [mm]')
@@ -93,12 +93,12 @@ def line_fit(pndata, pdfdata, fig):  #px pyの絶対値が200以上のものを�
     # x fit and plot
     clf = linear_model.LinearRegression(fit_intercept=False)
     X = pndata[['dsx']].values
-    Y = pndata['dpx'].values
+    Y = pndata['meanX'].values
     clf.fit(X, Y)
     coef_x = clf.coef_[0]
 
     ax = fig.add_subplot(111)
-    ax.errorbar(x=pndata["dsx"], y=pndata["dpx"], xerr=np.full(len(pndata['dsx']), 0.005), yerr=pndata["delta_px"],
+    ax.errorbar(x=pndata["dsx"], y=pndata["meanX"], xerr=np.full(len(pndata['dsx']), 0.005), yerr=pndata["delta_px"],
                 marker='o', color='none', markeredgecolor="b", ecolor="b", lw=0.5)
     ax.set_title('distance x (stage X vs pixel x)  fitting')
     ax.set_xlabel('dX [mm]')
@@ -110,12 +110,12 @@ def line_fit(pndata, pdfdata, fig):  #px pyの絶対値が200以上のものを�
 
     # y fit and plot
     X = pndata[['dsy']].values
-    Y = pndata['dpy'].values
+    Y = pndata['meanY'].values
     clf.fit(X, Y)
     coef_y = clf.coef_[0]
 
     ax = fig.add_subplot(111)
-    ax.errorbar(x=pndata["dsy"], y=pndata["dpy"], xerr=np.full(len(pndata['dsy']), 0.005), yerr=pndata["delta_py"],
+    ax.errorbar(x=pndata["dsy"], y=pndata["meanY"], xerr=np.full(len(pndata['dsy']), 0.005), yerr=pndata["delta_py"],
                 marker='o', color='none', markeredgecolor="r", ecolor="r", lw=0.5)
     ax.set_title('distance y (stage Y vs pixel y)  fitting')
     ax.set_xlabel('dY [mm]')
@@ -129,8 +129,8 @@ def line_fit(pndata, pdfdata, fig):  #px pyの絶対値が200以上のものを�
 
 
 def calc_aff(pndata):
-    px = pndata['dpx'].values.astype(np.longdouble)
-    py = pndata['dpy'].values.astype(np.longdouble)
+    px = pndata['meanX'].values.astype(np.longdouble)
+    py = pndata['meanY'].values.astype(np.longdouble)
     sx = pndata['dsx'].values.astype(np.longdouble)
     sy = pndata['dsy'].values.astype(np.longdouble)
     px_square = np.sum(np.square(px, dtype=np.longdouble))
@@ -178,8 +178,8 @@ for i in range(0, len(fit_pn)):
         delta_px = 0
         delta_py = 0
     else:
-        delta_px = fit_pn['sigmapx'][i] / math.sqrt(fit_pn['Entries'][i])
-        delta_py = fit_pn['sigmapy'][i] / math.sqrt(fit_pn['Entries'][i])
+        delta_px = abs(fit_pn['sigmaX'][i] / math.sqrt(fit_pn['Entries'][i]))
+        delta_py = abs(fit_pn['sigmaY'][i] / math.sqrt(fit_pn['Entries'][i]))
     delta_px_all.append(delta_px)
     delta_py_all.append(delta_py)
 
@@ -201,7 +201,7 @@ for i in range(0, len(fit_pn)):
                                                                                            npicture)
     # スキャンデータがない時の処理
     if not os.path.exists(base_json_path):
-        print('error! there is not base_json_path')
+        print('error! there is not base_json_path: ', base_json_path)
         sys.exit()
     if not os.path.exists(json_path):
         print('json not exist: ', json_path)
@@ -262,7 +262,6 @@ fit_pn = fit_pn.reset_index(drop=True)
 n_cut1 = len(fit_pn)
 print(len(fit_pn))
 
-fit_pn.to_csv(os.path.join(areapath, 'GrainMatching_loop', 'fitdata_firstcut.csv'))
 # 簡単処理後のplot
 plot_data(fig, fit_pn, out_pdf, view_x, view_y, '  first cut')
 
@@ -272,7 +271,7 @@ coef_x, coef_y = line_fit(fit_pn, out_pdf, fig)
 # fitting情報からnoiseの除去
 drop_line = []
 for k in range(0, len(fit_pn)):
-    if abs(fit_pn['dpx'][k] - coef_x * fit_pn['dsx'][k]) > 50 or abs(fit_pn['dpy'][k] - coef_y * fit_pn['dsy'][k]) > 25:
+    if abs(fit_pn['meanX'][k] - coef_x * fit_pn['dsx'][k]) > 50 or abs(fit_pn['meanY'][k] - coef_y * fit_pn['dsy'][k]) > 25:
         drop_line.append(k)
 fit_pn = fit_pn.drop(fit_pn.index[drop_line])
 fit_pn = fit_pn.reset_index(drop=True)
@@ -286,7 +285,7 @@ aff_a, aff_b, aff_c, aff_d = calc_aff(fit_pn)
 # pdf file close
 out_pdf.close()
 
-fit_pn.to_csv(areapath + '/GrainMatching_loop/fitdata_edit.csv')
+fit_pn.to_csv(areapath + '/GrainMatching_loop/fitdata_edit.csv', index=False)
 
 out_data_path = os.path.join(areapath, "aff_data.csv")
 out_data = open(out_data_path, 'w')

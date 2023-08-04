@@ -6,10 +6,10 @@ import shutil
 import pandas as pn
 import json
 
-basepath = 'R:\\minami\\20230621_xybas\\20230621_yonly_abs\\Module1\\sensor-7'
+basepath = 'R:\\minami\\20230531_aff\\Module1\\sensor-7'
 GMexe_path = 'C:\\Users\\flab\\source\\repos\\myproject\\x64\\Release\\GrainMatching.exe'
 root_macro_path = 'C:\\Users\\flab\\cpp_project\\root\\cut_fit_GM.C'
-out_path_name = 'GrainMatching_loop'
+out_path_name = 'check_ystep'
 out_path = os.path.join(basepath, out_path_name)
 editdata_path = os.path.join(basepath, out_path_name, 'fitdata.csv')
 yaml_path = os.path.join(basepath, 'AreaScan4Param.yml')
@@ -22,18 +22,18 @@ layer = param["Area"][0]["NLayer"]
 npicture = param["NPictures"]
 plate_sum = layer * x_size * y_size
 
-mode = '111'
+mode = '001'
 
 #GM
 if mode[0] == '1':
-    ref_path = os.path.join(basepath, 'IMAGE00_AREA-1', 'png', 'L0_VX0000_VY0000', 'L0_VX0000_VY0000_{}.png'.format(npicture-1))
-    ref_name = 'L0_VX0000_VY0000'
     target_max = 6000
     target_min = 5000
     for i in range(1, y_size):
-        comp_path = os.path.join(basepath, 'IMAGE00_AREA-1', 'png', 'L0_VX0000_VY{:04}'.format(i), 'L0_VX0000_VY{:04}_{}.png'.format(i, npicture-1))
+        ref_path = os.path.join(basepath, 'IMAGE00_AREA-1', 'png', 'L0_VX0000_VY0000_{}_{}.png'.format(npicture - 1, i))
+        ref_name = 'L0_VX0000_VY0000_{}'.format(i)
+        comp_path = os.path.join(basepath, 'IMAGE00_AREA-1', 'png', 'L0_VX0000_VY{:04}_{}.png'.format(i, npicture-1, i))
         comp_name = 'L0_VX0000_VY{:04}'.format(i)
-        dist_name = 'L0_VX0000_VY0000vs{:04}'.format(i)
+        dist_name = 'L0_VX0000_VY0000_{}vsVY{:04}'.format(i, i)
 
         command = '{} {} {} {} {} -COBname {} {} -autominus {} {} -skip'.format(GMexe_path, ref_path, comp_path, out_path,
                                                                          dist_name, ref_name, comp_name, target_max, target_min)
@@ -42,10 +42,10 @@ if mode[0] == '1':
 #fit
 if mode[1] == '1':
     for i in range(1, y_size):
-        input_csv = 'L0_VX0000_VY0000vs{:04}.csv'.format(i)
-        pdf_name = 'L0_VX0000_VY0000vs{:04}_fit.pdf'.format(i)
-        root_name = 'L0_VX0000_VY0000vs{:04}.root'.format(i)
-        out_csv = 'L0_VX0000_VY0000vs{:04}_fit.csv'.format(i)
+        input_csv = 'L0_VX0000_VY0000_{}vsVY{:04}.csv'.format(i, i)
+        pdf_name = 'L0_VX0000_VY0000_{}vsVY{:04}_fit.pdf'.format(i, i)
+        root_name = 'L0_VX0000_VY0000_{}vsVY{:04}.root'.format(i, i)
+        out_csv = 'L0_VX0000_VY0000_{}vsVY{:04}_fit.csv'.format(i, i)
 
         command = 'root -l -q -b {}(\\\"{}\\\",\\\"{}\\\",\\\"{}\\\",\\\"{}\\\",\\\"{}\\\")'.format(root_macro_path,
                                                                                                     out_path.replace(
@@ -85,21 +85,32 @@ if mode[2] == '1':
 
     for i in range(y_size):
         #jsonファイルの読み込み
-        oripath = os.path.join(basepath, 'IMAGE00_AREA-1',
-                               'V{:08}_L{}_VX{:04}_VY{:04}_0_{:03}.json'.format(i, 0, 0, i, npicture))
-        json_open = open(oripath)
-        j = json.load(json_open)
         if i == 0:
-            sx_0 = j['Images'][0]['x']
-            sy_0 = j['Images'][0]['y']
+            view = 0
+            ref_json = os.path.join(basepath, 'IMAGE00_AREA-1',
+                                    'V{:08}_L{}_VX{:04}_VY{:04}_0_{:03}.json'.format(view, 0, 0, 0, npicture))
+            comp_json = ref_json
+        else:
+            view = (x_size + 1) * i - 1
+            ref_json = os.path.join(basepath, 'IMAGE00_AREA-1',
+                                   'V{:08}_L{}_VX{:04}_VY{:04}_0_{:03}.json'.format(view, 0, 0, 0, npicture))
+            comp_json = os.path.join(basepath, 'IMAGE00_AREA-1',
+                                   'V{:08}_L{}_VX{:04}_VY{:04}_0_{:03}.json'.format(view + 1, 0, 0, i, npicture))
+        ref_json_open = open(ref_json)
+        j_ref = json.load(ref_json_open)
+        comp_json_open = open(comp_json)
+        j_comp = json.load(comp_json_open)
+        if i == 0:
+            sx_0 = j_ref['Images'][0]['x']
+            sy_0 = j_ref['Images'][0]['y']
             dx = 0
             dy = 0
         else:
-            dx = j['Images'][0]['x'] - sx_0
-            dy = j['Images'][0]['y'] - sy_0
+            dx = j_comp['Images'][0]['x'] - j_ref['Images'][0]['x']
+            dy = j_comp['Images'][0]['y'] - j_ref['Images'][0]['y']
         line.append(i)
-        sx.append(j['Images'][0]['x'])
-        sy.append(j['Images'][0]['y'])
+        sx.append(j_comp['Images'][0]['x'])
+        sy.append(j_comp['Images'][0]['y'])
         dsx.append(dx)
         dsy.append(dy)
 
@@ -111,7 +122,7 @@ if mode[2] == '1':
             dpx_err.append(0)
             dpy_err.append(0)
             continue
-        fit_data_name = 'L0_VX0000_VY0000vs{:04}_fit.csv'.format(i)
+        fit_data_name = 'L0_VX0000_VY0000_{}vsVY{:04}_fit.csv'.format(i, i)
         fit_csv = os.path.join(out_path, fit_data_name)
         fit_data = pn.read_csv(fit_csv)
         entries.append(fit_data['entries'][0])
@@ -121,16 +132,16 @@ if mode[2] == '1':
         dpy_err.append(fit_data['dpy_err'][0])
 
         #ファイルの移動
-        stat_path = os.path.join(out_path, 'L0_VX0000_VY{:04}_stats.csv'.format(i))
-        if os.path.exists(stat_path):
-            shutil.move(stat_path, stat_dir)
-        GM_path = os.path.join(out_path, 'L0_VX0000_VY0000vs{:04}.csv'.format(i))
+        # stat_path = os.path.join(out_path, 'L0_VX0000_VY0000_{}vsVY{:04}.csv'.format(i, i))
+        # if os.path.exists(stat_path):
+        #     shutil.move(stat_path, stat_dir)
+        GM_path = os.path.join(out_path, 'L0_VX0000_VY0000_{}vsVY{:04}.csv'.format(i, i))
         if os.path.exists(GM_path):
             shutil.move(GM_path, GM_dir)
-        root_path = os.path.join(out_path, 'L0_VX0000_VY0000vs{:04}.root'.format(i))
+        root_path = os.path.join(out_path, 'L0_VX0000_VY0000_{}vsVY{:04}.root'.format(i, i))
         if os.path.exists(root_path):
             shutil.move(root_path, root_dir)
-        plot_path = os.path.join(out_path, 'L0_VX0000_VY0000vs{:04}_fit.pdf'.format(i))
+        plot_path = os.path.join(out_path, 'L0_VX0000_VY0000_{}vsVY{:04}_fit.pdf'.format(i, i))
         if os.path.exists(plot_path):
             shutil.move(plot_path, plot_dir)
         # os.remove(fit_csv)

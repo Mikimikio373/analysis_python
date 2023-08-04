@@ -1,7 +1,7 @@
 import cv2
 
-path_img = 'R:\\minami\\20230106_overrap\\0-9.jpg'
-write_path = 'R:\\minami\\20230106_overrap\\0-9_flip.png'
+path_img = 'B:\\data\\powerpoint\\GRAINE_nagoya_local\\graine20230530\\fig\\test0-6_adjust.jpg'
+write_path = 'B:\\data\\powerpoint\\GRAINE_nagoya_local\\graine20230530\\fig\\test0-6_adjust_flip.png'
 img = cv2.imread(path_img, 0)
 
 img_flip_up = cv2.flip(img, 0)
