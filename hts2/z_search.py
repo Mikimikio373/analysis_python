@@ -14,6 +14,7 @@ basepath = sys.argv[1]
 if not os.path.exists(basepath):
     exit('there is no directory: {}'.format(basepath))
 
+print('calc for: {}'.format(basepath))
 def plot_write(z_all, nog_all, thr):
     fig = plt.figure()
     ax = fig.add_subplot(111, xlabel='z [mm]', ylabel='nog')
@@ -21,13 +22,13 @@ def plot_write(z_all, nog_all, thr):
     max_nog_index = np.argmax(nog_all)
     ax.axvline(x=z_all[max_nog_index])
     ax.set_title('nog thr={}'.format(thr))
-    savefig_path = os.path.join(basepath, 'nogplot_thr{}.png'.format(thr))
+    savefig_path = os.path.join(basepath, 'nogplot.png')
     fig.savefig(savefig_path, dpi=300)
 
     df = pn.DataFrame()
     df['nog'] = nog_all
     df['z'] = z_all
-    out_csv = os.path.join(basepath, 'nog_thr{}.csv'.format(thr))
+    out_csv = os.path.join(basepath, 'nog.csv')
     df.to_csv(out_csv, index=False)
 
 gaus_size = 15
