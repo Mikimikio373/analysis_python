@@ -7,7 +7,7 @@ import yaml
 
 # basepath = 'R:\\minami\\20230603_ali-z\\Module0\\sensor-6'
 if len(sys.argv) != 2:
-    exit('command line error. please \"basepath\"')
+    sys.exit('command line error. please \"basepath\"')
 
 basepath = sys.argv[1]
 image = 'IMAGE00_AREA-1'
