@@ -1,14 +1,21 @@
+import json
+import sys
 import os
 
-basepath = 'Q:/minami/20230811_dip/1-7/0.5um'
-os.chdir(basepath)
-current_dir = os.getcwd()
-print('directory changed, current path: {}'.format(current_dir))
-count = 8
-for i in range(400):
-    tar_file_name = '20230811T170{:03}'.format(i)
-    if not os.path.exists(tar_file_name):
-        continue
+import numpy as np
 
-    os.rename(tar_file_name, '{}'.format(count))
-    count += 1
+if not len(sys.argv) == 2:
+    sys.exit('command line error. please input \"basepath\"')
+
+basepath = sys.argv[1]
+
+z_list = []
+for i in range(1, 51):
+    tar_json = os.path.join(basepath, '{}'.format(i), 'image.json')
+    with open(tar_json, 'r') as f:
+        j = json.load(f)
+
+    z_list.append(float(j['Images'][0]['stagez']))
+
+out_csv = os.path.join(basepath, 'stagez.csv')
+np.savetxt(out_csv, np.asarray(z_list), delimiter=',')
