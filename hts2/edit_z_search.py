@@ -1,10 +1,10 @@
 import json
 import pandas as pn
 
-# ref_path = "R:\\minami\\20230609_ali-z\\Module1\\sensor-7\\ori\\IMAGE00_AREA-1\\V00000000_L0_VX0000_VY0000_0_064.json"
-ref_path = "R:\\minami\\20230609_ali-z\\Module1\\sensor-7\\0\\IMAGE00_AREA-1\\V00000000_L0_VX0000_VY0000_0_064.json"
-# compare_path = "R:\\minami\\20230609_ali-z\\Module0\\sensor-6\\IMAGE00_AREA-1\\V00000000_L0_VX0000_VY0000_0_064.json"
-compare_path = "R:\\minami\\20230609_ali-z\\Module1\\sensor-7\\2\\IMAGE00_AREA-1\\V00000000_L0_VX0000_VY0000_0_064.json"
+ref_path = "R:\\minami\\20230609_ali-z\\Module1\\sensor-7\\ori\\IMAGE00_AREA-1\\V00000000_L0_VX0000_VY0000_0_064.json"
+# ref_path = "R:\\minami\\20230609_ali-z\\Module1\\sensor-7\\0\\IMAGE00_AREA-1\\V00000000_L0_VX0000_VY0000_0_064.json"
+compare_path = "R:\\minami\\20230609_ali-z\\Module0\\sensor-6\\IMAGE00_AREA-1\\V00000000_L0_VX0000_VY0000_0_064.json"
+# compare_path = "R:\\minami\\20230609_ali-z\\Module1\\sensor-7\\2\\IMAGE00_AREA-1\\V00000000_L0_VX0000_VY0000_0_064.json"
 
 ref_json = open(ref_path, 'r')
 ref_j = json.load(ref_json)
@@ -12,8 +12,8 @@ ref_j = json.load(ref_json)
 compare_json = open(compare_path, 'r')
 compare_j = json.load(compare_json)
 
-# csv_path = 'R:\\minami\\20230609_ali-z\\Module1\\sensor-7\\ori\\IMAGE00_AREA-1\\png\\GrainMatching4z-match\\z_search.csv'
-csv_path = 'R:\\minami\\20230609_ali-z\\Module1\\sensor-7\\0\\IMAGE00_AREA-1\\png\\GrainMatching4z-match\\compare_0-2\\z_search.csv'
+csv_path = 'R:\\minami\\20230609_ali-z\\Module1\\sensor-7\\ori\\IMAGE00_AREA-1\\png\\GrainMatching4z-match\\z_search.csv'
+# csv_path = 'R:\\minami\\20230609_ali-z\\Module1\\sensor-7\\0\\IMAGE00_AREA-1\\png\\GrainMatching4z-match\\compare_0-2\\z_search.csv'
 pn_data = pn.read_csv(csv_path)
 
 

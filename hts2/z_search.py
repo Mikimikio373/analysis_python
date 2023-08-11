@@ -22,13 +22,13 @@ def plot_write(z_all, nog_all, thr):
     max_nog_index = np.argmax(nog_all)
     ax.axvline(x=z_all[max_nog_index])
     ax.set_title('nog thr={}'.format(thr))
-    savefig_path = os.path.join(basepath, 'nogplot.png')
+    savefig_path = os.path.join(basepath, 'nogplot_rev.png')
     fig.savefig(savefig_path, dpi=300)
 
     df = pn.DataFrame()
     df['nog'] = nog_all
     df['z'] = z_all
-    out_csv = os.path.join(basepath, 'nog.csv')
+    out_csv = os.path.join(basepath, 'nog_rev.csv')
     df.to_csv(out_csv, index=False)
 
 gaus_size = 15
@@ -69,5 +69,5 @@ for i in range(npicture):
     nog = cv2.countNonZero(img_thr)
     nog_all.append(nog)
 
-
-plot_write(z_all, nog_all, thr)
+z_rev = np.flipud(z_all)
+plot_write(z_rev, nog_all, thr)
