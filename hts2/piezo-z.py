@@ -7,7 +7,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 if not len(sys.argv) == 2:
-    sys.exit('command line error. please input \"basepaht\"')
+    sys.exit('command line error. please input \"basepath\"')
 
 basepath = sys.argv[1]
 
