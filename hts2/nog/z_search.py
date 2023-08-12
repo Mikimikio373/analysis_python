@@ -5,7 +5,7 @@ import yaml
 import numpy as np
 from matplotlib import pyplot as plt
 import json
-import pandas as pn
+import pandas as pd
 
 if len(sys.argv) != 2:
     exit('command line error. please \"basepath\"')
@@ -25,7 +25,7 @@ def plot_write(z_all, nog_all, thr):
     savefig_path = os.path.join(basepath, 'nogplot_rev.png')
     fig.savefig(savefig_path, dpi=300)
 
-    df = pn.DataFrame()
+    df = pd.DataFrame()
     df['nog'] = nog_all
     df['z'] = z_all
     out_csv = os.path.join(basepath, 'nog_rev.csv')
