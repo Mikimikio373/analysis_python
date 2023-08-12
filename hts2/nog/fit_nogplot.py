@@ -1,48 +1,78 @@
-import json
-import subprocess
-import sys
+import csv
 import os
+import json
+import sys
 
 import numpy as np
-import pandas as pd
+from matplotlib import pyplot as plt
 
-basepath = 'Q:/minami/20230811_dip/1-7/0.5um'
+if not len(sys.argv) == 2:
+    sys.exit('command line error. please input \"basepath\"')
 
-# for i in range(1, 51):
-#     tar_dir = os.path. join(basepath, '{}'.format(i))
-#     command = 'python piezo-z.py {}'.format(tar_dir)
-#     # print(command)
-#     subprocess.run(command, shell=True)
-#
-a_list = []
-b_list = []
-aerr_list = []
-berr_list = []
-fiterr_list = []
-b_data = []
+basepath = sys.argv[1]
 
-for i in range(1, 51):
-    tar_csv = os.path. join(basepath, '{}'.format(i), 'fitdata.csv')
-    df = pd.read_csv(tar_csv, header=None)
-    a_list.append(df[1][0])
-    b_list.append(df[1][1])
-    aerr_list.append(df[1][2])
-    berr_list.append(df[1][3])
-    fiterr_list.append(df[1][4])
+json_path = os.path.join(basepath, 'image.json')
+with open(json_path, 'r') as f:
+    j = json.load(f)
 
-    tar_json = os.path.join(basepath, '{}'.format(i), 'image.json')
-    with open(tar_json, 'r') as f:
-        j = json.load(f)
-    b_data.append(float(j['Images'][0]['piezoz']) *1000)
 
-out_df = pd.DataFrame()
-out_df['a'] = a_list
-out_df['b'] = b_list
-out_df['a err'] = aerr_list
-out_df['b err'] = berr_list
-out_df['fit err'] = fiterr_list
-out_df['b data'] = b_data
+piezo_list = []
+skip_list = []
+for i in range(len(j['Images'])):
+    if j['Images'][i]['piezoz'] == 0.0:
+        skip_list.append(i)
+        print('detect skip point {}'.format(i))
+    piezo_list.append(float(j['Images'][i]['piezoz']) * 1000)
 
-out_csv = os.path.join(basepath, 'piezo-z_list.csv')
-out_df.to_csv(out_csv, index=False)
+
+x = np.arange(len(j['Images']))
+
+for i in range(len(skip_list)):
+    tmp1 = piezo_list.pop(skip_list[i])
+    x = x[x != skip_list[i]]
+
+delete_num = -8 - len(skip_list)
+x_fix = x[2:delete_num]
+piezo_list_fix = piezo_list[2:delete_num]
+
+p, cov = np.polyfit(x_fix, piezo_list_fix, 1, cov=True)
+a = p[0]
+b = p[1]
+a_err = np.sqrt(cov[0, 0])
+b_err = np.sqrt(cov[1, 1])
+print(p)
+print(a_err, b_err)
+
+y_fit = a * x + b
+
+plt.plot(x, piezo_list, '-x')
+plt.plot(x, y_fit, '-', label='y = {:.3g} $\pm$ {:.3g} x + ({:.3g} $\pm$ {:.3g})'.format(a, a_err, b, b_err))
+plt.xlabel('number of picture')
+plt.ylabel('z [um]')
+plt.axvline(x=x[2], c='r')
+plt.axvline(x=x[-8], c='r')
+plt.grid()
+plt.legend()
+plt.savefig(os.path.join(basepath, 'image_json.png'), dpi=300)
+# plt.show()
+plt.clf()
+
+sigma_y = np.sqrt(1/(len(x_fix) - 2) * np.sum([(a*x1+b-y1)**2 for x1, y1 in zip(x_fix, piezo_list_fix)]))
+print(sigma_y)
+y_err = np.asarray(piezo_list) - np.asarray(y_fit)
+plt.hist(y_err[2:-8])
+plt.xlabel('data - fit [um]')
+plt.ylabel('entries')
+plt.title('σ = {:.3g}'.format(sigma_y))
+plt.savefig(os.path.join(basepath, 'fit_error.png'), dpi=300)
+# plt.show()
+plt.clf()
+
+with open(os.path.join(basepath, 'fitdata.csv'), 'w', newline='') as f:
+    writer = csv.writer(f)
+    writer.writerow(['a', a])
+    writer.writerow(['b', b])
+    writer.writerow(['a_err', a_err])
+    writer.writerow(['b_err', b_err])
+    writer.writerow(['fit err', sigma_y])
 
