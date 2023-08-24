@@ -10,8 +10,11 @@ import datetime
 from matplotlib.backends.backend_pdf import PdfPages
 import shutil
 
-cut_mode = 0
-cut_time = datetime.datetime(2023, 4, 29, hour=9, minute=0, second=0)
+cut_mode = 1
+# cut_time = datetime.datetime(2023, 4, 29, hour=9, minute=0, second=0)
+cut_time = datetime.datetime(2023, 4, 30, hour=0, minute=0, second=0)
+# cut_time = datetime.datetime(2023, 3, 4, hour=0, minute=0, second=0)
+# cut_time2 = datetime.datetime(2023, 3, 5, hour=0, minute=0, second=0)
 
 
 def draw_hline(ax, index):
@@ -40,11 +43,11 @@ def plot_angle(fig, pdfdata, pndata, index, cmap, cmap_num):
     global cut_mode
     global index_y_list
     y_mean = np.mean(np.asarray(pndata[index]))
-    y_min = y_mean - 0.01
-    y_max = y_mean + 0.01
+    y_min = y_mean - 0.001
+    y_max = y_mean + 0.001
     ax = fig.add_subplot(111)
-    ax.scatter('time', index, data=pndata, marker='o', lw=0.1, facecolor='None', edgecolors=cmap(int(cmap_num % 10)),
-               s=1)
+    ax.scatter('time', index, data=pndata, marker='o', lw=0.5, facecolor='None', edgecolors=cmap(int(cmap_num % 10)),
+               s=1.5)
     # ax.axvline(x=datetime.datetime(2023, 4, 3, hour=9, minute=0, second=0), c='r', alpha=0.5)
     # ax.axvline(x=datetime.datetime(2023, 4, 5, hour=10, minute=30, second=0), c='b', alpha=0.5)
     # ax.axvline(x=datetime.datetime(2023, 4, 4, hour=15, minute=46, second=0), c='b', alpha=0.5)
@@ -56,10 +59,12 @@ def plot_angle(fig, pdfdata, pndata, index, cmap, cmap_num):
     # ax.axvline(x=datetime.datetime(2023, 4, 21, hour=22, minute=10, second=00), c='b', alpha=0.5)
     # ax.axvline(x=datetime.datetime(2023, 4, 22, hour=0, minute=56, second=40), c='b', alpha=0.5)
     # ax.axvline(x=datetime.datetime(2023, 4, 22, hour=1, minute=40, second=00), c='b', alpha=0.5)
+    ax.axvline(x=datetime.datetime(2023, 4, 30, hour=3, minute=16, second=40), c='b', alpha=0.5)
     # draw_hline(ax, index)
     ax.set_title(index, fontsize=15)
     ax.set_xlim(np.asarray(pndata['time'])[0], np.asarray(pndata['time'])[-1])
     Minute_fmt = mdates.DateFormatter("%m-%d\n%H:%M")
+    # Minute_fmt = mdates.DateFormatter("%m-%d")
     locator = mdates.DayLocator()
     ax.xaxis.set_major_formatter(Minute_fmt)
     if cut_mode == 0:
@@ -86,10 +91,10 @@ path = sys.argv[1]
 
 if cut_mode == 0:
     outdir = path[:-4]
-elif cut_mode == 1:
+elif cut_mode == 1 or 2:
     outdir = path[:-4] + '_cut'
 else:
-    sys.exit('cut_mode must be 0/1')
+    sys.exit('cut_mode must be 0, 1 or 2')
 os.makedirs(outdir, exist_ok=True)
 shutil.copy(path, outdir)
 # 出力csvのディレクトリ及び名前
@@ -133,6 +138,9 @@ for i in range(0, len(input)):
     if cut_mode == 1:
         if datetime.datetime.strptime(input['Date/Time'][i], '%Y-%m-%d %H:%M:%S') < cut_time:
             continue
+    if cut_mode == 2:
+        if datetime.datetime.strptime(input['Date/Time'][i], '%Y-%m-%d %H:%M:%S') < cut_time or datetime.datetime.strptime(input['Date/Time'][i], '%Y-%m-%d %H:%M:%S') > cut_time2:
+            continue
     tan1 = a * float(input['No.1'][i]) - b
     tan2 = a * float(input['No.2'][i]) - b
     tan3 = a * float(input['No.3'][i]) - b
@@ -147,7 +155,7 @@ for i in range(0, len(input)):
     ay3.append(-tan6)
     time_all.append(datetime.datetime.strptime(input['Date/Time'][i], '%Y-%m-%d %H:%M:%S'))
 
-if cut_mode == 1:
+if cut_mode == 1 or cut_mode == 2:
     input = input.drop(input.index[0:len(input) - len(time_all)])
     input = input.reset_index(drop=True)
 # pandasにlistの追加
@@ -204,5 +212,5 @@ input = input.drop(columns=droplist)
 input.to_csv(edit_path, index=False)
 
 # rootマクロの実行
-root_command = 'root -q {}(\\\"{}\\\")'.format(root_path, edit_path)
+root_command = 'root -q {}\\(\\\"{}\\\"\\)'.format(root_path, edit_path)
 subprocess.run(root_command, shell=True)
