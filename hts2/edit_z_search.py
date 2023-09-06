@@ -1,5 +1,5 @@
 import json
-import pandas as pn
+import pandas as pd
 
 ref_path = "R:\\minami\\20230609_ali-z\\Module1\\sensor-7\\ori\\IMAGE00_AREA-1\\V00000000_L0_VX0000_VY0000_0_064.json"
 # ref_path = "R:\\minami\\20230609_ali-z\\Module1\\sensor-7\\0\\IMAGE00_AREA-1\\V00000000_L0_VX0000_VY0000_0_064.json"
@@ -14,7 +14,7 @@ compare_j = json.load(compare_json)
 
 csv_path = 'R:\\minami\\20230609_ali-z\\Module1\\sensor-7\\ori\\IMAGE00_AREA-1\\png\\GrainMatching4z-match\\z_search.csv'
 # csv_path = 'R:\\minami\\20230609_ali-z\\Module1\\sensor-7\\0\\IMAGE00_AREA-1\\png\\GrainMatching4z-match\\compare_0-2\\z_search.csv'
-pn_data = pn.read_csv(csv_path)
+pn_data = pd.read_csv(csv_path)
 
 
 ref_num = int(pn_data['name'][0][5:8])
