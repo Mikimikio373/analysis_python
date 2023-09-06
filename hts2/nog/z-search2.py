@@ -7,10 +7,18 @@ from matplotlib import pyplot as plt
 import json
 import pandas as pd
 
-if len(sys.argv) != 2:
-    exit('command line error. please \"basepath\"')
+if len(sys.argv) == 2:
+    basepath = sys.argv[1]
+    starskip = 0
+    endskip = 0
+elif len(sys.argv) == 4:
+    basepath = sys.argv[1]
+    starskip = int(sys.argv[2])
+    endskip = int(sys.argv[3])
+else:
+    sys.exit('use error. please input \"basepath\", (\"start skip num\", \"end skip num\")')
 
-basepath = sys.argv[1]
+
 if not os.path.exists(basepath):
     exit('there is no directory: {}'.format(basepath))
 
@@ -33,7 +41,7 @@ def plot_write(z_all, nog_all, thr):
 
 gaus_size = 15
 thr = 14
-a = -0.5086 / 1000
+a = -0.50911432 / 1000
 
 json_path = os.path.join(basepath, 'image.json')
 if not os.path.exists(json_path):
@@ -43,7 +51,7 @@ with open(json_path, 'r') as f:
 
 npicture = len(j['Images'])
 
-z = np.arange(2, npicture - 7)
+z = np.arange(starskip, npicture - endskip)
 fit_csv = os.path.join(basepath, 'fitdata.csv')
 df_fit = pd.read_csv(fit_csv, header=None)
 b = df_fit[1][1] / 1000
@@ -51,7 +59,7 @@ stage_z = j['Images'][0]['stagez']
 z = z * a + b + stage_z
 
 nog_all = []
-for i in range(2, npicture - 7):
+for i in range(starskip, npicture - endskip):
     ##nogの計算
     png_path = os.path.join(basepath, '{:04}.png'.format(i))
     if not os.path.exists(png_path):
