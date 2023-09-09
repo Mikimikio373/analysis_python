@@ -11,6 +11,7 @@ path8 = 'R:/minami/20230531_aff/Module1/sensor-7/pixel2stage/0-0_7_stage.csv'
 path9 = 'R:/minami/20230531_aff/Module1/sensor-7/pixel2stage/0-0_8_stage.csv'
 path10 = 'R:/minami/20230531_aff/Module1/sensor-7/pixel2stage/0-0_9_stage.csv'
 
+
 df1 = pd.read_csv(path1)
 df2 = pd.read_csv(path2)
 
