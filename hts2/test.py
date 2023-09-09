@@ -1,14 +1,23 @@
-import cv2
-import numpy as np
+import os
+import shutil
+import glob
 
-# img_path = 'Q:/minami/graine_u4/PL089/L0_VX0009_VY0043_thr1211_dil/L0_VX0009_VY0043_2_thr2.png'
-img_path = 'Q:/minami/graine_u4/PL089/L0_VX0009_VY0043_cubicthr1211_dil/L0_VX0009_VY0043_2_thr2.png'
-# img_path = 'Q:/minami/graine_u4/PL089/L0_VX0009_VY0043_thr1211/L0_VX0009_VY0043_2_thr.png'
-# img_path = 'Q:/minami/graine_u4/PL089/L0_VX0009_VY0043_cubicthr1211/L0_VX0009_VY0043_2_thr.png'
+path = 'Q:/minami/20230909_nog'
+ori_path = 'A:/Test'
 
-img = cv2.imread(img_path, 0)
-num = np.count_nonzero(img)
-print(num)
+os.chdir(path)
+currend_dir = os.getcwd()
+print('current directry: {}'.format(currend_dir))
 
-hit_per = num / (len(img) * len(img[0])) * 100
-print(hit_per)
+for i in range(21):
+    tar_dir = '{}'.format(i)
+    if os.path.exists(tar_dir):
+        shutil.rmtree(tar_dir)
+
+    param_path = os.path.join(ori_path, '{:04}'.format(i), 'PARAMS')
+    shutil.copytree(param_path, os.path.join(tar_dir, 'PARAMS'))
+    for p in glob.glob(os.path.join(ori_path, '{:04}'.format(i), '*.json'), recursive=True):
+        if os.path.isfile(p):
+            shutil.copy2(p, tar_dir)
+
+
