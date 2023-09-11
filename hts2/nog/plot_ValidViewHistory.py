@@ -9,7 +9,7 @@ import numpy as np
 from matplotlib.backends.backend_pdf import PdfPages
 
 base_path = 'Q:/minami/20230910_nog2'
-pdf_mode = 1    # 0:off 1:on
+pdf_mode = 0    # 0:off 1:on
 gap = 0.5
 
 fig = plt.figure(tight_layout=True)
@@ -20,7 +20,7 @@ for i in range(2):
     for j in range(12):
         peak_list[i].append([])
 
-for num in range(1, 2):
+for num in range(1,2):
     if pdf_mode == 1:
         pdf = PdfPages(os.path.join(base_path, '{}'.format(num), 'nogplot.pdf'))
     else:
@@ -84,16 +84,16 @@ module_flag = []
 x_width = 1.177
 y_width = 0.572
 for i in range(24):
-    if math.floor(i /12) == 0:
+    if math.floor(i / 12) == 0:
         flag = 0
         if i % 4 == 0:
             x = x_width * 2.5
         elif i % 4 == 1:
             x = x_width * 0.5
         elif i % 4 == 2:
-            x = -x_width * 0.5
+            x = -x_width * 1.5
         else:
-            x = -x_width * 2.5
+            x = -x_width * 3.5
         if math.floor(i / 4) == 0:
             y = - y_width * 3
         elif math.floor(i / 4) == 1:
@@ -107,9 +107,9 @@ for i in range(24):
         elif i % 4 == 1:
             x = x_width * 1.5
         elif i % 4 == 2:
-            x = 0
+            x = -x_width * 0.5
         else:
-            x = -x_width * 1.5
+            x = -x_width * 2.5
 
         if math.floor((i - 12) / 4) == 0:
             y = y_width * 3
@@ -122,7 +122,7 @@ for i in range(24):
     x_list.append(x)
     y_list.append(y)
     peak_z = np.mean(peak_list[math.floor(i / 12)][i % 12]) * gap
-    peak_z_err = np.std(peak_list[math.floor(i / 12)][i % 12]) / math.sqrt(len(peak_list)) * gap
+    peak_z_err = np.std(peak_list[math.floor(i / 12)][i % 12]) / math.sqrt(len(peak_list[math.floor(i / 12)][i % 12])) * gap
     z_list.append(peak_z)
     zerr_list.append(peak_z_err)
     module_flag.append(flag)
@@ -138,5 +138,5 @@ xyz_df.to_csv(out_path2, index=False)
 
 python_path = 'C:/Users/flab/discord/post.py'
 command = 'python {} nogplot ended -user mikio'.format(python_path)
-subprocess.run(command)
+# subprocess.run(command)
 
