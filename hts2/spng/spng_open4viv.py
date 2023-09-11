@@ -9,7 +9,10 @@ mode = 1  # 0:最後だけ、1:全画像 2:最初の画像
 
 image = 'IMAGE00_AREA-1'
 
-areapath = "R:\\minami\\20221228_vivtest_500ms\\Module0\\sensor-1"
+# areapath = "R:\\minami\\20221228_vivtest_500ms\\Module0\\sensor-1"
+if not len(sys.argv) == 2:
+    sys.exit('command line errror')
+areapath = sys.argv[1]
 if os.path.exists(areapath)==False:
     sys.exit()
 os.chdir(areapath)
