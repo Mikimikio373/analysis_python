@@ -150,12 +150,13 @@ def calc_aff(pndata):
 
 
 args = sys.argv
-if not len(args) == 5:
-    sys.exit('command line error, please input \"path vx vy npicture\"')
+if not len(args) == 6:
+    sys.exit('command line error, please input \"path vx vy npicture mode\"')
 areapath = args[1]
 view_x = int(args[2])
 view_y = int(args[3])
 npicture = int(args[4])
+mode = int(args[5])
 print('target dir: {}'.format(areapath))
 if not os.path.exists(areapath):
     sys.exit("there are not direcory: {}".format(areapath))
@@ -244,21 +245,24 @@ print(len(fit_pn))
 
 # pdf file open
 outpath = os.path.join(areapath, "edit_fitting_data.pdf")
+if mode == 1:
+    outpath = os.path.join(areapath, "edit_fitting_data_second.pdf")
 out_pdf = PdfPages(outpath)
 
 fig = plt.figure(tight_layout=True)
 
 # 処理なしのplot
 plot_data(fig, fit_pn, out_pdf, view_x, view_y, '')
-
-entries_cut = find_entry_cut(fig, fit_pn, out_pdf)
+if not mode == 1:
+    entries_cut = find_entry_cut(fig, fit_pn, out_pdf)
 # フィッティングできていなさそうなところをカット
 drop_line = []
-for j in range(0, len(fit_pn)):
-    if fit_pn['Entries'][j] < entries_cut:
-        drop_line.append(j)
-fit_pn = fit_pn.drop(fit_pn.index[drop_line])
-fit_pn = fit_pn.reset_index(drop=True)
+if not mode == 1:
+    for j in range(0, len(fit_pn)):
+        if fit_pn['Entries'][j] < entries_cut:
+            drop_line.append(j)
+    fit_pn = fit_pn.drop(fit_pn.index[drop_line])
+    fit_pn = fit_pn.reset_index(drop=True)
 n_cut1 = len(fit_pn)
 print(len(fit_pn))
 
@@ -275,7 +279,7 @@ for k in range(0, len(fit_pn)):
         drop_line.append(k)
 fit_pn = fit_pn.drop(fit_pn.index[drop_line])
 fit_pn = fit_pn.reset_index(drop=True)
-n_cut2 =len(fit_pn)
+n_cut2 = len(fit_pn)
 print(len(fit_pn))
 plot_data(fig, fit_pn, out_pdf, view_x, view_y, '  fitting cut')
 
@@ -285,9 +289,13 @@ aff_a, aff_b, aff_c, aff_d = calc_aff(fit_pn)
 # pdf file close
 out_pdf.close()
 
-fit_pn.to_csv(areapath + '/GrainMatching_loop/fitdata_edit.csv', index=False)
+fit_pn.to_csv(areapath + '/fitdata_edit.csv', index=False)
+if mode == 1:
+    fit_pn.to_csv(areapath + '/fitdata_edit.csv', index=False)
 
 out_data_path = os.path.join(areapath, "aff_data.csv")
+if mode == 1:
+    out_data_path = os.path.join(areapath, "aff_data_second.csv")
 out_data = open(out_data_path, 'w')
 out_data.write('total,cut1,cut2,a,b,c,d\n')
 out_data.write('{},{},{},{},{},{},{}'.format(n_total,n_cut1,n_cut2,aff_a,aff_b,aff_c,aff_d))
