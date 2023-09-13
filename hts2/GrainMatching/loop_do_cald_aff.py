@@ -1,13 +1,13 @@
 import os.path
 import subprocess
 
-basepath = 'R:\\minami\\20221228_aff'
-python_path = 'c:\\Users\\flab\\analysis_python\\do_calc_aff.py'
+basepath = 'Q:\\minami\\202300912_aff'
+python_path = 'c:\\Users\\flab\\analysis_python\\hts2\\GrainMatching\\do_calc_aff.py'
 minus = 45
-option = '001'
+option = '1111'
 ori_path = os.getcwd()
-for i in range(0, 2):
-    for j in range(1, 13):
+for i in range(1, 2):
+    for j in range(12):
         module = 'Module{}'.format(i)
         sensor = 'sensor-{}'.format(j)
         target_path = os.path.join(basepath, module, sensor)
