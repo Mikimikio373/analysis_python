@@ -1,23 +1,13 @@
 import os
 import shutil
 import glob
+import subprocess
+import pandas as pd
+import matplotlib.pyplot as plt
 
-path = 'Q:/minami/20230909_nog'
-ori_path = 'A:/Test'
-
-os.chdir(path)
-currend_dir = os.getcwd()
-print('current directry: {}'.format(currend_dir))
-
-for i in range(21):
-    tar_dir = '{}'.format(i)
-    if os.path.exists(tar_dir):
-        shutil.rmtree(tar_dir)
-
-    param_path = os.path.join(ori_path, '{:04}'.format(i), 'PARAMS')
-    shutil.copytree(param_path, os.path.join(tar_dir, 'PARAMS'))
-    for p in glob.glob(os.path.join(ori_path, '{:04}'.format(i), '*.json'), recursive=True):
-        if os.path.isfile(p):
-            shutil.copy2(p, tar_dir)
-
-
+python_path = 'C:/Users/flab/analysis_python/hts2/image_process/deadpixel_seach.py'
+for i in range(2):
+    for j in range(12):
+        command = 'start python {} {} {}'.format(python_path, i, j)
+        print(command)
+        subprocess.run(command, shell=True)
