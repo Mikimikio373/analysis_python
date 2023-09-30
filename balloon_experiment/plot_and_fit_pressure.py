@@ -19,24 +19,27 @@ from matplotlib.backends.backend_pdf import PdfPages
 click_count = 0  # クリックした回数
 xvline_list = []  # クリックした場所の、xポジションを記録
 cmap = plt.get_cmap('tab20')
-cut_mode = 0 #0何もなし 1:指定時刻でカット
-# cut_time = datetime.datetime(2023, 3, 24, hour=14, minute=44, second=12) #再加圧後
-cut_time = datetime.datetime(2023, 4, 21, hour=10, minute=0, second=0) #リハ前再加圧
+cut_mode = 2 #0何もなし 1:指定時刻でカット 2:上限下限指定
+cut_time = datetime.datetime(2023, 3, 24, hour=14, minute=44, second=12) #再加圧後
+cut_time2 = datetime.datetime(2023, 4, 21, hour=10, minute=0, second=0) #リハ前再加圧
 vol_name = 'all_diff_press_20230430.csv'
 atm_ondotori_name = 'all_atm_ondotori20230430.csv'
 temp_ondotori_name = 'all_temp_ondotori20230430.csv'
 
-point_select_mode = 0 #0:クリックで選択、1:リストで選択
+point_select_mode = 1 #0:クリックで選択、1:リストで選択
 # specific_time = [[370, 510], [1055, 1195]]
-specific_time = [[1055, 1195]]
-# specific_time = []
-# first_fp = 370
-# divide = 24
-# time_range = 96
-# last_time = 805
-# while first_fp < last_time - time_range:
-#     specific_time.append([first_fp, first_fp + time_range])
-#     first_fp += divide
+# specific_time = [[1055, 1195]]
+# specific_time = [[20, 140], [190, 346], [370, 1000], [1055, 1195]] #all fit
+# specific_time = [[20, 140], [375, 495], [1055, 1175]] #120hour fit
+# specific_time = [[375, 1000]]
+specific_time = []
+first_fp = 375
+divide = 72
+time_range = 120
+last_time = 1000
+while first_fp < last_time - time_range:
+    specific_time.append([first_fp, first_fp + time_range])
+    first_fp += divide
 
 # V to P 一次変換式の傾き(a)と切片(b)
 a = 497.74
@@ -89,7 +92,7 @@ dt_now_str = dt_now.strftime('%Y%m%d')
 
 if cut_mode == 0:
     out_dir = os.path.join(csvpath, 'plot_and_data', vol_name[:-4] + 'in' + dt_now_str + '_all')
-elif cut_mode == 1:
+elif cut_mode == 1 or 2:
     out_dir = os.path.join(csvpath, 'plot_and_data', vol_name[:-4] + 'in' + dt_now_str + '_cut')
 else:
     sys.exit('cut_mode error')
@@ -136,6 +139,9 @@ for i in range(0, len(vol_pn)):
     time_t = datetime.datetime.strptime(vol_pn['Date/Time'][i], '%Y-%m-%d %H:%M:%S')
     if cut_mode == 1:
         if time_t < cut_time:
+            continue
+    if cut_mode == 2:
+        if time_t < cut_time or time_t > cut_time2:
             continue
     pressure.append(p_tmp)
     press_time.append(time_t)
