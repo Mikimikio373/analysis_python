@@ -8,21 +8,18 @@ from matplotlib import pyplot as plt
 from matplotlib.colors import Normalize
 from matplotlib.backends.backend_pdf import PdfPages
 
-basepath ='R:\\minami\\20231020_kondensator_check'
+basepath ='Q:\\minami\\20230928_acrylic_oil_fix'
 
 outpath = os.path.join(basepath, "brightness_data.pdf")
 out_pdf = PdfPages(outpath)
 
-for m in range(0, 2):
-    for s in range(1, 13):
-        if s == 1:
-            img_path = os.path.join(basepath, 'Module{}'.format(m), 'sensor-1_2'.format(s), '001',
-                                    'IMAGE00_AREA-1', 'png', 'L0_VX0000_VY0000_4_0.png')
-        else:
-            img_path = os.path.join(basepath, 'Module{}'.format(m), 'sensor-1_{}'.format(s), '{:03}'.format(s), 'IMAGE00_AREA-1', 'png', 'L0_VX0000_VY0000_4_0.png')
+for m in range(2):
+    for s in range(12):
+        img_path = os.path.join(basepath, '{}-{}.jpg'.format(m, s))
+        if not os.path.join(img_path):
+            sys.exit('there are no file: {}'.format(img_path))
         print(img_path)
         img = cv2.imread(img_path, 0)
-        # img = cv2.imread(os.path.join(basepath, '{}-{}'.format(m, s), '1.jpg'), 0)
 
         print(len(img[0]), len(img))
         projectionX = np.zeros(len(img[0]))
@@ -36,7 +33,7 @@ for m in range(0, 2):
 
         print('append ended')
         fig = plt.figure(figsize=(12, 9), dpi=72, tight_layout=True)
-        fig.suptitle('module:{}, sensor:{}'.format(m, s), size=20)
+        fig.suptitle('module:{}, sensor:{}'.format(m, s+1), size=20)
         ax1 = fig.add_subplot(221)
         cbar = ax1.imshow(img, cmap="gray", vmin=0, vmax=255)
         ax1.set_aspect('equal')
