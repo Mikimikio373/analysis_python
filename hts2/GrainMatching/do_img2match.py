@@ -3,7 +3,7 @@ import subprocess
 import sys
 import math
 
-tar_dir = 'Q:/minami/20230914_Ali'
+tar_dir = 'Q:/minami/20230914_Ali2'
 os.chdir(tar_dir)
 current_dir = os.getcwd()
 print('path changed. currend path: {}'.format(current_dir))
@@ -19,7 +19,7 @@ img_path = os.path.join(img_base, '{:02}_{:02}'.format(module, sensor), 'ImageFi
 if not os.path.exists(img_path):
     sys.exit('there are no file: {}'.format(img_path))
 
-aff_path = os.path.join('Q:/minami/202300912_aff', 'Module{}'.format(module), 'sensor-{}'.format(sensor), 'affdata_surf_first.csv')
+aff_path = os.path.join('Q:/minami/20230912_aff', 'Module{}'.format(module), 'sensor-{}'.format(sensor), 'affdata_surf.csv')
 
 pixel2image_path = 'C:/Users/flab/source/repos/myproject/x64/Release/pixel2stage.exe'
 out_path = 'calc_ali'
