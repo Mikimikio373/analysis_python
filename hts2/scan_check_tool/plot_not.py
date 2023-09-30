@@ -34,32 +34,32 @@ for vy in range(48):
         line_tmp1 = []
         line_tmp2 = []
         for vx in range(33):
-            line_tmp0.append(int(df_not['0-03'][view].split(' ')[9]))
-            line_tmp0.append(int(df_not['1-11'][view].split(' ')[9]))
-            line_tmp0.append(int(df_not['0-02'][view].split(' ')[9]))
-            line_tmp0.append(int(df_not['1-10'][view].split(' ')[9]))
-            line_tmp0.append(int(df_not['0-01'][view].split(' ')[9]))
+            line_tmp0.append(int(df_not['1-00'][view].split(' ')[9]))
+            line_tmp0.append(int(df_not['0-08'][view].split(' ')[9]))
             line_tmp0.append(int(df_not['1-01'][view].split(' ')[9]))
-            line_tmp0.append(int(df_not['0-00'][view].split(' ')[9]))
-            line_tmp0.append(int(df_not['1-09'][view].split(' ')[9]))
+            line_tmp0.append(int(df_not['0-09'][view].split(' ')[9]))
+            line_tmp0.append(int(df_not['1-02'][view].split(' ')[9]))
+            line_tmp0.append(int(df_not['0-10'][view].split(' ')[9]))
+            line_tmp0.append(int(df_not['1-03'][view].split(' ')[9]))
+            line_tmp0.append(int(df_not['0-11'][view].split(' ')[9]))
 
-            line_tmp1.append(int(df_not['1-07'][view].split(' ')[9]))
-            line_tmp1.append(int(df_not['0-06'][view].split(' ')[9]))
-            line_tmp1.append(int(df_not['1-06'][view].split(' ')[9]))
-            line_tmp1.append(int(df_not['0-05'][view].split(' ')[9]))
-            line_tmp1.append(int(df_not['1-05'][view].split(' ')[9]))
-            line_tmp1.append(int(df_not['0-04'][view].split(' ')[9]))
             line_tmp1.append(int(df_not['1-04'][view].split(' ')[9]))
-            line_tmp1.append(int(df_not['0-03'][view].split(' ')[9]))
+            line_tmp1.append(int(df_not['0-04'][view].split(' ')[9]))
+            line_tmp1.append(int(df_not['1-05'][view].split(' ')[9]))
+            line_tmp1.append(int(df_not['0-05'][view].split(' ')[9]))
+            line_tmp1.append(int(df_not['1-06'][view].split(' ')[9]))
+            line_tmp1.append(int(df_not['0-06'][view].split(' ')[9]))
+            line_tmp1.append(int(df_not['1-07'][view].split(' ')[9]))
+            line_tmp1.append(int(df_not['0-07'][view].split(' ')[9]))
 
-            line_tmp2.append(int(df_not['0-11'][view].split(' ')[9]))
-            line_tmp2.append(int(df_not['1-03'][view].split(' ')[9]))
-            line_tmp2.append(int(df_not['0-10'][view].split(' ')[9]))
-            line_tmp2.append(int(df_not['1-02'][view].split(' ')[9]))
+            line_tmp2.append(int(df_not['1-08'][view].split(' ')[9]))
+            line_tmp2.append(int(df_not['0-00'][view].split(' ')[9]))
+            line_tmp2.append(int(df_not['1-09'][view].split(' ')[9]))
             line_tmp2.append(int(df_not['0-01'][view].split(' ')[9]))
-            line_tmp2.append(int(df_not['1-04'][view].split(' ')[9]))
-            line_tmp2.append(int(df_not['0-06'][view].split(' ')[9]))
-            line_tmp2.append(int(df_not['1-00'][view].split(' ')[9]))
+            line_tmp2.append(int(df_not['1-10'][view].split(' ')[9]))
+            line_tmp2.append(int(df_not['0-02'][view].split(' ')[9]))
+            line_tmp2.append(int(df_not['1-11'][view].split(' ')[9]))
+            line_tmp2.append(int(df_not['0-03'][view].split(' ')[9]))
 
             view += 1
         not_line_l0_0.append(line_tmp0)
@@ -76,17 +76,18 @@ for vy in range(48):
         for vx in range(33):
             view += 1
 
-# x = np.arange(0, 297, 1.125)
-# y = np.arange(0, 237.6, 0.55)
-# # x, y = np.mgrid[:len(not_all), :len(not_all[0])]
-# # print(x)
-# # print(y)
-# # print(not_all)
+x = np.arange(0, 297, 1.125)
+y = np.arange(0, 237.6, 0.55)
+# x, y = np.mgrid[:len(not_all), :len(not_all[0])]
+# print(x)
+# print(y)
+# print(not_all)
 # fig, ax = plt.subplots()
 # z = ax.pcolormesh(x, y, not_all, cmap='jet', vmin=0, vmax=30000)
 # pp = fig.colorbar(z, ax=ax, orientation="vertical")
 # ax.set_xlabel('X [mm]')
 # ax.set_ylabel('Y [mm]')
+# ax.set_aspect('equal')
 #
 # plt.show()
 
@@ -101,16 +102,17 @@ for module in range(2):
         df_not_list['{}-{:02}'.format(module, sensor)] = [np.average(nog_list)]
         not_list_sensor.append(np.average(nog_list))
 
-# x = np.arange(24)
-# plt.plot(x, not_list_sensor, 'x')
-# plt.ylim(0, 16000)
-# plt.xticks(np.arange(0,24))
-# plt.grid()
-# plt.xlabel('sensor ID')
-# plt.ylabel('average not')
+x = np.arange(24)
+plt.plot(x, not_list_sensor, 'x')
+plt.ylim(0, 16000)
+plt.xticks(np.arange(0,24))
+plt.grid()
+plt.xlabel('sensor ID')
+plt.ylabel('average not')
 # plt.show()
+plt.clf()
 
-json_path = 'X:/Project_v3/AdminParam/HTS2/SapEVMG/default.json'
+json_path = 'X:/Project_v3/AdminParam/HTS2/SapEVMG/default_HTS.json'
 with open(json_path, 'rb') as f:
     json_data = json.load(f)
 
@@ -121,5 +123,16 @@ for i in range(24):
 plt.plot(tar_bright, not_list_sensor, 'x')
 plt.xlabel('taget bright')
 plt.ylabel('average not')
-plt.show()
+# plt.show()
+plt.clf()
 
+# fig = plt.figure()
+# ax = fig.add_subplot(111, projection='3d')
+# ax.scatter(x, tar_bright, not_list_sensor)
+# plt.show()
+
+out_df = pd.DataFrame()
+out_df['sensor'] = x + 1
+out_df['not'] = not_list_sensor
+out_df['tar_bright'] = tar_bright
+out_df.to_csv(os.path.join(basepath, 'GRAPH', 'not_list.csv'), index=False)
