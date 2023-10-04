@@ -1,0 +1,8 @@
+- module: 0
+  sensor: 0
+  id: 0
+  pos: 49
+- module: 0
+  sensor: 1
+  id: 1
+  pos: 51

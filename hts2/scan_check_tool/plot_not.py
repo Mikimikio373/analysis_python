@@ -6,8 +6,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 import matplotlib.ticker as mticker
-from matplotlib.colors import Normalize # Normalizeをimport
-
+from matplotlib.colors import Normalize  # Normalizeをimport
 
 basepath = 'Q:/minami/20230914_300mm240mm'
 not_path = os.path.join(basepath, 'GRAPH', 'NOT')
