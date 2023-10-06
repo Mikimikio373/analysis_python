@@ -1,7 +1,7 @@
 - module: 0
   sensor: 0
   id: 0
-  pos: 48
+  pos: 49
 - module: 0
   sensor: 1
   id: 1
@@ -165,7 +165,7 @@
 - module: 3
   sensor: 5
   id: 41
-  pos: 35
+  pos: 34
 - module: 3
   sensor: 6
   id: 42
@@ -237,7 +237,7 @@
 - module: 4
   sensor: 11
   id: 59
-  pos: 071
+  pos: 71
 - module: 5
   sensor: 0
   id: 60
