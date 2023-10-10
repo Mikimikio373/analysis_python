@@ -80,7 +80,7 @@ plt.clf()
 x = np.arange(1, 9)
 y = np.arange(1, 10)
 x, y = np.meshgrid(x, y)
-z = np.zeros((9,8))
+z = np.zeros((9, 8))
 cmap = copy.copy(plt.get_cmap("jet"))
 cmap.set_under('w', 1) # 下限以下の色を設定
 base_shrink_x = shrink_x[3+8*1]
