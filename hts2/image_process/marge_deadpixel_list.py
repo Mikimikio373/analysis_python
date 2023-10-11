@@ -22,8 +22,8 @@ for i in range(24):
     sensor = i % 12
     df = pd.read_csv(os.path.join(marge_dir, '{}-{:02}_pixel-list.csv'.format(module, sensor)))
     deadpixel_list = []
-    for i in range(len(df)):
-        pair = [float(df['px'][i]), float(df['py'][i])]
+    for j in range(len(df)):
+        pair = [float(df['px'][j]), float(df['py'][j])]
         deadpixel_list.append(pair)
     print(deadpixel_list)
     ori_jsondata[i]["DeadPixel"] = deadpixel_list
@@ -31,5 +31,5 @@ for i in range(24):
 print(ori_jsondata[0])
 out_json = os.path.join(marge_dir, 'DeadPixel_One_Third.json')
 with open(out_json, 'w') as f:
-    json.dump(ori_jsondata, f)
+    json.dump(ori_jsondata, f, indent=2)
 
