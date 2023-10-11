@@ -13,6 +13,30 @@ step_x = 9.0
 step_y = 4.95
 not_max = 30000
 
+def textbox(ax, flat_list, ax_x_max, ax_y_max):
+    entries = len(flat_list)
+    length = len(str(entries))
+    mean = np.mean(flat_list)
+    std_dev = np.std(flat_list)
+    if len(str(mean)) > length:
+        if str(mean)[0:length][-1] == '.':
+            str_mean = 'Mean:     {}'.format(str(mean)[0:length - 1])
+        else:
+            str_mean = 'Mean:    {}'.format(str(mean)[0:length])
+    else:
+        str_mean = 'Mean:    {}'.format(str(mean).rjust(length))
+
+    if len(str(std_dev)) > length:
+        if str(std_dev)[0:length][-1] == '.':
+            str_std = 'Std Dev:  {}'.format(str(std_dev)[0:length - 1])
+        else:
+            str_std = 'Std Dev: {}'.format(str(std_dev)[0:length])
+    else:
+        str_std = 'Std Dev: {}'.format(str(std_dev).rjust(length))
+
+    text = 'Entries: {}\n{}\n{}'.format(entries, str_mean, str_std)
+    ax.text(ax_x_max * 0.9, ax_y_max * 0.9, text, bbox=(dict(boxstyle='square', fc='w')))
+
 if not len(sys.argv) == 2:
     sys.exit('please enter \"target path\"')
 
@@ -63,7 +87,7 @@ for m in range(module):
         f = open(nottxt_path, 'r')
         data_line = f.readlines()
         for i in range(len(data_line)):
-            # L0, L1の判断
+            # L0, L1の判断 ValidViweHistryを使わなくとも実装できるi % step_x_num*2 < step_x_num
             if vvh_json[i]['Layer'] == 0:   #L0側
                 not_tmp_l0.append([int(data_line[i].split(' ')[-2]), i])
             else:
@@ -130,11 +154,13 @@ ax2.set_ylabel('Y [mm]')
 
 ax3 = plt.subplot(223, title='L0 not')
 flat_not_l0 = list(itertools.chain.from_iterable(not_array_l0))
-ax3.hist(flat_not_l0, histtype='step', bins=100, range=(0, not_max), color='w', ec='r')
+hist_return0 = ax3.hist(flat_not_l0, histtype='step', bins=100, range=(0, not_max), color='w', ec='r')
+textbox(ax3, flat_not_l0, not_max, max(hist_return0[0]))
 
 ax4 = plt.subplot(224, title='L1 not')
 flat_not_l1 = list(itertools.chain.from_iterable(not_array_l1))
-ax4.hist(flat_not_l1, histtype='step', bins=100, range=(0, not_max), color='w', ec='b')
+hist_return1 = ax4.hist(flat_not_l1, histtype='step', bins=100, range=(0, not_max), color='w', ec='b')
+textbox(ax4, flat_not_l1, not_max, max(hist_return1[0]))
 
 # plt.show()
 plt.savefig(os.path.join(out_path, 'not_plot.png'), dpi=300)
