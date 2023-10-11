@@ -12,7 +12,9 @@ def text(array: np.ndarray, ax, color: str):
         for num_c, value in enumerate(array[num_r]):
             ax.text(num_c, num_r, '{:d}'.format(int(value)), color=color, ha='center', va='center')
 
-sensor_num = 24
+module = 2
+sensor = 12
+imager_num = module * sensor
 ex_max = 1000
 ex_min = 1
 
@@ -32,12 +34,12 @@ with open(os.path.join(target_path, 'ValidViewHistory.json'), 'rb') as f:
 
 all_exposure_l0 = []
 all_exposure_l1 = []
-for i in range(sensor_num):
+for i in range(imager_num):
     all_exposure_l0.append([])
     all_exposure_l1.append([])
 
 for view in range(len(params)):
-    for i in range(sensor_num):
+    for i in range(imager_num):
         if params[view]['Layer'] == 0:
             all_exposure_l0[i].append(params[view]['ImagerControllerParam']['ExposureCount'][i])
         else:
@@ -45,7 +47,7 @@ for view in range(len(params)):
 
 ave_exposure_l0 = []
 ave_exposure_l1 = []
-for i in range(sensor_num):
+for i in range(imager_num):
     ave_exposure_l0.append(np.average(all_exposure_l0[i]))
     ave_exposure_l1.append(np.average(all_exposure_l1[i]))
 
