@@ -10,6 +10,7 @@ import copy
 
 step_x = 9.0
 step_y = 4.95
+absolute_max = 20000
 relative_min = 0.7
 def text(array: np.ndarray, ax, color: str):
     for num_r, row in enumerate(array):
@@ -71,7 +72,7 @@ not_average_L0_relative = np.asarray(not_average_L0) / max_not_L0
 not_average_L1_relative = np.asarray(not_average_L1) / max_not_L1
 
 cmap = copy.copy(plt.get_cmap("copper"))
-cmap.set_under('w', 1) # 下限以下の色を設定
+cmap.set_under('w', 1)  # 下限以下の色を設定
 
 z0 = np.zeros((9, 8))
 z1 = np.zeros((9, 8))
@@ -91,26 +92,28 @@ ax1 = fig.add_subplot(321)
 ax1.plot(x, not_average_L0, marker='x', c='r')
 ax1.set_title('L0 NOT (absolute)')
 ax1.set_xticks(x)
-ax1.set_ylim(0, 20000)
+ax1.set_xlabel('Imager ID')
+ax1.set_ylim(0, absolute_max)
 ax1.grid()
 
 ax2 = fig.add_subplot(322)
 ax2.plot(x, not_average_L1, marker='x', c='b')
 ax2.set_title('L1 NOT (absolute)')
 ax2.set_xticks(x)
-ax2.set_ylim(0, 20000)
+ax2.set_xlabel('Imager ID')
+ax2.set_ylim(0, absolute_max)
 ax2.grid()
 
 x = np.arange(8)
 y = np.arange(9)
 x, y = np.meshgrid(x, y)
-ax3 = plt.subplot(323, title='L0 relative (array)')
+ax3 = plt.subplot(323, title='L0 NOT (relative, sensor array)')
 z_ber0 = ax3.pcolormesh(x, y, z0, cmap=cmap, vmax=1, vmin=relative_min, edgecolors="black")
 text(z0, ax3, 'black')
 pp0 = fig.colorbar(z_ber0, orientation="vertical")
 ax3.set_aspect(1088/2024)
 
-ax4 = plt.subplot(324, title='L1 relative (array)')
+ax4 = plt.subplot(324, title='L1 NOT (relative, sensor array)')
 z_ber1 = ax4.pcolormesh(x, y, z1, cmap=cmap, vmax=1, vmin=relative_min, edgecolors="black")
 text(z1, ax4, 'black')
 pp1 = fig.colorbar(z_ber1, orientation="vertical")
@@ -122,9 +125,10 @@ ax5.plot(x, not_average_L0_relative, marker='x', c='r', label='L0 NOT (relative)
 ax5.plot(x, not_average_L1_relative, marker='x', c='b', label='L1 NOT (relative)')
 ax5.set_title('NOT (relative)')
 ax5.set_xticks(x)
+ax5.set_xlabel('Imager ID')
 ax5.set_ylim(relative_min, 1)
 ax5.legend()
 ax5.grid()
 
 # plt.show()
-plt.savefig(os.path.join(out_path, 'check_not.pdf'))
+plt.savefig(os.path.join(out_path, 'check_not.png'), dpi=300)
