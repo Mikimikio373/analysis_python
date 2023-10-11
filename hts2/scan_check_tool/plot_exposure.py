@@ -94,7 +94,7 @@ ex_array_l1 = np.zeros((step_y_num * 9, step_x_num * 8))
 
 print('all scan area view num: {}'.format(half_view))
 print('scaned area view num: {}'.format(len(ex_l0[0])))
-for i in range(half_view):
+for i in range(len(ex_l0[0])):
     # 1/3でY方向を3分割しているため何レーン目かを判断
     y_lane = math.floor(i / step_x_num) % 3
     for py in range(9):
