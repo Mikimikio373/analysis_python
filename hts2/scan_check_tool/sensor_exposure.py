@@ -4,7 +4,6 @@ import sys
 import numpy as np
 import copy
 import matplotlib.pyplot as plt
-import math
 import yaml
 
 def text(array: np.ndarray, ax, color: str):
