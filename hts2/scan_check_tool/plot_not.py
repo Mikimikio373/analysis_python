@@ -163,6 +163,6 @@ hist_return1 = ax4.hist(flat_not_l1, histtype='step', bins=100, range=(0, not_ma
 textbox(ax4, flat_not_l1, not_max, max(hist_return1[0]))
 
 # plt.show()
-plt.savefig(os.path.join(out_path, 'not_plot.png'), dpi=300)
+plt.savefig(os.path.join(out_path, 'scan_area_not.png'), dpi=300)
 
 

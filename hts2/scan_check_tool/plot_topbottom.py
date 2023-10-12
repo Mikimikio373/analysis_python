@@ -160,5 +160,5 @@ hist_return1 = ax4.hist(flat_not_l1, histtype='step', bins=plot_max-plot_min, ra
 textbox(ax4, flat_not_l1, plot_max, max(hist_return1[0]))
 
 # plt.show()
-plt.savefig(os.path.join(basepath, 'GRAPH', 'topbottom_plot.png'), dpi=300)
+plt.savefig(os.path.join(basepath, 'GRAPH', 'scan_area_topbottom.png'), dpi=300)
 plt.clf()

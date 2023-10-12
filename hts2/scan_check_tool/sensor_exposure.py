@@ -95,4 +95,4 @@ ax3.set_ylim(ex_min, ex_max)
 ax3.set_xticks(x)
 ax3.grid()
 
-plt.savefig(os.path.join(target_path, 'GRAPH', 'exposure_count.png'), dpi=300)
+plt.savefig(os.path.join(target_path, 'GRAPH', 'sensor_excount.png'), dpi=300)

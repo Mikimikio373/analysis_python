@@ -156,6 +156,6 @@ hist_return1 = ax4.hist(flat_not_l1, histtype='step', bins=100, range=(0, 1000),
 textbox(ax4, flat_not_l1, 1000, max(hist_return1[0]))
 
 # plt.show()
-plt.savefig(os.path.join(out_path, 'exposure_count_plot.png'), dpi=300)
+plt.savefig(os.path.join(out_path, 'scan_area_excount.png'), dpi=300)
 
 

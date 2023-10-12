@@ -133,7 +133,7 @@ ax3.set_ylim(nog_min, nog_max)
 ax3.set_xticks(x)
 ax3.grid()
 
-plt.savefig(os.path.join(basepath, 'GRAPH', 'nog_sensor.png'), dpi=300)
+plt.savefig(os.path.join(basepath, 'GRAPH', 'sensor_nog.png'), dpi=300)
 plt.clf()
 
 x = np.arange(8)
@@ -179,7 +179,7 @@ ax3.set_ylim(nog_top_bottom_min, nog_top_bottom_max)
 ax3.set_xticks(x)
 ax3.grid()
 
-plt.savefig(os.path.join(basepath, 'GRAPH', 'nog_top_sensor.png'), dpi=300)
+plt.savefig(os.path.join(basepath, 'GRAPH', 'sensor_nog0.png'), dpi=300)
 plt.clf()
 
 x = np.arange(8)
@@ -225,4 +225,4 @@ ax3.set_ylim(nog_top_bottom_min, nog_top_bottom_max)
 ax3.set_xticks(x)
 ax3.grid()
 
-plt.savefig(os.path.join(basepath, 'GRAPH', 'nog_bottom_sensor.png'), dpi=300)
+plt.savefig(os.path.join(basepath, 'GRAPH', 'sensor_nog15.png'), dpi=300)

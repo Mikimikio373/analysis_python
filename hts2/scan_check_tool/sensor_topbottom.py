@@ -105,6 +105,6 @@ ax3.set_ylim(plot_min, plot_max)
 ax3.set_xticks(x)
 ax3.grid()
 
-plt.savefig(os.path.join(basepath, 'GRAPH', 'topbottom_sensor.png'), dpi=300)
+plt.savefig(os.path.join(basepath, 'GRAPH', 'sensor_topbottom.png'), dpi=300)
 plt.clf()
 

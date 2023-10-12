@@ -131,4 +131,4 @@ ax5.legend()
 ax5.grid()
 
 # plt.show()
-plt.savefig(os.path.join(out_path, 'check_not.png'), dpi=300)
+plt.savefig(os.path.join(out_path, 'sensor_not.png'), dpi=300)

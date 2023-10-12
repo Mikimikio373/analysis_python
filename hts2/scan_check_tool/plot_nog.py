@@ -176,7 +176,7 @@ hist_return1 = ax4.hist(flat_not_l1, histtype='step', bins=100, range=(nog_min, 
 textbox(ax4, flat_not_l1, nog_max, max(hist_return1[0]))
 
 # plt.show()
-plt.savefig(os.path.join(basepath, 'GRAPH', 'nog_plot.png'), dpi=300)
+plt.savefig(os.path.join(basepath, 'GRAPH', 'scan_area_nog.png'), dpi=300)
 plt.clf()
 
 for i in range(len(top_l0[0])):
@@ -235,7 +235,7 @@ hist_return1 = ax4.hist(flat_not_l1, histtype='step', bins=100, range=(nog_top_b
 textbox(ax4, flat_not_l1, nog_top_bottom_max, max(hist_return1[0]))
 
 # plt.show()
-plt.savefig(os.path.join(basepath, 'GRAPH', 'nog_plot_top.png'), dpi=300)
+plt.savefig(os.path.join(basepath, 'GRAPH', 'scan_area_nog0.png'), dpi=300)
 plt.clf()
 
 for i in range(len(bottom_l0[0])):
@@ -294,5 +294,5 @@ hist_return1 = ax4.hist(flat_not_l1, histtype='step', bins=100, range=(nog_top_b
 textbox(ax4, flat_not_l1, nog_top_bottom_max, max(hist_return1[0]))
 
 # plt.show()
-plt.savefig(os.path.join(basepath, 'GRAPH', 'nog_plot_bottom.png'), dpi=300)
+plt.savefig(os.path.join(basepath, 'GRAPH', 'scan_area_nog15.png'), dpi=300)
 plt.clf()
