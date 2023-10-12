@@ -75,7 +75,7 @@ for py in range(9):
             z0[py][px] = ave_topbottom_l0[id]
             z1[py][px] = ave_topbottom_l1[id]
 
-fig2 = plt.figure(figsize=(10, 8), tight_layout=True)
+fig2 = plt.figure(figsize=(11.69, 8.27), tight_layout=True)
 fig2.suptitle('Top to Bottom', fontsize=20)
 ax0 = plt.subplot(221, title='L0 array')
 z_ber20 = ax0.pcolormesh(x, y, z0, cmap=cmap, vmin=plot_min, vmax=plot_max, edgecolors="black")

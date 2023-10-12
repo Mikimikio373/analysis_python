@@ -5,6 +5,7 @@ import numpy as np
 import copy
 import matplotlib.pyplot as plt
 import yaml
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 def text(array: np.ndarray, ax, color: str):
     for num_r, row in enumerate(array):
@@ -67,28 +68,30 @@ for py in range(9):
             z0[py][px] = ave_exposure_l0[id]
             z1[py][px] = ave_exposure_l1[id]
 
-fig = plt.figure(figsize=(10, 8), tight_layout=True)
+fig = plt.figure(figsize=(11.69, 8.27), tight_layout=True)
 fig.suptitle('exposure count', fontsize=20)
-ax0 = plt.subplot(221, title='L0 array')
+ax0 = plt.subplot(221, title='Layer0 array')
 z_ber0 = ax0.pcolormesh(x, y, z0, cmap=cmap, vmax=ex_min, vmin=ex_max, edgecolors="black")
 text(z0, ax0, 'black')
-pp0 = fig.colorbar(z_ber0, orientation="vertical")
-ax0.set_aspect(1088/2024)
+divider0 = make_axes_locatable(ax0) #axに紐付いたAxesDividerを取得
+cax0 = divider0.append_axes("right", size="5%", pad=0.1) #append_axesで新しいaxesを作成
+pp0 = fig.colorbar(z_ber0, orientation="vertical", cax=cax0)
 
-ax1 = plt.subplot(222, title='L1 array')
+ax1 = plt.subplot(222, title='Layer1 array')
 z_ber1 = ax1.pcolormesh(x, y, z1, cmap=cmap, vmax=ex_min, vmin=ex_max, edgecolors="black")
 text(z1, ax1, 'black')
-pp1 = fig.colorbar(z_ber1, orientation="vertical")
-ax1.set_aspect(1088/2024)
+divider1 = make_axes_locatable(ax1) #axに紐付いたAxesDividerを取得
+cax1 = divider1.append_axes("right", size="5%", pad=0.1) #append_axesで新しいaxesを作成
+pp1 = fig.colorbar(z_ber1, orientation="vertical", cax=cax1)
 
-ax2 = plt.subplot(223, title='L0')
+ax2 = plt.subplot(223, title='Layer0')
 x = np.arange(24)
 ax2.plot(x, ave_exposure_l0, marker='x', c='r')
 ax2.set_ylim(ex_min, ex_max)
 ax2.set_xticks(x)
 ax2.grid()
 
-ax3 = plt.subplot(224, title='L1')
+ax3 = plt.subplot(224, title='Layer1')
 x = np.arange(24)
 ax3.plot(x, ave_exposure_l1, marker='x', c='b')
 ax3.set_ylim(ex_min, ex_max)

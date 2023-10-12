@@ -7,6 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import yaml
 import copy
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 step_x = 9.0
 step_y = 4.95
@@ -87,10 +88,11 @@ for py in range(9):
             z1[py][px] = not_average_L1_relative[id]
 
 fig = plt.figure(figsize=(8.27*1.3, 11.69*1.3), tight_layout=True)
+fig.suptitle('Number Of Tracks', fontsize=20)
 x = np.arange(24)
 ax1 = fig.add_subplot(321)
 ax1.plot(x, not_average_L0, marker='x', c='r')
-ax1.set_title('L0 NOT (absolute)')
+ax1.set_title('Layer0 (absolute)')
 ax1.set_xticks(x)
 ax1.set_xlabel('Imager ID')
 ax1.set_ylim(0, absolute_max)
@@ -98,7 +100,7 @@ ax1.grid()
 
 ax2 = fig.add_subplot(322)
 ax2.plot(x, not_average_L1, marker='x', c='b')
-ax2.set_title('L1 NOT (absolute)')
+ax2.set_title('Layer1 (absolute)')
 ax2.set_xticks(x)
 ax2.set_xlabel('Imager ID')
 ax2.set_ylim(0, absolute_max)
@@ -107,22 +109,24 @@ ax2.grid()
 x = np.arange(8)
 y = np.arange(9)
 x, y = np.meshgrid(x, y)
-ax3 = plt.subplot(323, title='L0 NOT (relative, sensor array)')
-z_ber0 = ax3.pcolormesh(x, y, z0, cmap=cmap, vmax=1, vmin=relative_min, edgecolors="black")
+ax3 = plt.subplot(323, title='Layer0  (relative, sensor array)')
+z_ber0 = ax1.pcolormesh(x, y, z0, cmap=cmap, vmax=1, vmin=relative_min)
+divider0 = make_axes_locatable(ax1) #axに紐付いたAxesDividerを取得
+cax0 = divider0.append_axes("right", size="5%", pad=0.1) #append_axesで新しいaxesを作成
 text(z0, ax3, 'black')
-pp0 = fig.colorbar(z_ber0, orientation="vertical")
-ax3.set_aspect(1088/2024)
+pp0 = fig.colorbar(z_ber0, orientation="vertical", cax=cax0)
 
-ax4 = plt.subplot(324, title='L1 NOT (relative, sensor array)')
-z_ber1 = ax4.pcolormesh(x, y, z1, cmap=cmap, vmax=1, vmin=relative_min, edgecolors="black")
+ax4 = plt.subplot(324, title='Layer1 (relative, sensor array)')
+z_ber1 = ax1.pcolormesh(x, y, z0, cmap=cmap, vmax=1, vmin=relative_min)
+divider1 = make_axes_locatable(ax1) #axに紐付いたAxesDividerを取得
+cax1 = divider1.append_axes("right", size="5%", pad=0.1) #append_axesで新しいaxesを作成
 text(z1, ax4, 'black')
-pp1 = fig.colorbar(z_ber1, orientation="vertical")
-ax4.set_aspect(1088/2024)
+pp1 = fig.colorbar(z_ber1, orientation="vertical", cax=cax1)
 
 x = np.arange(24)
 ax5 = fig.add_subplot(325)
-ax5.plot(x, not_average_L0_relative, marker='x', c='r', label='L0 NOT (relative)')
-ax5.plot(x, not_average_L1_relative, marker='x', c='b', label='L1 NOT (relative)')
+ax5.plot(x, not_average_L0_relative, marker='x', c='r', label='Layer0 (relative)')
+ax5.plot(x, not_average_L1_relative, marker='x', c='b', label='Layer1 (relative)')
 ax5.set_title('NOT (relative)')
 ax5.set_xticks(x)
 ax5.set_xlabel('Imager ID')

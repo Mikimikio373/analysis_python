@@ -103,21 +103,21 @@ for py in range(9):
             z0[py][px] = ave_nog_over_thr_l0[id]
             z1[py][px] = ave_nog_over_thr_l1[id]
 
-fig1 = plt.figure(figsize=(10, 8), tight_layout=True)
+fig1 = plt.figure(figsize=(11.69, 8.27), tight_layout=True)
 fig1.suptitle('Nogs Threshold over average', fontsize=20)
-ax0 = plt.subplot(221, title='L0 array')
-z_ber10 = ax0.pcolormesh(x, y, z0, cmap=cmap, vmin=nog_min, vmax=nog_max, edgecolors="black")
-divider10 = make_axes_locatable(ax0) #axに紐付いたAxesDividerを取得
-cax10 = divider10.append_axes("right", size="5%", pad=0.1) #append_axesで新しいaxesを作成
-pp0 = fig1.colorbar(z_ber10, orientation="vertical", cax=cax10)
+ax0 = plt.subplot(221, title='Layer0 array')
+z_ber0 = ax0.pcolormesh(x, y, z0, cmap=cmap, vmax=nog_min, vmin=nog_max, edgecolors="black")
 text(z0, ax0, 'black')
+divider0 = make_axes_locatable(ax0) #axに紐付いたAxesDividerを取得
+cax0 = divider0.append_axes("right", size="5%", pad=0.1) #append_axesで新しいaxesを作成
+pp0 = fig1.colorbar(z_ber0, orientation="vertical", cax=cax0)
 
-ax1 = plt.subplot(222, title='L1 array')
-z_ber11 = ax1.pcolormesh(x, y, z1, cmap=cmap, vmin=nog_min, vmax=nog_max, edgecolors="black")
-divider11 = make_axes_locatable(ax1) #axに紐付いたAxesDividerを取得
-cax11 = divider11.append_axes("right", size="5%", pad=0.1) #append_axesで新しいaxesを作成
-pp1 = fig1.colorbar(z_ber11, orientation="vertical", cax=cax11)
+ax1 = plt.subplot(222, title='Layer1 array')
+z_ber1 = ax1.pcolormesh(x, y, z1, cmap=cmap, vmax=nog_min, vmin=nog_max, edgecolors="black")
 text(z1, ax1, 'black')
+divider1 = make_axes_locatable(ax1) #axに紐付いたAxesDividerを取得
+cax1 = divider1.append_axes("right", size="5%", pad=0.1) #append_axesで新しいaxesを作成
+pp1 = fig1.colorbar(z_ber1, orientation="vertical", cax=cax1)
 
 ax2 = plt.subplot(223, title='L0')
 x = np.arange(24)
@@ -149,21 +149,21 @@ for py in range(9):
             z0[py][px] = ave_top_l0[id]
             z1[py][px] = ave_top_l1[id]
 
-fig2 = plt.figure(figsize=(10, 8), tight_layout=True)
+fig2 = plt.figure(figsize=(11.69, 8.27), tight_layout=True)
 fig2.suptitle('Nogs Top', fontsize=20)
-ax0 = plt.subplot(221, title='L0 array')
-z_ber20 = ax0.pcolormesh(x, y, z0, cmap=cmap, vmin=nog_top_bottom_min, vmax=nog_top_bottom_max, edgecolors="black")
-divider20 = make_axes_locatable(ax0) #axに紐付いたAxesDividerを取得
-cax20 = divider20.append_axes("right", size="5%", pad=0.1) #append_axesで新しいaxesを作成
-pp0 = fig2.colorbar(z_ber20, orientation="vertical", cax=cax20)
+ax0 = plt.subplot(221, title='Layer0 array')
+z_ber0 = ax0.pcolormesh(x, y, z0, cmap=cmap, vmax=nog_top_bottom_min, vmin=nog_top_bottom_max, edgecolors="black")
 text(z0, ax0, 'black')
+divider0 = make_axes_locatable(ax0) #axに紐付いたAxesDividerを取得
+cax0 = divider0.append_axes("right", size="5%", pad=0.1) #append_axesで新しいaxesを作成
+pp0 = fig2.colorbar(z_ber0, orientation="vertical", cax=cax0)
 
-ax1 = plt.subplot(222, title='L1 array')
-z_ber21 = ax1.pcolormesh(x, y, z1, cmap=cmap, vmin=nog_top_bottom_min, vmax=nog_top_bottom_max, edgecolors="black")
-divider21 = make_axes_locatable(ax1) #axに紐付いたAxesDividerを取得
-cax21 = divider21.append_axes("right", size="5%", pad=0.1) #append_axesで新しいaxesを作成
-pp1 = fig2.colorbar(z_ber20, orientation="vertical", cax=cax21)
+ax1 = plt.subplot(222, title='Layer1 array')
+z_ber1 = ax1.pcolormesh(x, y, z1, cmap=cmap, vmax=nog_top_bottom_min, vmin=nog_top_bottom_max, edgecolors="black")
 text(z1, ax1, 'black')
+divider1 = make_axes_locatable(ax1) #axに紐付いたAxesDividerを取得
+cax1 = divider1.append_axes("right", size="5%", pad=0.1) #append_axesで新しいaxesを作成
+pp1 = fig2.colorbar(z_ber1, orientation="vertical", cax=cax1)
 
 ax2 = plt.subplot(223, title='L0')
 x = np.arange(24)
@@ -195,21 +195,21 @@ for py in range(9):
             z0[py][px] = ave_bottom_l0[id]
             z1[py][px] = ave_bottom_l1[id]
 
-fig3 = plt.figure(figsize=(10, 8), tight_layout=True)
+fig3 = plt.figure(figsize=(11.69, 8.27), tight_layout=True)
 fig3.suptitle('Nogs Bottom', fontsize=20)
-ax0 = plt.subplot(221, title='L0 array')
-z_ber30 = ax0.pcolormesh(x, y, z0, cmap=cmap, vmin=nog_top_bottom_min, vmax=nog_top_bottom_max, edgecolors="black")
-divider30 = make_axes_locatable(ax0) #axに紐付いたAxesDividerを取得
-cax30 = divider30.append_axes("right", size="5%", pad=0.1) #append_axesで新しいaxesを作成
-pp0 = fig3.colorbar(z_ber30, orientation="vertical", cax=cax30)
+ax0 = plt.subplot(221, title='Layer0 array')
+z_ber0 = ax0.pcolormesh(x, y, z0, cmap=cmap, vmax=nog_top_bottom_min, vmin=nog_top_bottom_max, edgecolors="black")
 text(z0, ax0, 'black')
+divider0 = make_axes_locatable(ax0) #axに紐付いたAxesDividerを取得
+cax0 = divider0.append_axes("right", size="5%", pad=0.1) #append_axesで新しいaxesを作成
+pp0 = fig3.colorbar(z_ber0, orientation="vertical", cax=cax0)
 
-ax1 = plt.subplot(222, title='L1 array')
-z_ber31 = ax1.pcolormesh(x, y, z1, cmap=cmap, vmin=nog_top_bottom_min, vmax=nog_top_bottom_max, edgecolors="black")
-divider31 = make_axes_locatable(ax1) #axに紐付いたAxesDividerを取得
-cax31 = divider31.append_axes("right", size="5%", pad=0.1) #append_axesで新しいaxesを作成
-pp1 = fig3.colorbar(z_ber31, orientation="vertical", cax=cax31)
+ax1 = plt.subplot(222, title='Layer1 array')
+z_ber1 = ax1.pcolormesh(x, y, z1, cmap=cmap, vmax=nog_top_bottom_min, vmin=nog_top_bottom_max, edgecolors="black")
 text(z1, ax1, 'black')
+divider1 = make_axes_locatable(ax1) #axに紐付いたAxesDividerを取得
+cax1 = divider1.append_axes("right", size="5%", pad=0.1) #append_axesで新しいaxesを作成
+pp1 = fig3.colorbar(z_ber1, orientation="vertical", cax=cax1)
 
 ax2 = plt.subplot(223, title='L0')
 x = np.arange(24)
