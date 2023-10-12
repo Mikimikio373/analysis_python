@@ -264,7 +264,7 @@ y = y * step_y / 9
 x, y = np.meshgrid(x, y)
 
 fig = plt.figure(figsize=(11.69, 8.27), tight_layout=True)
-fig.suptitle('Nog picnum15', fontsize=20)
+fig.suptitle('Nogs picnum15', fontsize=20)
 ax1 = plt.subplot(221, title='Layer0')
 z_ber0 = ax1.pcolormesh(x, y, scan_array_l0, cmap=cmap, vmin=nog_top_bottom_min, vmax=nog_top_bottom_max)
 divider0 = make_axes_locatable(ax1) #axに紐付いたAxesDividerを取得
