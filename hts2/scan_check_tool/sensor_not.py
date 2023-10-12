@@ -42,7 +42,7 @@ with open(ScanAreaParam, 'rb') as sap:
 with open(os.path.join(basepath, 'ScanControllParam.json') , 'rb') as f:
     scan_cont_json = json.load(f)
 
-rl_mode = 'ClusterRadialParam' in scan_cont_json['TrackingParam']['CommonParamArray']
+rl_mode = 'ClusterRadialParam' in scan_cont_json['TrackingParam']['CommonParamArray'][0]
 
 sideX = sap_json['SideX']
 step_x_num = math.ceil(sideX / step_x)

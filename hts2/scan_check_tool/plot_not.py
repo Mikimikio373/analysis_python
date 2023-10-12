@@ -64,7 +64,7 @@ with open(os.path.join(basepath, 'ValidViewHistory.json'), 'rb') as f:
 with open(os.path.join(basepath, 'ScanControllParam.json') , 'rb') as f:
     scan_cont_json = json.load(f)
 
-rl_mode = 'ClusterRadialParam' in scan_cont_json['TrackingParam']['CommonParamArray']
+rl_mode = 'ClusterRadialParam' in scan_cont_json['TrackingParam']['CommonParamArray'][0]
 
 sideX = sap_json['SideX']
 sideY = sap_json['SideY']
