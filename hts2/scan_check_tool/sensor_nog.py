@@ -39,7 +39,7 @@ with open(os.path.join(basepath, 'ValidViewHistory.json'), 'rb') as f:
 with open(os.path.join(basepath, 'ScanControllParam.json') , 'rb') as f:
     scan_cont_json = json.load(f)
 
-npicture = int(scan_cont_json['LayerParam']['ComonParamArray'][0]['NPicSnap'])
+npicture = int(scan_cont_json['LayerParam']['CommonParamArray'][0]['NPicSnap'])
 
 # imager idごとのすべてのnog　list all_nog[id][viex][picture num]
 all_nog_l0 = []
