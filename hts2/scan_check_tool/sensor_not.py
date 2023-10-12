@@ -39,6 +39,11 @@ ScanAreaParam = os.path.join(basepath, 'ScanAreaParam.json')
 with open(ScanAreaParam, 'rb') as sap:
     sap_json = json.load(sap)
 
+with open(os.path.join(basepath, 'ScanControllParam.json') , 'rb') as f:
+    scan_cont_json = json.load(f)
+
+rl_mode = 'ClusterRadialParam' in scan_cont_json['TrackingParam']['CommonParamArray']
+
 sideX = sap_json['SideX']
 step_x_num = math.ceil(sideX / step_x)
 
@@ -59,9 +64,15 @@ for module in range(module_num):
         for i in range(len(data_line)):
             # L0, L1の判断
             if i % (step_x_num * 2) < step_x_num:   #L0側
-                not_tmp_L0.append(int(data_line[i].split(' ')[-3]))
+                if rl_mode:
+                    not_tmp_L0.append(int(data_line[i].split(' ')[-3]))
+                else:
+                    not_tmp_L0.append(int(data_line[i].split(' ')[-2]))
             else:
-                not_tmp_L1.append(int(data_line[i].split(' ')[-3]))
+                if rl_mode:
+                    not_tmp_L1.append(int(data_line[i].split(' ')[-3]))
+                else:
+                    not_tmp_L1.append(int(data_line[i].split(' ')[-2]))
         not_average_L0.append(statistics.mean(not_tmp_L0))
         not_average_L1.append(statistics.mean(not_tmp_L1))
 
