@@ -11,6 +11,8 @@ os.makedirs(outpath, exist_ok=True)
 
 # sensor_exposureをたたいているコマンドから、scan_chech_toolの場所を特定
 pythonpath = os.path.split(sys.argv[0])[0]
+if pythonpath == '':
+    pythonpath = '../scan_check_tool'
 
 command_nog_s = 'python {}/sensor_nog.py {}'.format(pythonpath, basepath)
 subprocess.run(command_nog_s, shell=True)
