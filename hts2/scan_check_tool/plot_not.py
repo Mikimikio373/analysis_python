@@ -89,9 +89,9 @@ for m in range(module):
         for i in range(len(data_line)):
             # L0, L1の判断 ValidViweHistryを使わなくとも実装できるi % step_x_num*2 < step_x_num
             if vvh_json[i]['Layer'] == 0:   #L0側
-                not_tmp_l0.append([int(data_line[i].split(' ')[-2]), i])
+                not_tmp_l0.append([int(data_line[i].split(' ')[-3]), i])
             else:
-                not_tmp_l1.append([int(data_line[i].split(' ')[-2]), i])
+                not_tmp_l1.append([int(data_line[i].split(' ')[-3]), i])
         not_l0.append(not_tmp_l0)
         not_l1.append(not_tmp_l1)
 

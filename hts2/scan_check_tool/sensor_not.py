@@ -59,9 +59,9 @@ for module in range(module_num):
         for i in range(len(data_line)):
             # L0, L1の判断
             if i % (step_x_num * 2) < step_x_num:   #L0側
-                not_tmp_L0.append(int(data_line[i].split(' ')[-2]))
+                not_tmp_L0.append(int(data_line[i].split(' ')[-3]))
             else:
-                not_tmp_L1.append(int(data_line[i].split(' ')[-2]))
+                not_tmp_L1.append(int(data_line[i].split(' ')[-3]))
         not_average_L0.append(statistics.mean(not_tmp_L0))
         not_average_L1.append(statistics.mean(not_tmp_L1))
 
