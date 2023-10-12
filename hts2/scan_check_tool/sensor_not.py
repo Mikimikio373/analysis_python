@@ -87,7 +87,7 @@ for py in range(9):
             z0[py][px] = not_average_L0_relative[id]
             z1[py][px] = not_average_L1_relative[id]
 
-fig = plt.figure(figsize=(8.27*1.3, 11.69*1.3), tight_layout=True)
+fig = plt.figure(figsize=(8.27*1.5, 11.69*1.5), tight_layout=True)
 fig.suptitle('Number Of Tracks', fontsize=20)
 x = np.arange(24)
 ax1 = fig.add_subplot(321)
@@ -110,15 +110,15 @@ x = np.arange(8)
 y = np.arange(9)
 x, y = np.meshgrid(x, y)
 ax3 = plt.subplot(323, title='Layer0  (relative, sensor array)')
-z_ber0 = ax1.pcolormesh(x, y, z0, cmap=cmap, vmax=1, vmin=relative_min)
-divider0 = make_axes_locatable(ax1) #axに紐付いたAxesDividerを取得
+z_ber0 = ax3.pcolormesh(x, y, z0, cmap=cmap, vmax=1, vmin=relative_min, edgecolors="black")
+divider0 = make_axes_locatable(ax3) #axに紐付いたAxesDividerを取得
 cax0 = divider0.append_axes("right", size="5%", pad=0.1) #append_axesで新しいaxesを作成
 text(z0, ax3, 'black')
 pp0 = fig.colorbar(z_ber0, orientation="vertical", cax=cax0)
 
 ax4 = plt.subplot(324, title='Layer1 (relative, sensor array)')
-z_ber1 = ax1.pcolormesh(x, y, z0, cmap=cmap, vmax=1, vmin=relative_min)
-divider1 = make_axes_locatable(ax1) #axに紐付いたAxesDividerを取得
+z_ber1 = ax4.pcolormesh(x, y, z0, cmap=cmap, vmax=1, vmin=relative_min, edgecolors="black")
+divider1 = make_axes_locatable(ax4) #axに紐付いたAxesDividerを取得
 cax1 = divider1.append_axes("right", size="5%", pad=0.1) #append_axesで新しいaxesを作成
 text(z1, ax4, 'black')
 pp1 = fig.colorbar(z_ber1, orientation="vertical", cax=cax1)
