@@ -146,8 +146,8 @@ y = y * step_y / 9
 x, y = np.meshgrid(x, y)
 
 fig = plt.figure(figsize=(11.69, 8.27), tight_layout=True)
-fig.suptitle('Nogs', fontsize=20)
-ax1 = plt.subplot(221, title='L0')
+fig.suptitle('Nogs (over threshold average)', fontsize=20)
+ax1 = plt.subplot(221, title='Layer0')
 z_ber0 = ax1.pcolormesh(x, y, scan_array_l0, cmap=cmap, vmin=nog_min, vmax=nog_max)
 divider0 = make_axes_locatable(ax1) #axに紐付いたAxesDividerを取得
 cax0 = divider0.append_axes("right", size="5%", pad=0.1) #append_axesで新しいaxesを作成
@@ -156,7 +156,7 @@ ax1.set_aspect('equal')
 ax1.set_xlabel('X [mm]')
 ax1.set_ylabel('Y [mm]')
 
-ax2 = plt.subplot(222, title='L1')
+ax2 = plt.subplot(222, title='Layer1')
 z_ber1 = ax2.pcolormesh(x, y, scan_array_l1, cmap=cmap, vmin=nog_min, vmax=nog_max)
 divider1 = make_axes_locatable(ax2) #axに紐付いたAxesDividerを取得
 cax1 = divider1.append_axes("right", size="5%", pad=0.1) #append_axesで新しいaxesを作成
@@ -165,12 +165,12 @@ ax2.set_aspect('equal')
 ax2.set_xlabel('X [mm]')
 ax2.set_ylabel('Y [mm]')
 
-ax3 = plt.subplot(223, title='L0')
+ax3 = plt.subplot(223, title='Layer0')
 flat_not_l0 = list(itertools.chain.from_iterable(scan_array_l0))
 hist_return0 = ax3.hist(flat_not_l0, histtype='step', bins=100, range=(nog_min, nog_max), color='w', ec='r')
 textbox(ax3, flat_not_l0, nog_max, max(hist_return0[0]))
 
-ax4 = plt.subplot(224, title='L1')
+ax4 = plt.subplot(224, title='Layer1')
 flat_not_l1 = list(itertools.chain.from_iterable(scan_array_l1))
 hist_return1 = ax4.hist(flat_not_l1, histtype='step', bins=100, range=(nog_min, nog_max), color='w', ec='b')
 textbox(ax4, flat_not_l1, nog_max, max(hist_return1[0]))
@@ -205,8 +205,8 @@ y = y * step_y / 9
 x, y = np.meshgrid(x, y)
 
 fig = plt.figure(figsize=(11.69, 8.27), tight_layout=True)
-fig.suptitle('Nogs Top', fontsize=20)
-ax1 = plt.subplot(221, title='L0')
+fig.suptitle('Nogs picnum0', fontsize=20)
+ax1 = plt.subplot(221, title='Layer0')
 z_ber0 = ax1.pcolormesh(x, y, scan_array_l0, cmap=cmap, vmin=nog_top_bottom_min, vmax=nog_top_bottom_max)
 divider0 = make_axes_locatable(ax1) #axに紐付いたAxesDividerを取得
 cax0 = divider0.append_axes("right", size="5%", pad=0.1) #append_axesで新しいaxesを作成
@@ -215,7 +215,7 @@ ax1.set_aspect('equal')
 ax1.set_xlabel('X [mm]')
 ax1.set_ylabel('Y [mm]')
 
-ax2 = plt.subplot(222, title='L1')
+ax2 = plt.subplot(222, title='Layer1')
 z_ber1 = ax2.pcolormesh(x, y, scan_array_l1, cmap=cmap, vmin=nog_top_bottom_min, vmax=nog_top_bottom_max)
 divider1 = make_axes_locatable(ax2) #axに紐付いたAxesDividerを取得
 cax1 = divider1.append_axes("right", size="5%", pad=0.1) #append_axesで新しいaxesを作成
@@ -224,12 +224,12 @@ ax2.set_aspect('equal')
 ax2.set_xlabel('X [mm]')
 ax2.set_ylabel('Y [mm]')
 
-ax3 = plt.subplot(223, title='L0')
+ax3 = plt.subplot(223, title='Layer0')
 flat_not_l0 = list(itertools.chain.from_iterable(scan_array_l0))
 hist_return0 = ax3.hist(flat_not_l0, histtype='step', bins=100, range=(nog_top_bottom_min, nog_top_bottom_max), color='w', ec='r')
 textbox(ax3, flat_not_l0, nog_top_bottom_max, max(hist_return0[0]))
 
-ax4 = plt.subplot(224, title='L1')
+ax4 = plt.subplot(224, title='Layer1')
 flat_not_l1 = list(itertools.chain.from_iterable(scan_array_l1))
 hist_return1 = ax4.hist(flat_not_l1, histtype='step', bins=100, range=(nog_top_bottom_min, nog_top_bottom_max), color='w', ec='b')
 textbox(ax4, flat_not_l1, nog_top_bottom_max, max(hist_return1[0]))
@@ -264,8 +264,8 @@ y = y * step_y / 9
 x, y = np.meshgrid(x, y)
 
 fig = plt.figure(figsize=(11.69, 8.27), tight_layout=True)
-fig.suptitle('Nogs Bottom', fontsize=20)
-ax1 = plt.subplot(221, title='L0')
+fig.suptitle('Nog picnum15', fontsize=20)
+ax1 = plt.subplot(221, title='Layer0')
 z_ber0 = ax1.pcolormesh(x, y, scan_array_l0, cmap=cmap, vmin=nog_top_bottom_min, vmax=nog_top_bottom_max)
 divider0 = make_axes_locatable(ax1) #axに紐付いたAxesDividerを取得
 cax0 = divider0.append_axes("right", size="5%", pad=0.1) #append_axesで新しいaxesを作成
@@ -274,7 +274,7 @@ ax1.set_aspect('equal')
 ax1.set_xlabel('X [mm]')
 ax1.set_ylabel('Y [mm]')
 
-ax2 = plt.subplot(222, title='L1')
+ax2 = plt.subplot(222, title='Layer1')
 z_ber1 = ax2.pcolormesh(x, y, scan_array_l1, cmap=cmap, vmin=nog_top_bottom_min, vmax=nog_top_bottom_max)
 divider1 = make_axes_locatable(ax2) #axに紐付いたAxesDividerを取得
 cax1 = divider1.append_axes("right", size="5%", pad=0.1) #append_axesで新しいaxesを作成
@@ -283,12 +283,12 @@ ax2.set_aspect('equal')
 ax2.set_xlabel('X [mm]')
 ax2.set_ylabel('Y [mm]')
 
-ax3 = plt.subplot(223, title='L0')
+ax3 = plt.subplot(223, title='Layer0')
 flat_not_l0 = list(itertools.chain.from_iterable(scan_array_l0))
 hist_return0 = ax3.hist(flat_not_l0, histtype='step', bins=100, range=(nog_top_bottom_min, nog_top_bottom_max), color='w', ec='r')
 textbox(ax3, flat_not_l0, nog_top_bottom_max, max(hist_return0[0]))
 
-ax4 = plt.subplot(224, title='L1')
+ax4 = plt.subplot(224, title='Layer1')
 flat_not_l1 = list(itertools.chain.from_iterable(scan_array_l1))
 hist_return1 = ax4.hist(flat_not_l1, histtype='step', bins=100, range=(nog_top_bottom_min, nog_top_bottom_max), color='w', ec='b')
 textbox(ax4, flat_not_l1, nog_top_bottom_max, max(hist_return1[0]))
