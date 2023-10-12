@@ -65,6 +65,11 @@ with open(ScanAreaParam, 'rb') as sap:
 with open(os.path.join(basepath, 'ValidViewHistory.json'), 'rb') as f:
     vvh_json = json.load(f)
 
+with open(os.path.join(basepath, 'ScanControllParam.json') , 'rb') as f:
+    scan_cont_json = json.load(f)
+
+npicture = int(scan_cont_json['LayerParam']['CommonParamArray'][0]['NPicSnap'])
+
 sideX = sap_json['SideX']
 sideY = sap_json['SideY']
 layer = sap_json['Layer']
@@ -98,6 +103,8 @@ for view in range(len(vvh_json)):
     for id in range(imager_num):
         if vvh_json[view]['Layer'] == 0:
             bottom = int(vvh_json[view]['SurfaceDetail'][id]['Bottom']) - 1
+            if bottom < 15:
+                bottom = 15
             top = bottom - 15
             all_nog_l0[id].append(vvh_json[view]['Nogs'][id])
             nog_over_thr_l0[id].append(vvh_json[view]['SurfaceDetail'][id]['NogOverThr'])
@@ -105,6 +112,8 @@ for view in range(len(vvh_json)):
             bottom_l0[id].append(int(vvh_json[view]['Nogs'][id][bottom]))
         else:
             top = int(vvh_json[view]['SurfaceDetail'][id]['Top'])
+            if top > npicture - 16:
+                top = npicture - 16
             bottom = top + 15
             all_nog_l1[id].append(vvh_json[view]['Nogs'][id])
             nog_over_thr_l1[id].append(vvh_json[view]['SurfaceDetail'][id]['NogOverThr'])
