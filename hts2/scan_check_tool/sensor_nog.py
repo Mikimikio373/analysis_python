@@ -74,7 +74,7 @@ for view in range(len(vvh_json)):
         else:
             top = int(vvh_json[view]['SurfaceDetail'][id]['Top'])
             if top > npicture - 16:
-                top = npicture + 16
+                top = npicture - 16
             bottom = top + 15
             all_nog_l1[id].append(vvh_json[view]['Nogs'][id])
             nog_over_thr_l1[id].append(vvh_json[view]['SurfaceDetail'][id]['NogOverThr'])
