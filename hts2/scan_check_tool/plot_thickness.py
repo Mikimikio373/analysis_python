@@ -94,10 +94,11 @@ cmap.set_under('w', 1)  # 下限以下の色を設定
 
 scan_array_l0 = np.zeros((step_y_num * 9, step_x_num * 8))
 scan_array_l1 = np.zeros((step_y_num * 9, step_x_num * 8))
+scaned_ara_view = min(len(thickness_l0), len(thickness_l1))
 
 print('all scan area view num: {}'.format(half_view))
-print('scaned area view num: {}'.format(len(thickness_l0)))
-for i in range(len(thickness_l0)):
+print('scaned area view num: {}'.format(scaned_ara_view))
+for i in range(scaned_ara_view):
     # 1/3でY方向を3分割しているため何レーン目かを判断
     y_lane = math.floor(i / step_x_num) % 3
     for py in range(9):

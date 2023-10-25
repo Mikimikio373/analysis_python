@@ -109,10 +109,12 @@ for m in range(module):
 
 not_array_l0 = np.zeros((step_y_num * 9, step_x_num * 8))
 not_array_l1 = np.zeros((step_y_num * 9, step_x_num * 8))
+scaned_area_view = min(len(not_l0[0]), len(not_l1[0]))
 
 print('all scan area view num: {}'.format(half_view))
-print('scaned area view num: {}'.format(len(not_l0[0])))
-for i in range(len(not_l0[0])):
+print('scaned area view num: {}'.format(scaned_area_view))
+
+for i in range(scaned_area_view):
     # 1/3でY方向を3分割しているため何レーン目かを判断
     y_lane = math.floor(i / step_x_num) % 3
     for py in range(9):
@@ -165,12 +167,12 @@ ax2.set_ylabel('Y [mm]')
 
 ax3 = plt.subplot(223, title='Layer0')
 flat_not_l0 = list(itertools.chain.from_iterable(not_array_l0))
-hist_return0 = ax3.hist(flat_not_l0, histtype='step', bins=100, range=(0, not_max), color='w', ec='r')
+hist_return0 = ax3.hist(flat_not_l0, histtype='step', bins=100, range=(1, not_max), color='w', ec='r')
 textbox(ax3, flat_not_l0, not_max, max(hist_return0[0]))
 
 ax4 = plt.subplot(224, title='Layer1')
 flat_not_l1 = list(itertools.chain.from_iterable(not_array_l1))
-hist_return1 = ax4.hist(flat_not_l1, histtype='step', bins=100, range=(0, not_max), color='w', ec='b')
+hist_return1 = ax4.hist(flat_not_l1, histtype='step', bins=100, range=(1, not_max), color='w', ec='b')
 textbox(ax4, flat_not_l1, not_max, max(hist_return1[0]))
 
 # plt.show()

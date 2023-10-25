@@ -126,10 +126,10 @@ cmap.set_under('w', 1)  # 下限以下の色を設定
 
 scan_array_l0 = np.zeros((step_y_num * 9, step_x_num * 8))
 scan_array_l1 = np.zeros((step_y_num * 9, step_x_num * 8))
-
+scaned_area_view = min(len(nog_over_thr_l0[0]), len(nog_over_thr_l1[0]))
 print('all scan area view num: {}'.format(half_view))
-print('scaned area view num: {}'.format(len(nog_over_thr_l0[0])))
-for i in range(len(nog_over_thr_l0[0])):
+print('scaned area view num: {}'.format(scaned_area_view))
+for i in range(scaned_area_view):
     # 1/3でY方向を3分割しているため何レーン目かを判断
     y_lane = math.floor(i / step_x_num) % 3
     for py in range(9):
@@ -188,7 +188,7 @@ textbox(ax4, flat_not_l1, nog_max, max(hist_return1[0]))
 plt.savefig(os.path.join(basepath, 'GRAPH', 'scan_area_nog.png'), dpi=300)
 plt.clf()
 
-for i in range(len(top_l0[0])):
+for i in range(scaned_area_view):
     # 1/3でY方向を3分割しているため何レーン目かを判断
     y_lane = math.floor(i / step_x_num) % 3
     for py in range(9):
@@ -247,7 +247,7 @@ textbox(ax4, flat_not_l1, nog_top_bottom_max, max(hist_return1[0]))
 plt.savefig(os.path.join(basepath, 'GRAPH', 'scan_area_nog0.png'), dpi=300)
 plt.clf()
 
-for i in range(len(bottom_l0[0])):
+for i in range(scaned_area_view):
     # 1/3でY方向を3分割しているため何レーン目かを判断
     y_lane = math.floor(i / step_x_num) % 3
     for py in range(9):
