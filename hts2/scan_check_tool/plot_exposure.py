@@ -10,7 +10,7 @@ from mpl_toolkits.axes_grid1 import make_axes_locatable
 import itertools
 
 step_x = 9.0
-step_y = 4.95
+step_y = 5.0
 
 def textbox(ax, flat_list, ax_x_max, ax_y_max):
     entries = len(flat_list)

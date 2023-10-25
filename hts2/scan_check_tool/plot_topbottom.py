@@ -46,7 +46,7 @@ imager_num = module * sensor
 plot_max = 25
 plot_min = 10
 step_x = 9.0
-step_y = 4.95
+step_y = 5.0
 
 if not len(sys.argv) == 2:
     sys.exit('please enter \"target path\"')

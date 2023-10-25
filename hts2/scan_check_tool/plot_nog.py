@@ -38,7 +38,7 @@ def textbox(ax, flat_list, ax_x_max, ax_y_max):
 module = 2
 sensor = 12
 step_x = 9.0
-step_y = 4.95
+step_y = 5.0
 imager_num = module * sensor
 nog_max = 60000
 nog_min = 1

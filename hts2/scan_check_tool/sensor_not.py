@@ -10,7 +10,7 @@ import copy
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 step_x = 9.0
-step_y = 4.95
+step_y = 5.0
 absolute_max = 20000
 relative_min = 0.7
 def text(array: np.ndarray, ax, color: str):
