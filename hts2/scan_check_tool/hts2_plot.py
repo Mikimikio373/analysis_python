@@ -80,6 +80,9 @@ myplt.plot_sensor(scan_data1['top2bottom'], 0.1, 24, 'bottom - top', y_sorted, o
 outfile = os.path.join(out_path, 'scan_area_not.png')
 myplt.plot_area(scan_data1['not'], 0.1, 30000, step_x_num, step_y_num, 'Number Of Tracks', y_sorted, outfile)
 
+outfile = os.path.join(out_path, 'sensor_not.png')
+myplt.plot_sensor_not(scan_data1['not'], 'Number Of Tracks', y_sorted, outfile, relative_min=0.8, absolute_max=30000)
+
 outfile = os.path.join(out_path, 'scan_area_StartPicNum.png')
 myplt.plot_area(scan_data1['start_picnum'], 0, 12, step_x_num, step_y_num, 'StartPicNum', y_sorted, outfile)
 

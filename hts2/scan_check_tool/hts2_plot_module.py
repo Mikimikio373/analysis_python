@@ -438,3 +438,83 @@ def plot_sensor(input_data: list, zmin: float, zmax: float, title: str,
 
     plt.savefig(out_file, dpi=300)
     print('{} written'.format(out_file))
+
+def plot_sensor_not(input_data: list, title: str,
+                sensor_pos_sorted: dict or list, out_file: str, *, relative_min: float = 0.8, absolute_max: float = 30000):
+
+    average_data = [[], []]
+    for i in range(len(input_data[0])):
+        for L in range(2):
+            average_data[L].append(np.average(input_data[L][i]))
+
+    cmap = copy.copy(plt.get_cmap("jet"))
+    cmap.set_under('w', 0.0001)  # 下限以下の色を設定
+    x = np.arange(8)
+    y = np.arange(9)
+    x, y = np.meshgrid(x, y)
+    not_max = [max(average_data[0]), max(average_data[1])]
+    z = [[], []]
+    for L in range(2):
+        z[L] = np.zeros((9, 8))
+
+    for py in range(9):
+        for px in range(8):
+            id = sensor_pos_sorted[py * 8 + px]['id']
+            for L in range(2):
+                if id > 23:
+                    z[L][py][px] = 0
+                else:
+                    z[L][py][px] = average_data[L][id] / not_max[L]
+
+    fig = plt.figure(figsize=(8.27 * 1.5, 11.69 * 1.5), tight_layout=True)
+    fig.suptitle('Number Of Tracks', fontsize=20)
+    x = np.arange(24)
+    ax1 = fig.add_subplot(321)
+    ax1.plot(x, average_data[0], marker='x', c='r')
+    ax1.set_title('Layer0 (absolute)')
+    ax1.set_xticks(x)
+    ax1.set_xlabel('Imager ID')
+    ax1.set_ylim(1, absolute_max)
+    ax1.grid()
+
+    ax2 = fig.add_subplot(322)
+    ax2.plot(x, average_data[1], marker='x', c='b')
+    ax2.set_title('Layer1 (absolute)')
+    ax2.set_xticks(x)
+    ax2.set_xlabel('Imager ID')
+    ax2.set_ylim(1, absolute_max)
+    ax2.grid()
+
+    x = np.arange(8)
+    y = np.arange(9)
+    x, y = np.meshgrid(x, y)
+    ax3 = plt.subplot(323, title='Layer0  (relative, sensor array)')
+    z_ber0 = ax3.pcolormesh(x, y, z[0], cmap=cmap, vmax=1, vmin=0.8, edgecolors="black")
+    divider0 = make_axes_locatable(ax3)  # axに紐付いたAxesDividerを取得
+    cax0 = divider0.append_axes("right", size="5%", pad=0.1)  # append_axesで新しいaxesを作成
+    text(z[0], ax3, 'black')
+    pp0 = fig.colorbar(z_ber0, orientation="vertical", cax=cax0)
+
+    ax4 = plt.subplot(324, title='Layer1 (relative, sensor array)')
+    z_ber1 = ax4.pcolormesh(x, y, z[1], cmap=cmap, vmax=1, vmin=relative_min, edgecolors="black")
+    divider1 = make_axes_locatable(ax4)  # axに紐付いたAxesDividerを取得
+    cax1 = divider1.append_axes("right", size="5%", pad=0.1)  # append_axesで新しいaxesを作成
+    text(z[1], ax4, 'black')
+    pp1 = fig.colorbar(z_ber1, orientation="vertical", cax=cax1)
+
+    average_data_relative = [[], []]
+    average_data_relative[0] = np.asarray(average_data[0]) / not_max[0]
+    average_data_relative[1] = np.asarray(average_data[1]) / not_max[1]
+    x = np.arange(24)
+    ax5 = fig.add_subplot(325)
+    ax5.plot(x, average_data_relative[0], marker='x', c='r', label='Layer0 (relative)')
+    ax5.plot(x, average_data_relative[1], marker='x', c='b', label='Layer1 (relative)')
+    ax5.set_title('NOT (relative)')
+    ax5.set_xticks(x)
+    ax5.set_xlabel('Imager ID')
+    ax5.set_ylim(relative_min, 1)
+    ax5.legend()
+    ax5.grid()
+
+    plt.savefig(os.path.join(out_file), dpi=300)
+    print('{} written'.format(out_file))
