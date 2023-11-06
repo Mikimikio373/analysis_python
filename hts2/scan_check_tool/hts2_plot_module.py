@@ -447,7 +447,7 @@ def plot_sensor_not(input_data: list, title: str,
         for L in range(2):
             average_data[L].append(np.average(input_data[L][i]))
 
-    cmap = copy.copy(plt.get_cmap("jet"))
+    cmap = copy.copy(plt.get_cmap("copper"))
     cmap.set_under('w', 0.0001)  # 下限以下の色を設定
     x = np.arange(8)
     y = np.arange(9)
@@ -489,7 +489,7 @@ def plot_sensor_not(input_data: list, title: str,
     y = np.arange(9)
     x, y = np.meshgrid(x, y)
     ax3 = plt.subplot(323, title='Layer0  (relative, sensor array)')
-    z_ber0 = ax3.pcolormesh(x, y, z[0], cmap=cmap, vmax=1, vmin=0.8, edgecolors="black")
+    z_ber0 = ax3.pcolormesh(x, y, z[0], cmap=cmap, vmax=1, vmin=relative_min, edgecolors="black")
     divider0 = make_axes_locatable(ax3)  # axに紐付いたAxesDividerを取得
     cax0 = divider0.append_axes("right", size="5%", pad=0.1)  # append_axesで新しいaxesを作成
     text(z[0], ax3, 'black')
