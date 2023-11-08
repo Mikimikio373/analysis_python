@@ -1,6 +1,8 @@
 import os
 import sys
 import json
+
+import matplotlib.pyplot as plt
 import yaml
 import math
 import hts2_plot_module as myplt
@@ -87,10 +89,11 @@ outfile = os.path.join(out_path, 'scan_area_StartPicNum.png')
 myplt.plot_area(scan_data1['start_picnum'], 0, 12, step_x_num, step_y_num, 'StartPicNum', y_sorted, outfile)
 
 outfile = os.path.join(out_path, 'sensor_StartPicNum.png')
-myplt.plot_sensor(scan_data1['start_picnum'], 0.1, 24, 'StartPicNum', y_sorted, outfile)
+myplt.plot_sensor(scan_data1['start_picnum'], 0.1, 12, 'StartPicNum', y_sorted, outfile)
 
 outfile = os.path.join(out_path, 'scan_area_ThickOfLayer.png')
 myplt.plot_area_view(scan_data2['ThickOfLayer'], 50, 120, step_x_num, step_y_num, 'Thick Of Layer', y_sorted, outfile)
 
 outfile = os.path.join(out_path, 'finez.png')
 myplt.plot_finez(scan_data1['fine_z'], 11500, 12500, 180, 240, step_x_num, step_y_num, 'fine Z', y_sorted, outfile)
+
