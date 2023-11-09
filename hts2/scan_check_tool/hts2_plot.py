@@ -97,10 +97,10 @@ outfile = os.path.join(out_path, 'sensor_not.png')
 myplt.plot_sensor_not(scan_data1['not'], 'Number Of Tracks', y_sorted, outfile, relative_min=0.8, absolute_max=30000)
 
 outfile = os.path.join(out_path, 'scan_area_StartPicNum.png')
-myplt.plot_area(scan_data1['start_picnum'], 0, 12, step_x_num, step_y_num, 'StartPicNum', y_sorted, outfile)
+myplt.plot_area(scan_data1['start_picnum'], 0, 8, step_x_num, step_y_num, 'StartPicNum', y_sorted, outfile)
 
 outfile = os.path.join(out_path, 'sensor_StartPicNum.png')
-myplt.plot_sensor(scan_data1['start_picnum'], 0.1, 12, 'StartPicNum', y_sorted, outfile)
+myplt.plot_sensor(scan_data1['start_picnum'], 0.1, 8, 'StartPicNum', y_sorted, outfile)
 
 outfile = os.path.join(out_path, 'scan_area_ThickOfLayer.png')
 myplt.plot_area_view(scan_data2['ThickOfLayer'], 40, 120, step_x_num, step_y_num, 'Thick Of Layer', y_sorted, outfile)
@@ -108,5 +108,5 @@ myplt.plot_area_view(scan_data2['ThickOfLayer'], 40, 120, step_x_num, step_y_num
 outfile = os.path.join(out_path, 'Base_Surface.png')
 myplt.plot_finez(scan_data1['fine_z'], 11100, 11700, 11300, 11900, 180, 240, step_x_num, step_y_num, 'Base Surface', y_sorted, outfile)
 
-myplt.plot_nogall(scan_data1['nog_all'], 18, 80000, nog_thr_list, out_path)
+myplt.plot_nogall(scan_data1['nog_all'], 18, 80000, nog_thr_list, out_path, alpha=0.15)
 
