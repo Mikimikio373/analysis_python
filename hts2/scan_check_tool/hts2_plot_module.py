@@ -291,7 +291,8 @@ def plot_area_view(input_data: list, zmin: float, zmax: float, step_x_num: int, 
     print('{} written'.format(out_file))
 
 
-def plot_finez(input_data: list, zmin0: float, zmax0: float, zmin1: float, zmax1: float, basemin: float, basemax: float, step_x_num: int,
+def plot_finez(input_data: list, zmin0: float, zmax0: float, zmin1: float, zmax1: float, basemin: float, basemax: float,
+               step_x_num: int,
                step_y_num: int, title: str, sensor_pos_sorted: dict or list, out_file: str, *, bins: int = 100,
                basebins: int = 100):
     cmap = copy.copy(plt.get_cmap("jet"))
@@ -437,9 +438,10 @@ def plot_sensor(input_data: list, zmin: float, zmax: float, title: str,
     plt.savefig(out_file, dpi=300)
     print('{} written'.format(out_file))
 
-def plot_sensor_not(input_data: list, title: str,
-                sensor_pos_sorted: dict or list, out_file: str, *, relative_min: float = 0.8, absolute_max: float = 30000):
 
+def plot_sensor_not(input_data: list, title: str,
+                    sensor_pos_sorted: dict or list, out_file: str, *, relative_min: float = 0.8,
+                    absolute_max: float = 30000):
     average_data = [[], []]
     for i in range(len(input_data[0])):
         for L in range(2):
@@ -515,4 +517,29 @@ def plot_sensor_not(input_data: list, title: str,
     ax5.grid()
 
     plt.savefig(os.path.join(out_file), dpi=300)
+    print('{} written'.format(out_file))
+
+
+def plot_nogall(input_nogdata: list, imager_id: int, plot_ymax: float, nog_thr_list: list, out_path: str):
+    title = 'All nog Plot Imager = {}'.format(imager_id)
+    color = ['r', 'b']
+    fig = plt.figure(tight_layout=True)
+    fig.suptitle(title, fontsize=20)
+    pos = 121
+    for layer in range(len(nog_thr_list)):
+        ax = fig.add_subplot(pos)
+        for i in range(len(input_nogdata[layer][imager_id])):
+            ax.plot(input_nogdata[layer][imager_id][i], marker='x', ms=1, lw=0.5)
+        Npic_Snap = len(input_nogdata[layer][imager_id][0])
+        ax.set_xlabel('picture number \n ←lens         stage→')
+        ax.set_ylabel('Number of grains')
+        ax.set_xlim([0, Npic_Snap + 1])  # x軸の範囲
+        ax.set_ylim(0, plot_ymax)
+        ax.set_title('Number of Grain Layer = {}'.format(layer))
+        for j in range(len(nog_thr_list[layer])):
+            ax.axhline(y=nog_thr_list[layer][j], color=color[j])
+        pos += 1
+
+    out_file = os.path.join(out_path, 'all_nog_plot_{}.png'.format(imager_id))
+    plt.savefig(out_file, dpi=300)
     print('{} written'.format(out_file))

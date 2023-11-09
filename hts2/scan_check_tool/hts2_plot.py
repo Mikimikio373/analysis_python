@@ -40,6 +40,17 @@ else:
 with open(os.path.join(basepath, 'ValidViewHistory.json'), 'rb') as f:
     vvh_json = json.load(f)
 
+with open(os.path.join(basepath, 'PARAMS', 'UserParam.json'), 'rb') as f:
+    user_json = json.load(f)
+nog_thr_list = []
+for i in range(int(user_json['LayerParam']['LayerNum'])):
+    tmp = []
+    if 'NogTop' in user_json['LayerParam']['CommonParamArray'][i]:
+        tmp.append(user_json['LayerParam']['CommonParamArray'][i]['NogTop'])
+    if 'NogBottom' in user_json['LayerParam']['CommonParamArray'][i]:
+        tmp.append(user_json['LayerParam']['CommonParamArray'][i]['NogBottom'])
+    nog_thr_list.append(tmp)
+
 out_path = os.path.join(basepath, 'GRAPH')
 if not os.path.exists(out_path):
     os.makedirs(out_path)
@@ -96,4 +107,6 @@ myplt.plot_area_view(scan_data2['ThickOfLayer'], 40, 120, step_x_num, step_y_num
 
 outfile = os.path.join(out_path, 'Base_Surface.png')
 myplt.plot_finez(scan_data1['fine_z'], 11100, 11700, 11300, 11900, 180, 240, step_x_num, step_y_num, 'Base Surface', y_sorted, outfile)
+
+myplt.plot_nogall(scan_data1['nog_all'], 18, 80000, nog_thr_list, out_path)
 
