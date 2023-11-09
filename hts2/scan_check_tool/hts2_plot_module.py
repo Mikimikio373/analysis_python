@@ -520,20 +520,21 @@ def plot_sensor_not(input_data: list, title: str,
     print('{} written'.format(out_file))
 
 
-def plot_nogall(input_nogdata: list, imager_id: int, plot_ymax: float, nog_thr_list: list, out_path: str):
+def plot_nogall(input_nogdata: list, imager_id: int, plot_ymax: float, nog_thr_list: list, out_path: str, *, alpha: float = 0.15):
     title = 'All nog Plot Imager = {}'.format(imager_id)
     color = ['r', 'b']
+    cmap = plt.get_cmap('rainbow')
     fig = plt.figure(tight_layout=True)
     fig.suptitle(title, fontsize=20)
     pos = 121
     for layer in range(len(nog_thr_list)):
         ax = fig.add_subplot(pos)
         for i in range(len(input_nogdata[layer][imager_id])):
-            ax.plot(input_nogdata[layer][imager_id][i], marker='x', ms=1, lw=0.5)
+            ax.plot(input_nogdata[layer][imager_id][i], marker='x', ms=0.5, lw=0.5, color=cmap(i / len(input_nogdata[layer][imager_id])), markerfacecolor=cmap(i / len(input_nogdata[layer][imager_id])), alpha=alpha)
         Npic_Snap = len(input_nogdata[layer][imager_id][0])
         ax.set_xlabel('picture number \n ←lens         stage→')
         ax.set_ylabel('Number of grains')
-        ax.set_xlim([0, Npic_Snap + 1])  # x軸の範囲
+        ax.set_xlim(0, Npic_Snap - 1)  # x軸の範囲
         ax.set_ylim(0, plot_ymax)
         ax.set_title('Number of Grain Layer = {}'.format(layer))
         for j in range(len(nog_thr_list[layer])):
