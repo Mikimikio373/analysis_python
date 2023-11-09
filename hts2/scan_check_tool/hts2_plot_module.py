@@ -291,7 +291,7 @@ def plot_area_view(input_data: list, zmin: float, zmax: float, step_x_num: int, 
     print('{} written'.format(out_file))
 
 
-def plot_finez(input_data: list, zmin: float, zmax: float, basemin: float, basemax: float, step_x_num: int,
+def plot_finez(input_data: list, zmin0: float, zmax0: float, zmin1: float, zmax1: float, basemin: float, basemax: float, step_x_num: int,
                step_y_num: int, title: str, sensor_pos_sorted: dict or list, out_file: str, *, bins: int = 100,
                basebins: int = 100):
     cmap = copy.copy(plt.get_cmap("jet"))
@@ -300,8 +300,6 @@ def plot_finez(input_data: list, zmin: float, zmax: float, basemin: float, basem
     plot_array = [[], []]
     plot_array[0] = np.zeros((step_y_num * 9, step_x_num * 8))
     plot_array[1] = np.zeros((step_y_num * 9, step_x_num * 8))
-    if zmax - zmin < float(bins):
-        bins = int(zmax - zmin)
 
     scaned_ara_view = step_x_num * step_y_num * 3  # step数から計算。1/3モードのため、view数は3倍
 
@@ -332,8 +330,8 @@ def plot_finez(input_data: list, zmin: float, zmax: float, basemin: float, basem
 
     fig = plt.figure(figsize=(8.27 * 1.5, 11.69 * 1.5), tight_layout=True)
     fig.suptitle(title, fontsize=20)
-    ax1 = fig.add_subplot(321, title='Layer0')
-    z_ber0 = ax1.pcolormesh(x, y, plot_array[0], cmap=cmap, vmin=zmin, vmax=zmax)
+    ax1 = fig.add_subplot(321, title='Z of base surface Layer0')
+    z_ber0 = ax1.pcolormesh(x, y, plot_array[0], cmap=cmap, vmin=zmin0, vmax=zmax0)
     divider0 = make_axes_locatable(ax1)  # axに紐付いたAxesDividerを取得
     cax0 = divider0.append_axes("right", size="5%", pad=0.1)  # append_axesで新しいaxesを作成
     pp0 = fig.colorbar(z_ber0, orientation="vertical", cax=cax0)
@@ -341,8 +339,8 @@ def plot_finez(input_data: list, zmin: float, zmax: float, basemin: float, basem
     ax1.set_xlabel('X [mm]')
     ax1.set_ylabel('Y [mm]')
 
-    ax2 = fig.add_subplot(322, title='Layer1')
-    z_ber1 = ax2.pcolormesh(x, y, plot_array[1], cmap=cmap, vmin=zmin, vmax=zmax)
+    ax2 = fig.add_subplot(322, title='Z of base surface Layer1')
+    z_ber1 = ax2.pcolormesh(x, y, plot_array[1], cmap=cmap, vmin=zmin1, vmax=zmax1)
     divider1 = make_axes_locatable(ax2)  # axに紐付いたAxesDividerを取得
     cax1 = divider1.append_axes("right", size="5%", pad=0.1)  # append_axesで新しいaxesを作成
     pp1 = fig.colorbar(z_ber1, orientation="vertical", cax=cax1)
@@ -350,17 +348,17 @@ def plot_finez(input_data: list, zmin: float, zmax: float, basemin: float, basem
     ax2.set_xlabel('X [mm]')
     ax2.set_ylabel('Y [mm]')
 
-    ax3 = fig.add_subplot(323, title='Layer0')
+    ax3 = fig.add_subplot(323, title='Z of base surface Layer0')
     flat_data_l0 = list(itertools.chain.from_iterable(plot_array[0]))
-    hist_return0 = ax3.hist(flat_data_l0, histtype='step', bins=bins, range=(zmin, zmax), color='w', ec='r')
+    hist_return0 = ax3.hist(flat_data_l0, histtype='step', bins=bins, range=(zmin0, zmax0), color='w', ec='r')
     ax3.set_xlabel('Z0 [um]')
-    textbox(ax3, flat_data_l0, zmax, max(hist_return0[0]), factor=0.99)
+    textbox(ax3, flat_data_l0, zmax0, max(hist_return0[0]), factor=0.99)
 
-    ax4 = fig.add_subplot(324, title='Layer1')
+    ax4 = fig.add_subplot(324, title='Z of base surface Layer1')
     flat_data_l1 = list(itertools.chain.from_iterable(plot_array[1]))
-    hist_return1 = ax4.hist(flat_data_l1, histtype='step', bins=bins, range=(zmin, zmax), color='w', ec='b')
+    hist_return1 = ax4.hist(flat_data_l1, histtype='step', bins=bins, range=(zmin1, zmax1), color='w', ec='b')
     ax4.set_xlabel('Z1 [um]')
-    textbox(ax4, flat_data_l1, zmax, max(hist_return1[0]), factor=0.99)
+    textbox(ax4, flat_data_l1, zmax1, max(hist_return1[0]), factor=0.99)
 
     ax5 = fig.add_subplot(325, title='Thickness of Base (2D)')
     z_ber3 = ax5.pcolormesh(x, y, plot_array[1] - plot_array[0], cmap=cmap, vmin=basemin, vmax=basemax)
@@ -373,7 +371,7 @@ def plot_finez(input_data: list, zmin: float, zmax: float, basemin: float, basem
 
     ax6 = fig.add_subplot(326, title='Thickness of Base')
     flat_data_base = list(itertools.chain.from_iterable(plot_array[1] - plot_array[0]))
-    hist_return2 = ax6.hist(flat_data_base, histtype='step', bins=bins, range=(basemin, basemax), color='w', ec='r')
+    hist_return2 = ax6.hist(flat_data_base, histtype='step', bins=basebins, range=(basemin, basemax), color='w', ec='r')
     ax6.set_xlabel('base [um]')
     textbox(ax6, flat_data_base, basemax, max(hist_return2[0]), factor=0.95)
 

@@ -94,6 +94,6 @@ myplt.plot_sensor(scan_data1['start_picnum'], 0.1, 12, 'StartPicNum', y_sorted, 
 outfile = os.path.join(out_path, 'scan_area_ThickOfLayer.png')
 myplt.plot_area_view(scan_data2['ThickOfLayer'], 40, 120, step_x_num, step_y_num, 'Thick Of Layer', y_sorted, outfile)
 
-outfile = os.path.join(out_path, 'finez.png')
-myplt.plot_finez(scan_data1['fine_z'], 11000, 12000, 180, 240, step_x_num, step_y_num, 'fine Z', y_sorted, outfile)
+outfile = os.path.join(out_path, 'Base_Surface.png')
+myplt.plot_finez(scan_data1['fine_z'], 11100, 11700, 11300, 11900, 180, 240, step_x_num, step_y_num, 'Base Surface', y_sorted, outfile)
 
