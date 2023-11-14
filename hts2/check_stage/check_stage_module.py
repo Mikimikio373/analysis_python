@@ -36,13 +36,13 @@ def plot_stage_shift_vec(ax, pdf, X: list, Y: list, U: list, V: list, stage_x: l
     plt.clf()
 
 
-def plot_stage_shift_scatter(fig, pdf, X: list, Y: list, U: list, V: list, layer: str, *, ymin: float = -5,
+def plot_stage_shift_scatter(fig, pdf, X: list, Y: list, U: list, V: list, title: str, *, ymin: float = -5,
                              ymax: float = 5):
     cmap = plt.get_cmap('tab10')
     i = 0
     for (stage, xlabel) in zip([X, Y], ["Stage X [mm]", "Stage Y [mm]"]):
         for (shift, ylabel) in zip([U, V], ["shift_X [um]", "shift_Y [um]"]):
-            ax = fig.add_subplot(111, title="{} : {} (Layer = {})".format(xlabel[0:7], ylabel[0:7], layer))
+            ax = fig.add_subplot(111, title="{} : {} ({})".format(xlabel[0:7], ylabel[0:7], title))
             ax.scatter(stage, shift * 1000, marker='x', s=1, color=cmap(i))
             ax.set_ylim(ymin, ymax)
             ax.yaxis.set_major_locator(mpl.ticker.LinearLocator(11))
