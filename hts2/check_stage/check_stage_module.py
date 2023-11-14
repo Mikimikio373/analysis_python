@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import matplotlib as mpl
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_pdf import PdfPages
 
 
 def plot_stage_shift_vec(ax, pdf, X: list, Y: list, U: list, V: list, stage_x: list, stage_y, title: str,
@@ -55,7 +56,7 @@ def plot_stage_shift_scatter(fig, pdf, X: list, Y: list, U: list, V: list, title
 
 
 def read_ali_stage(path):
-    with open('ali.json', 'rb') as f:
+    with open(path, 'rb') as f:
         obj = json.load(f)
 
     shift_data = [[], []]
@@ -64,6 +65,7 @@ def read_ali_stage(path):
     U_tmp = [[], []]
     V_tmp = [[], []]
     flag_tmp = [[], []]
+    hit_num_tmp = [[], []]
     stage = [[], []]
     for i in range(2):
         shift_data[i] = pd.DataFrame()
@@ -86,6 +88,7 @@ def read_ali_stage(path):
         U_tmp[o["layer"]].append(o["shift_x"])
         V_tmp[o["layer"]].append(o["shift_y"])
         flag_tmp[o["layer"]].append(flag)
+        hit_num_tmp[o["layer"]].append(o["Nhit"])
         stage[o["layer"]]["stage_x"].append(o["stage_x1"])
         stage[o["layer"]]["stage_x"].append(o["stage_x2"])
         stage[o["layer"]]["stage_y"].append(o["stage_y1"])
@@ -97,8 +100,12 @@ def read_ali_stage(path):
         shift_data[i]["U"] = U_tmp[i]
         shift_data[i]["V"] = V_tmp[i]
         shift_data[i]["flag"] = flag_tmp[i]
+        shift_data[i]["hit_num"] = hit_num_tmp[i]
 
     for i in range(2):
+        drop_index = shift_data[i].index[(shift_data[i]['hit_num'] < 50)]
+        shift_data[i] = shift_data[i].drop(drop_index)
+        shift_data[i] = shift_data[i].reset_index(drop=True)
         shift_data[i] = shift_data[i].sort_values(["X", "Y"])
         shift_data[i] = shift_data[i].reset_index()
         shift_data[i] = shift_data[i].drop("index", axis=1)
@@ -106,3 +113,25 @@ def read_ali_stage(path):
 
     return shift_data, int_df, stage
 
+def plot_xydivide(json_path: str, out_pdf_path: str):
+    shift_data, int_data, stage = read_ali_stage(json_path)
+    pdf = PdfPages(out_pdf_path)
+
+    for layer in range(2):
+        for (flag, title) in zip([1, 2], ['X overlap', 'Y overlap']):
+            X = shift_data[layer].query('flag == {}'.format(flag))['X']
+            Y = shift_data[layer].query('flag == {}'.format(flag))['Y']
+            U = shift_data[layer].query('flag == {}'.format(flag))['U']
+            V = shift_data[layer].query('flag == {}'.format(flag))['V']
+            stage_x = sorted(list(set(stage[layer]["stage_x"])))
+            stage_y = sorted(list(set(stage[layer]["stage_y"])))
+
+            fig = plt.figure()
+            ax = fig.add_subplot(111)
+
+            plot_stage_shift_vec(ax, pdf, X, Y, U, V, stage_x, stage_y, 'layer = {} ({})'.format(layer, title))
+            plot_stage_shift_scatter(fig, pdf, X, Y, U, V, 'layer = {} ({})'.format(layer, title))
+
+            plt.clf()
+
+    pdf.close()
