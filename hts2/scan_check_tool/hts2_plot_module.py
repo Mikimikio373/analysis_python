@@ -14,8 +14,10 @@ step_x = 9.0
 step_y = 5.0
 index_list1 = ['excount', 'nog_all', 'nog_over_thr', 'start_picnum', 'nog0', 'nog15', 'top2bottom',
                'top5brightness', 'loop1', 'filter1', 'trackingtime', 'fine_z', 'not']
-index_list2 = ['ThickOfLayer', 'repeatTime', 'drivingX', 'drivingY', 'drivingZ', 'DrivingTimePiezo', 'DampingTime',
-               'DrivingTimeAll']
+index_list2 = ['ThickOfLayer', 'repeatTime']
+
+index_list3 = ['repeatTime', 'drivingX', 'drivingY', 'drivingZ', 'DrivingTimePiezo', 'DampingTime',
+               'DrivingTimeAll', 'ElapsedTime']
 
 
 def read_not(basepath: str, module: int = 6, sensor: int = 12):
@@ -52,11 +54,13 @@ def initial(vvh_json: dict, sap_json: dict, basepath: str, mode: int = 0):
     :param sap_json: ScanAreaParamのjsonデータ
     :param basepath: スキャンの出力フォルダ
     :param mode: 0:フルセンサー, 1:1/3モード
-    :return: 1:センサーごとのDataFrame['index'][layer][imager id][data*view数], 2:センサーに依存しないDataFrame['index'][view数]
+    :return: 1:センサーごとのdict['index'][layer][imager id][data*view数], 2:センサーに依存しないdict['index'][layer][view数], 3:センサーにもlayerにも依存しないdict['index'][view数]
 
     out1 index一覧:'excount', 'nog_all', 'nog_over_thr', 'start_picnum', 'nog0', 'nog15', 'top2bottom', 'top5brightness', 'fine_z', 'loop1', 'filter1', 'trackingtime', 'not'
 
-    out2 index一覧:'ThickOfLayer', 'repeatTime', 'drivingX', 'drivingY', 'drivingZ', 'DrivingTimePiezo', 'DampingTime', 'DrivingTimeAll'
+    out2 index一覧:'ThickOfLayer', 'repeatTime'
+
+    out3 index一覧:'repeatTime', 'drivingX', 'drivingY', 'drivingZ', 'DrivingTimePiezo', 'DampingTime', 'DrivingTimeAll', 'ElapsedTime'
     """
     global index_list1, index_list2
 
@@ -84,10 +88,13 @@ def initial(vvh_json: dict, sap_json: dict, basepath: str, mode: int = 0):
             tmp_list1[i].append([])
     out1 = {}
     out2 = {}
+    out3 = {}
     for i in range(len(index_list1)):
         out1[index_list1[i]] = copy.deepcopy(tmp_list1)
     for i in range(len(index_list2)):
         out2[index_list2[i]] = copy.deepcopy(tmp_list2)
+    for i in range(len(index_list3)):
+        out3[index_list3[i]] = []
 
     for view in range(len(vvh_json)):
         L = int(vvh_json[view]['Layer'])
@@ -95,12 +102,14 @@ def initial(vvh_json: dict, sap_json: dict, basepath: str, mode: int = 0):
         Npicthickness = vvh_json[view]['ScanEachLayerParam']['NPicThickOfLayer']
         out2[index_list2[0]][L].append(thickness)  # ThickOfLayer
         out2[index_list2[1]][L].append(vvh_json[view]['RepeatTimes'])  # repeatTime
-        out2[index_list2[2]][L].append(vvh_json[view]['DrivingTimeXYZ'][0])  # dirivingX
-        out2[index_list2[3]][L].append(vvh_json[view]['DrivingTimeXYZ'][1])  # dirivingY
-        out2[index_list2[4]][L].append(vvh_json[view]['DrivingTimeXYZ'][2])  # dirivingZ
-        out2[index_list2[5]][L].append(vvh_json[view]['DrivingTimePiezo'])  # DrivingTimePiezo
-        out2[index_list2[6]][L].append(vvh_json[view]['DampingTime'])  # DampingTime
-        out2[index_list2[7]][L].append(vvh_json[view]['DrivingTimeAll'])  # DrivingTime
+        out3[index_list3[0]].append(vvh_json[view]['RepeatTimes'])  # repeatTime
+        out3[index_list3[1]].append(vvh_json[view]['DrivingTimeXYZ'][0])  # dirivingX
+        out3[index_list3[2]].append(vvh_json[view]['DrivingTimeXYZ'][1])  # dirivingY
+        out3[index_list3[3]].append(vvh_json[view]['DrivingTimeXYZ'][2])  # dirivingZ
+        out3[index_list3[4]].append(vvh_json[view]['DrivingTimePiezo'])  # DrivingTimePiezo
+        out3[index_list3[5]].append(vvh_json[view]['DampingTime'])  # DampingTime
+        out3[index_list3[6]].append(vvh_json[view]['DrivingTimeAll'])  # DrivingTime
+        out3[index_list3[7]].append(vvh_json[view]['ProcessTimeMain']['ElapsedTime'])  # 経過時間
 
         for id in range(imager_num):
             StartPicNum = vvh_json[view]['StartAnalysisPicNo'][id]
@@ -131,7 +140,7 @@ def initial(vvh_json: dict, sap_json: dict, basepath: str, mode: int = 0):
             else:
                 out1[index_list1[12]][L][id].append(int(not_txtdata[id][view].split(' ')[-2]))
 
-    return out1, out2
+    return out1, out2, out3
 
 
 def text(array: np.ndarray, ax, color: str):
@@ -544,3 +553,55 @@ def plot_nogall(input_nogdata: list, imager_id: int, plot_ymax: float, nog_thr_l
     out_file = os.path.join(out_path, 'all_nog_plot_{}.png'.format(imager_id))
     plt.savefig(out_file, dpi=300)
     print('{} written'.format(out_file))
+
+
+def plot_elaspedtime(input_data: list, out_path: str):
+    plt.plot(input_data, marker=None)
+    plt.xlabel('Number of views')
+    plt.ylabel('ElaspedTime [s]')
+    plt.grid()
+
+    out_file = os.path.join(out_path, 'ElaspedTime.png')
+    plt.savefig(out_file, dpi=300)
+    print('{} written'.format(out_file))
+
+
+def calc_df(input_df: dict):
+    out = pd.DataFrame(input_df)
+    view_time = []
+    Hz_list = []
+    for i in range(len(out)):
+        if i == len(out) - 1:
+            view_time.append(None)
+            Hz_list.append(None)
+            continue
+        dff_time = out['ElapsedTime'][i + 1] - out['ElapsedTime'][i]
+        view_time.append(dff_time)
+        Hz = 1 / dff_time
+        Hz_list.append(Hz)
+    out['view_time'] = view_time
+    out['Hz'] = Hz_list
+
+    return out
+
+def plot_frequency(input_df: pd.DataFrame, out_path: str, *, plotmin: float = 0, plotmax: float = 6):
+    fig = plt.figure(figsize=(8.27, 11.69), tight_layout=True)
+    fig.suptitle('Frequency (RepeatTime = 0)')
+    ax1 = fig.add_subplot(211)
+    ax1.plot(input_df.query('repeatTime == 0')['Hz'], 'x', ms=0.7)
+    ax1.set_xlabel('Number of view')
+    ax1.set_ylabel('Frequency [Hz]')
+    ax1.set_ylim(plotmin, plotmax)
+    ax1.grid()
+
+    ax2 = fig.add_subplot(212)
+    ax2.hist(input_df.query('repeatTime == 0')['Hz'], bins=100, range=(plotmin, plotmax), histtype='stepfilled', facecolor='yellow',
+             linewidth=1, edgecolor='black')
+    ax2.set_xlabel('Frequency [Hz]')
+    ax2.grid()
+
+    plt.savefig(os.path.join(out_path, 'Frequency.png'), dpi=300)
+    plt.clf()
+    plt.close()
+    print('{} written'.format(os.path.join(out_path, 'Frequency.png')))
+
