@@ -5,6 +5,7 @@ import json
 import matplotlib.pyplot as plt
 import yaml
 import math
+import pandas as pd
 import hts2_plot_module as myplt
 
 
@@ -55,7 +56,7 @@ out_path = os.path.join(basepath, 'GRAPH')
 if not os.path.exists(out_path):
     os.makedirs(out_path)
 
-scan_data1, scan_data2 = myplt.initial(vvh_json, sap_json, basepath, mode)
+scan_data1, scan_data2, scan_data3 = myplt.initial(vvh_json, sap_json, basepath, mode)
 
 # 実データから実際のy_step数を計算(Xは恥からは時までプロット)
 if mode == 0:
@@ -109,4 +110,7 @@ outfile = os.path.join(out_path, 'Base_Surface.png')
 myplt.plot_finez(scan_data1['fine_z'], 11100, 11700, 11300, 11900, 180, 240, step_x_num, step_y_num, 'Base Surface', y_sorted, outfile)
 
 myplt.plot_nogall(scan_data1['nog_all'], 18, 80000, nog_thr_list, out_path, alpha=0.15)
+
+df3 = myplt.calc_df(scan_data3)
+myplt.plot_frequency(df3, out_path)
 
