@@ -12,9 +12,6 @@ import hts2_plot_module as myplt
 step_x = myplt.step_x
 step_y = myplt.step_y
 
-# if not len(sys.argv) == 2:
-#     sys.exit('please enter \"target path\"')
-
 basepath = os.getcwd()
 
 # sensor_exposureをたたいているコマンドから、scan_chech_toolの場所を特定
