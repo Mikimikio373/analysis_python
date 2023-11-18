@@ -12,10 +12,10 @@ import hts2_plot_module as myplt
 step_x = myplt.step_x
 step_y = myplt.step_y
 
-if not len(sys.argv) == 2:
-    sys.exit('please enter \"target path\"')
+# if not len(sys.argv) == 2:
+#     sys.exit('please enter \"target path\"')
 
-basepath = sys.argv[1]
+basepath = os.getcwd()
 
 # sensor_exposureをたたいているコマンドから、scan_chech_toolの場所を特定
 pythonpath = os.path.split(sys.argv[0])[0]
@@ -114,3 +114,5 @@ myplt.plot_nogall(scan_data1['nog_all'], 18, 80000, nog_thr_list, out_path, alph
 df3 = myplt.calc_df(scan_data3)
 myplt.plot_frequency(df3, out_path)
 
+
+os.startfile(out_path)
