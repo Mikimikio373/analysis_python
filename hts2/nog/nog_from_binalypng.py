@@ -42,5 +42,5 @@ out_df = pd.DataFrame()
 out_df['L0'] = nog_list[0]
 out_df['L1'] = nog_list[1]
 out_path = os.path.join(basepath, 'nog_list.csv')
-out_df.to_csv(out_path)
+out_df.to_csv(out_path, index=False)
 
