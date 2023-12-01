@@ -9,15 +9,81 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 import itertools
+from argparse import ArgumentParser
 
 step_x = 9.0
 step_y = 5.0
 index_list1 = ['excount', 'nog_all', 'nog_over_thr', 'start_picnum', 'nog0', 'nog15', 'top2bottom',
                'top5brightness', 'loop1', 'filter1', 'trackingtime', 'fine_z', 'not']
-index_list2 = ['ThickOfLayer', 'repeatTime']
+index_list2 = ['ThickOfLayer', 'repeatTime', 'surf_judge']
 
 index_list3 = ['repeatTime', 'drivingX', 'drivingY', 'drivingZ', 'DrivingTimePiezo', 'DampingTime',
                'DrivingTimeAll', 'ElapsedTime']
+
+
+def get_option() -> ArgumentParser.parse_args:
+    argparser = ArgumentParser()
+    argparser.add_argument('-ex', '--exposure_range', nargs=2,
+                           type=float,
+                           default=[0.1, 1000],
+                           metavar=('min', 'max'),
+                           help='Range of exposure count. default=[0.1, 1000]')
+    argparser.add_argument('-nog', '--nog_range', nargs=2,
+                           type=float,
+                           default=[0.1, 60000],
+                           metavar=('min', 'max'),
+                           help='Range of NOG. default=[0.1, 60000]')
+    argparser.add_argument('-nog0', '--nog0_range', nargs=2,
+                           type=float,
+                           default=[0.1, 100000],
+                           metavar=('min', 'max'),
+                           help='Range of NOG0. default=[0.1, 100000]')
+    argparser.add_argument('-nog15', '--nog15_range', nargs=2,
+                           type=float,
+                           default=[0.1, 100000],
+                           metavar=('min', 'max'),
+                           help='Range of NOG15. default=[0.1, 100000]')
+    argparser.add_argument('-not', '--not_absolute_max', type=float,
+                           default=30000,
+                           metavar='max',
+                           help='Maximum of not (absolute). default=30000')
+    argparser.add_argument('-notrmin', '--not_relative_min', type=float,
+                           default=0.7,
+                           metavar='min',
+                           help='Minimum of not (relative). default=0.7')
+    argparser.add_argument('-bs', '--base_surface_range', nargs=4,
+                           type=float,
+                           default=[11100, 11700, 11300, 11900],
+                           metavar=('L0 min', 'L0 max', 'L1 min', 'L1 max'),
+                           help='Range of base surface. default=[11100, 11700, 11300, 11900]')
+    argparser.add_argument('-bt', '--base_thickness_range', nargs=2,
+                           type=float,
+                           default=[180, 240],
+                           metavar=('min', 'max'),
+                           help='Range of base thickness. default=[180, 240]')
+    argparser.add_argument('-id', '--imager_id', type=int,
+                           default=18,
+                           metavar='Imager ID',
+                           help='Number of Imager ID. default=18')
+    argparser.add_argument('-noga', '--nog_all_max', type=int,
+                           default=80000,
+                           metavar='max',
+                           help='Maximum of nog all. default=80000')
+    argparser.add_argument('-on', '--only_plot', nargs='*',
+                           type=str,
+                           choices=['ex', 'nog', 'nog0', 'nog15', 'toptobottom', 'not', 'startpicnum', 'thickoflayer',
+                                    'base', 'freq', 'bright', 'nog_all', 'text'],
+                           default=[],
+                           metavar='Names',
+                           help='Maximum of nog all. default=80000')
+    argparser.add_argument('-off', '--off_plot', nargs='*',
+                           type=str,
+                           choices=['ex', 'nog', 'nog0', 'nog15', 'toptobottom', 'not', 'startpicnum', 'thickoflayer',
+                                    'base', 'freq', 'bright', 'nog_all', 'text'],
+                           default=[],
+                           metavar='Names',
+                           help='Maximum of nog all. default=80000')
+    return argparser.parse_args()
 
 
 def read_not(basepath: str, module: int = 6, sensor: int = 12):
@@ -58,7 +124,7 @@ def initial(vvh_json: dict, sap_json: dict, basepath: str, mode: int = 0):
 
     out1 index一覧:'excount', 'nog_all', 'nog_over_thr', 'start_picnum', 'nog0', 'nog15', 'top2bottom', 'top5brightness', 'fine_z', 'loop1', 'filter1', 'trackingtime', 'not'
 
-    out2 index一覧:'ThickOfLayer', 'repeatTime'
+    out2 index一覧:'ThickOfLayer', 'repeatTime', 'surf_judge'
 
     out3 index一覧:'repeatTime', 'drivingX', 'drivingY', 'drivingZ', 'DrivingTimePiezo', 'DampingTime', 'DrivingTimeAll', 'ElapsedTime'
     """
@@ -102,6 +168,7 @@ def initial(vvh_json: dict, sap_json: dict, basepath: str, mode: int = 0):
         Npicthickness = vvh_json[view]['ScanEachLayerParam']['NPicThickOfLayer']
         out2[index_list2[0]][L].append(thickness)  # ThickOfLayer
         out2[index_list2[1]][L].append(vvh_json[view]['RepeatTimes'])  # repeatTime
+        out2[index_list2[2]][L].append(vvh_json[view]['ScanEachLayerParam']['FindSurface'])  # surface_judge
         out3[index_list3[0]].append(vvh_json[view]['RepeatTimes'])  # repeatTime
         out3[index_list3[1]].append(vvh_json[view]['DrivingTimeXYZ'][0])  # dirivingX
         out3[index_list3[2]].append(vvh_json[view]['DrivingTimeXYZ'][1])  # dirivingY
@@ -143,23 +210,43 @@ def initial(vvh_json: dict, sap_json: dict, basepath: str, mode: int = 0):
     return out1, out2, out3
 
 
+def check_flag(on: list, off: list):
+    flags = {'ex': True, 'nog': True, 'nog0': True, 'nog15': True, 'toptobottom': True, 'not': True,
+             'startpicnum': True, 'thickoflayer': True, 'base': True, 'freq': True, 'bright': True,
+             'nog_all': True, 'text': True}
+    if len(on) != 0 and len(off) != 0:
+        sys.exit('hts2_plot.py: error: argument.\nCannot use "-on" and "-off" at the same time')
+    elif len(on) != 0:
+        # すべてFalseに
+        for key in flags:
+            flags[key] = False
+        for content in on:
+            flags[content] = True
+    elif len(off) != 0:
+        for content in off:
+            flags[content] = False
+
+    return flags
+
+
 def text(array: np.ndarray, ax, color: str):
     for num_r, row in enumerate(array):
         for num_c, value in enumerate(array[num_r]):
             ax.text(num_c, num_r, '{:g}'.format(value), color=color, ha='center', va='center')
 
 
-def textbox(ax, flat_list, ax_x_max, ax_y_max, *, factor: float = 0.9):
+def textbox(ax, flat_list, ax_x_max, ax_y_max, under: int, over: int, *, factor: float = 0.9):
     entries = len(flat_list)
     mean = np.mean(flat_list)
     std_dev = np.std(flat_list)
 
-    text = 'Entries: {:d}\nMean: {:4g}\nStd_dev: {:4g}'.format(entries, mean, std_dev)
+    text = 'Entries: {:d}\nMean: {:4g}\nStd_dev: {:4g}\nUnderflow: {:d}\nOverflow: {:d}'.format(entries, mean, std_dev,
+                                                                                                under, over)
     ax.text(ax_x_max * factor, ax_y_max * factor, text, bbox=(dict(boxstyle='square', fc='w')))
 
 
 def plot_area(input_data: list, zmin: float, zmax: float, step_x_num: int, step_y_num: int, title: str,
-              sensor_pos_sorted: dict or list, out_file: str, *, bins: int = 100):
+              sensor_pos_sorted: dict or list, out_file: str, startX: float, startY: float, *, bins: int = 100):
     cmap = copy.copy(plt.get_cmap("jet"))
     cmap.set_under('w', 0.0001)  # 下限以下の色を設定
 
@@ -191,9 +278,9 @@ def plot_area(input_data: list, zmin: float, zmax: float, step_x_num: int, step_
                 plot_array[1][array_y][array_x_l1] = tmp_l1
 
     x = np.arange(step_x_num * 8)
-    x = x * step_x / 8
+    x = x * step_x / 8 + startX
     y = np.arange(step_y_num * 9)
-    y = y * step_y / 9
+    y = y * step_y / 9 + startY
     x, y = np.meshgrid(x, y)
 
     fig = plt.figure(figsize=(11.69, 8.27), tight_layout=True)
@@ -219,15 +306,21 @@ def plot_area(input_data: list, zmin: float, zmax: float, step_x_num: int, step_
     ax3 = fig.add_subplot(223, title='Layer0')
     flat_data_l0 = list(itertools.chain.from_iterable(plot_array[0]))
     hist_return0 = ax3.hist(flat_data_l0, histtype='step', bins=bins, range=(zmin, zmax), color='w', ec='r')
-    textbox(ax3, flat_data_l0, zmax, max(hist_return0[0]))
+    under0 = np.count_nonzero(np.asarray(flat_data_l0) < zmin)
+    over0 = np.count_nonzero(np.asarray(flat_data_l0) > zmax)
+    textbox(ax3, flat_data_l0, zmax, max(hist_return0[0]), under0, over0)
 
     ax4 = fig.add_subplot(224, title='Layer1')
     flat_data_l1 = list(itertools.chain.from_iterable(plot_array[1]))
     hist_return1 = ax4.hist(flat_data_l1, histtype='step', bins=bins, range=(zmin, zmax), color='w', ec='b')
-    textbox(ax4, flat_data_l1, zmax, max(hist_return1[0]))
+    under1 = np.count_nonzero(np.asarray(flat_data_l1) < zmin)
+    over1 = np.count_nonzero(np.asarray(flat_data_l1) > zmax)
+    textbox(ax4, flat_data_l1, zmax, max(hist_return1[0]), under1, over1)
 
     plt.savefig(out_file, dpi=300)
     print('{} written'.format(out_file))
+
+    return [np.mean(flat_data_l0), np.mean(flat_data_l1)]
 
 
 def plot_area_view(input_data: list, zmin: float, zmax: float, step_x_num: int, step_y_num: int, title: str,
@@ -289,21 +382,25 @@ def plot_area_view(input_data: list, zmin: float, zmax: float, step_x_num: int, 
     ax3 = fig.add_subplot(223, title='Layer0')
     flat_data_l0 = list(itertools.chain.from_iterable(plot_array[0]))
     hist_return0 = ax3.hist(flat_data_l0, histtype='step', bins=bins, range=(zmin, zmax), color='w', ec='r')
-    textbox(ax3, flat_data_l0, zmax, max(hist_return0[0]))
+    under0 = np.count_nonzero(np.asarray(flat_data_l0) < zmin)
+    over0 = np.count_nonzero(np.asarray(flat_data_l0) > zmax)
+    textbox(ax3, flat_data_l0, zmax, max(hist_return0[0]), under0, over0)
 
     ax4 = fig.add_subplot(224, title='Layer1')
     flat_data_l1 = list(itertools.chain.from_iterable(plot_array[1]))
     hist_return1 = ax4.hist(flat_data_l1, histtype='step', bins=bins, range=(zmin, zmax), color='w', ec='b')
-    textbox(ax4, flat_data_l1, zmax, max(hist_return1[0]))
+    under1 = np.count_nonzero(np.asarray(flat_data_l1) < zmin)
+    over1 = np.count_nonzero(np.asarray(flat_data_l1) > zmax)
+    textbox(ax4, flat_data_l1, zmax, max(hist_return1[0]), under1, over1)
 
     plt.savefig(out_file, dpi=300)
     print('{} written'.format(out_file))
 
 
-def plot_finez(input_data: list, zmin0: float, zmax0: float, zmin1: float, zmax1: float, basemin: float, basemax: float,
-               step_x_num: int,
-               step_y_num: int, title: str, sensor_pos_sorted: dict or list, out_file: str, *, bins: int = 100,
-               basebins: int = 100):
+def plot_base(input_data: list, zmin0: float, zmax0: float, zmin1: float, zmax1: float, basemin: float, basemax: float,
+              step_x_num: int,
+              step_y_num: int, title: str, sensor_pos_sorted: dict or list, out_file: str, *, bins: int = 100,
+              basebins: int = 100):
     cmap = copy.copy(plt.get_cmap("jet"))
     cmap.set_under('w', 0.0001)  # 下限以下の色を設定
 
@@ -362,13 +459,17 @@ def plot_finez(input_data: list, zmin0: float, zmax0: float, zmin1: float, zmax1
     flat_data_l0 = list(itertools.chain.from_iterable(plot_array[0]))
     hist_return0 = ax3.hist(flat_data_l0, histtype='step', bins=bins, range=(zmin0, zmax0), color='w', ec='r')
     ax3.set_xlabel('Z0 [um]')
-    textbox(ax3, flat_data_l0, zmax0, max(hist_return0[0]), factor=0.99)
+    under0 = np.count_nonzero(np.asarray(flat_data_l0) < zmin0)
+    over0 = np.count_nonzero(np.asarray(flat_data_l0) > zmax0)
+    textbox(ax3, flat_data_l0, zmax0, max(hist_return0[0]), under0, over0, factor=0.99)
 
     ax4 = fig.add_subplot(324, title='Z of base surface Layer1')
     flat_data_l1 = list(itertools.chain.from_iterable(plot_array[1]))
     hist_return1 = ax4.hist(flat_data_l1, histtype='step', bins=bins, range=(zmin1, zmax1), color='w', ec='b')
     ax4.set_xlabel('Z1 [um]')
-    textbox(ax4, flat_data_l1, zmax1, max(hist_return1[0]), factor=0.99)
+    under1 = np.count_nonzero(np.asarray(flat_data_l1) < zmin1)
+    over1 = np.count_nonzero(np.asarray(flat_data_l1) > zmax1)
+    textbox(ax4, flat_data_l1, zmax1, max(hist_return1[0]), under1, over1, factor=0.99)
 
     ax5 = fig.add_subplot(325, title='Thickness of Base (2D)')
     z_ber3 = ax5.pcolormesh(x, y, plot_array[1] - plot_array[0], cmap=cmap, vmin=basemin, vmax=basemax)
@@ -383,10 +484,14 @@ def plot_finez(input_data: list, zmin0: float, zmax0: float, zmin1: float, zmax1
     flat_data_base = list(itertools.chain.from_iterable(plot_array[1] - plot_array[0]))
     hist_return2 = ax6.hist(flat_data_base, histtype='step', bins=basebins, range=(basemin, basemax), color='w', ec='r')
     ax6.set_xlabel('base [um]')
-    textbox(ax6, flat_data_base, basemax, max(hist_return2[0]), factor=0.95)
+    under_base = np.count_nonzero(np.asarray(flat_data_base) < basemin)
+    over_base = np.count_nonzero(np.asarray(flat_data_base) > basemax)
+    textbox(ax6, flat_data_base, basemax, max(hist_return2[0]), under_base, over_base, factor=0.95)
 
     plt.savefig(out_file, dpi=300)
     print('{} written'.format(out_file))
+
+    return flat_data_base
 
 
 def plot_sensor(input_data: list, zmin: float, zmax: float, title: str,
@@ -529,7 +634,8 @@ def plot_sensor_not(input_data: list, title: str,
     print('{} written'.format(out_file))
 
 
-def plot_nogall(input_nogdata: list, imager_id: int, plot_ymax: float, nog_thr_list: list, out_path: str, *, alpha: float = 0.15):
+def plot_nogall(input_nogdata: list, imager_id: int, plot_ymax: float, nog_thr_list: list, out_path: str, *,
+                alpha: float = 0.15):
     title = 'All nog Plot Imager = {}'.format(imager_id)
     color = ['r', 'b']
     cmap = plt.get_cmap('rainbow')
@@ -539,7 +645,9 @@ def plot_nogall(input_nogdata: list, imager_id: int, plot_ymax: float, nog_thr_l
     for layer in range(len(nog_thr_list)):
         ax = fig.add_subplot(pos)
         for i in range(len(input_nogdata[layer][imager_id])):
-            ax.plot(input_nogdata[layer][imager_id][i], marker='x', ms=0.5, lw=0.5, color=cmap(i / len(input_nogdata[layer][imager_id])), markerfacecolor=cmap(i / len(input_nogdata[layer][imager_id])), alpha=alpha)
+            ax.plot(input_nogdata[layer][imager_id][i], marker='x', ms=0.5, lw=0.5,
+                    color=cmap(i / len(input_nogdata[layer][imager_id])),
+                    markerfacecolor=cmap(i / len(input_nogdata[layer][imager_id])), alpha=alpha)
         Npic_Snap = len(input_nogdata[layer][imager_id][0])
         ax.set_xlabel('picture number \n ←lens         stage→')
         ax.set_ylabel('Number of grains')
@@ -584,6 +692,7 @@ def calc_df(input_df: dict):
 
     return out
 
+
 def plot_frequency(input_df: pd.DataFrame, out_path: str, *, plotmin: float = 0, plotmax: float = 6):
     fig = plt.figure(figsize=(8.27, 11.69), tight_layout=True)
     fig.suptitle('Frequency (RepeatTime = 0)')
@@ -595,7 +704,8 @@ def plot_frequency(input_df: pd.DataFrame, out_path: str, *, plotmin: float = 0,
     ax1.grid()
 
     ax2 = fig.add_subplot(212)
-    ax2.hist(input_df.query('repeatTime == 0')['Hz'], bins=100, range=(plotmin, plotmax), histtype='stepfilled', facecolor='yellow',
+    ax2.hist(input_df.query('repeatTime == 0')['Hz'], bins=100, range=(plotmin, plotmax), histtype='stepfilled',
+             facecolor='yellow',
              linewidth=1, edgecolor='black')
     ax2.set_xlabel('Frequency [Hz]')
     ax2.grid()
@@ -605,3 +715,56 @@ def plot_frequency(input_df: pd.DataFrame, out_path: str, *, plotmin: float = 0,
     plt.close()
     print('{} written'.format(os.path.join(out_path, 'Frequency.png')))
 
+
+def plot_TargetBright(evmg_json: dict, sensor_pos_sorted: dict or list, out_path: str):
+    brightlist = []
+    for i in range(len(evmg_json['ImagerControllerParamList'])):
+        brightlist.append(evmg_json['ImagerControllerParamList'][i]['TargetBrightness'])
+
+    cmap = copy.copy(plt.get_cmap("jet"))
+    cmap.set_under('w', 1)  # 下限以下の色を設定
+    x = np.arange(8)
+    y = np.arange(9)
+    x, y = np.meshgrid(x, y)
+    z = np.zeros((9, 8))
+    for py in range(9):
+        for px in range(8):
+            id = sensor_pos_sorted[py * 8 + px]['id']
+            if id > 23:
+                z[py][px] = 0
+            else:
+                z[py][px] = brightlist[id]
+
+    fig = plt.figure()
+    ax0 = plt.subplot(title='Target brightness')
+    z_ber0 = ax0.pcolormesh(x, y, z, cmap=cmap, vmax=256, vmin=200, edgecolors="black")
+    text(z, ax0, 'black')
+    divider0 = make_axes_locatable(ax0)  # axに紐付いたAxesDividerを取得
+    cax0 = divider0.append_axes("right", size="5%", pad=0.1)  # append_axesで新しいaxesを作成
+    pp0 = fig.colorbar(z_ber0, orientation="vertical", cax=cax0)
+
+    outfile = os.path.join(out_path, 'TargetBrightness.png')
+    plt.savefig(outfile, dpi=300)
+    print('{} written'.format(outfile))
+
+
+def text_dump(data1: dict, data2: dict, out_path: str):
+    outfile = os.path.join(out_path, 'summary.txt')
+    with open(outfile, 'w') as f:
+        for i in range(2):
+            print('Layer {}'.format(i), file=f)
+            print('{:33}:  {:g}'.format('Ave. Exposure Count', np.mean(data1['excount'][i])), file=f)
+            print('{:33}:  {:g}'.format('Ave. Number of Grains', np.mean(data1['nog_over_thr'][i])), file=f)
+            print('{:33}:  {:g}'.format('Ave. Number of Tracks', np.mean(data1['not'][i])), file=f)
+            print('{:33}:  {:g}'.format('Ave. Thick Of Layer', np.mean(data2['ThickOfLayer'][i])), file=f)
+            print('{:33}:  {:d} / {:d}'
+                  .format('Number of false of surface judge',
+                          np.count_nonzero(data2['surf_judge'][i] == False), len(data2['surf_judge'][i])), file=f)
+            flat_top2bottom = np.asarray(list(itertools.chain.from_iterable(data1['top2bottom'][i])))
+            print('{:33}:  {:d} / {:d}'.format('Number of thin (bottom-top<16)', np.count_nonzero(flat_top2bottom < 16),
+                                                                       len(data1['top2bottom'][i]) *
+                                                                       len(data1['top2bottom'][i][0])), file=f)
+            print('', file=f)
+
+        base_thickness = np.asarray(data1['fine_z'][1]) - np.asarray(data1['fine_z'][0])
+        print('{:33}:  {:g}'.format('Ave. Thickness of base', np.mean(base_thickness)), file=f)
