@@ -62,9 +62,13 @@ else:
     sys.exit()
 
 sap = copy.deepcopy(scp_json['ScanAreaParam'])
-evmg_path = scp_json['OtherPathParam']['ImagerControllerParamFilePath']
-with open(evmg_path, 'rb') as f:
-    evmg_json = json.load(f)
+if 'ImagerControllerParamFilePath' in scp_json['OtherPathParam']:
+    evmg_path = scp_json['OtherPathParam']['ImagerControllerParamFilePath']
+    with open(evmg_path, 'rb') as f:
+        evmg_json = json.load(f)
+else:
+    evwg_json = None
+    flags['bright'] = False
 
 with open(os.path.join(basepath, 'ValidViewHistory.json'), 'rb') as f:
     vvh_json = json.load(f)
@@ -170,4 +174,4 @@ if flags['nog_all']:
 if flags['text']:
     mylib.text_dump(scan_data1, scan_data2, out_path)
 
-# os.startfile(out_path)
+os.startfile(out_path)
