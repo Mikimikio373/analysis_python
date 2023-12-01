@@ -69,20 +69,20 @@ def get_option() -> ArgumentParser.parse_args:
                            default=80000,
                            metavar='max',
                            help='Maximum of nog all. default=80000')
-    argparser.add_argument('-on', '--only_plot', nargs='*',
+    argparser.add_argument('-on', '--only_plot', nargs='+',
                            type=str,
                            choices=['ex', 'nog', 'nog0', 'nog15', 'toptobottom', 'not', 'startpicnum', 'thickoflayer',
                                     'base', 'freq', 'bright', 'nog_all', 'text'],
                            default=[],
                            metavar='Names',
-                           help='Maximum of nog all. default=80000')
-    argparser.add_argument('-off', '--off_plot', nargs='*',
+                           help='plot only given arguments')
+    argparser.add_argument('-off', '--off_plot', nargs='+',
                            type=str,
                            choices=['ex', 'nog', 'nog0', 'nog15', 'toptobottom', 'not', 'startpicnum', 'thickoflayer',
                                     'base', 'freq', 'bright', 'nog_all', 'text'],
                            default=[],
                            metavar='Names',
-                           help='Maximum of nog all. default=80000')
+                           help='plot other things given arguments')
     return argparser.parse_args()
 
 
