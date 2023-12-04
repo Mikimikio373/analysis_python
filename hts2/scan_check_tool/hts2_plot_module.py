@@ -86,6 +86,22 @@ def get_option() -> ArgumentParser.parse_args:
     return argparser.parse_args()
 
 
+def check_notmode(basepath: str):
+    with open(os.path.join(basepath, 'ScanControllParam.json'), 'rb') as f:
+        scan_cont_json = json.load(f)
+
+    flag = False
+    if 'PhCutParam' in scan_cont_json['TrackingParam']['CommonParamArray'][0]:
+        flag = True
+    if 'VolCutParam' in scan_cont_json['TrackingParam']['CommonParamArray'][0]:
+        flag = True
+    if 'ClusterRadialParam' in scan_cont_json['TrackingParam']['CommonParamArray'][0]:
+        flag = True
+    print('not_mode {}'.format(flag))
+
+    return flag
+
+
 def read_not(basepath: str, module: int = 6, sensor: int = 12):
     """
 
@@ -94,10 +110,7 @@ def read_not(basepath: str, module: int = 6, sensor: int = 12):
     :param sensor: 1module内でのsensor数, defaultは12
     :return: 1:txtのデータをreadlinesでimagerごとに配列にしたもの, 2:rlクラスタリングがある場合はTrue
     """
-    with open(os.path.join(basepath, 'ScanControllParam.json'), 'rb') as f:
-        scan_cont_json = json.load(f)
 
-    rl_mode = 'ClusterRadialParam' in scan_cont_json['TrackingParam']['CommonParamArray'][0]
     txt_data = []
     for m in range(module):
         for s in range(sensor):
@@ -110,7 +123,9 @@ def read_not(basepath: str, module: int = 6, sensor: int = 12):
             data_line = f.readlines()
             txt_data.append(data_line)
 
-    return txt_data, rl_mode
+    flag = check_notmode(basepath)
+
+    return txt_data, flag
 
 
 def initial(vvh_json: dict, sap_json: dict, basepath: str, mode: int = 0):
