@@ -133,11 +133,12 @@ if flags['toptobottom']:
     outfile = os.path.join(out_path, 'sensor_topbottom.png')
     mylib.plot_sensor(scan_data1['top2bottom'], 0.1, npic, 'bottom - top', y_sorted, outfile)
 
+
+if flags['not']:
     outfile = os.path.join(out_path, 'scan_area_not.png')
     mylib.plot_area(scan_data1['not'], 0.1, args.not_absolute_max, step_x_num, step_y_num, 'Number Of Tracks',
                     y_sorted, outfile, startX, startY)
 
-if flags['not']:
     outfile = os.path.join(out_path, 'sensor_not.png')
     mylib.plot_sensor_not(scan_data1['not'], 'Number Of Tracks', y_sorted, outfile,
                           relative_min=args.not_relative_min, absolute_max=args.not_absolute_max)
