@@ -14,7 +14,7 @@ from argparse import ArgumentParser
 step_x = 9.0
 step_y = 5.0
 index_list1 = ['excount', 'nog_all', 'nog_over_thr', 'start_picnum', 'nog0', 'nog15', 'top2bottom',
-               'top5brightness', 'loop1', 'filter1', 'trackingtime', 'fine_z', 'not']
+               'top5brightness', 'loop1', 'filter1', 'trackingtime', 'fine_z', 'not', 'main_process', 'not_uncrust']
 index_list2 = ['ThickOfLayer', 'repeatTime', 'surf_judge']
 
 index_list3 = ['repeatTime', 'drivingX', 'drivingY', 'drivingZ', 'DrivingTimePiezo', 'DampingTime',
@@ -47,6 +47,14 @@ def get_option() -> ArgumentParser.parse_args:
                            default=30000,
                            metavar='max',
                            help='Maximum of not (absolute). default=30000')
+    argparser.add_argument('-not_un', '--unclusst_not_max', type=float,
+                           default=1000000,
+                           metavar='max',
+                           help='Maximum of not (absolute). default=1000000')
+    argparser.add_argument('-process', '--main_process_max', type=float,
+                           default=400,
+                           metavar='max',
+                           help='Maximum of not (absolute). default=400')
     argparser.add_argument('-notrmin', '--not_relative_min', type=float,
                            default=0.7,
                            metavar='min',
@@ -71,18 +79,20 @@ def get_option() -> ArgumentParser.parse_args:
                            help='Maximum of nog all. default=80000')
     argparser.add_argument('-on', '--only_plot', nargs='+',
                            type=str,
-                           choices=['ex', 'nog', 'nog0', 'nog15', 'toptobottom', 'not', 'startpicnum', 'thickoflayer',
+                           choices=['ex', 'nog', 'nog0', 'nog15', 'toptobottom', 'not', 'not_un', 'mainprocess', 'startpicnum', 'thickoflayer',
                                     'base', 'freq', 'bright', 'nog_all', 'text'],
                            default=[],
                            metavar='Names',
-                           help='plot only given arguments')
+                           help='plot only given arguments: [ex, nog, nog0, nog15, toptobottom, not, not_un, mainprocess, startpicnum'
+                                ', thickoflayer, base, freq, bright, nog_all, text]')
     argparser.add_argument('-off', '--off_plot', nargs='+',
                            type=str,
-                           choices=['ex', 'nog', 'nog0', 'nog15', 'toptobottom', 'not', 'startpicnum', 'thickoflayer',
+                           choices=['ex', 'nog', 'nog0', 'nog15', 'toptobottom', 'not', 'not_un', 'mainprocess', 'startpicnum', 'thickoflayer',
                                     'base', 'freq', 'bright', 'nog_all', 'text'],
                            default=[],
                            metavar='Names',
-                           help='plot other things given arguments')
+                           help='plot only given arguments: [ex, nog, nog0, nog15, toptobottom, not, not_un, mainprocess, startpicnum'
+                                ', thickoflayer, base, freq, bright, nog_all, text]')
     return argparser.parse_args()
 
 
@@ -123,9 +133,7 @@ def read_not(basepath: str, module: int = 6, sensor: int = 12):
             data_line = f.readlines()
             txt_data.append(data_line)
 
-    flag = check_notmode(basepath)
-
-    return txt_data, flag
+    return txt_data
 
 
 def initial(vvh_json: dict, sap_json: dict, basepath: str, mode: int = 0):
@@ -137,11 +145,13 @@ def initial(vvh_json: dict, sap_json: dict, basepath: str, mode: int = 0):
     :param mode: 0:フルセンサー, 1:1/3モード
     :return: 1:センサーごとのdict['index'][layer][imager id][data*view数], 2:センサーに依存しないdict['index'][layer][view数], 3:センサーにもlayerにも依存しないdict['index'][view数]
 
-    out1 index一覧:'excount', 'nog_all', 'nog_over_thr', 'start_picnum', 'nog0', 'nog15', 'top2bottom', 'top5brightness', 'fine_z', 'loop1', 'filter1', 'trackingtime', 'not'
+    out1 index一覧:'excount', 'nog_all', 'nog_over_thr', 'start_picnum', 'nog0', 'nog15', 'top2bottom', 'top5brightness',
+     'fine_z', 'loop1', 'filter1', 'trackingtime', 'not', 'main_process', 'not_uncrust'
 
     out2 index一覧:'ThickOfLayer', 'repeatTime', 'surf_judge'
 
-    out3 index一覧:'repeatTime', 'drivingX', 'drivingY', 'drivingZ', 'DrivingTimePiezo', 'DampingTime', 'DrivingTimeAll', 'ElapsedTime'
+    out3 index一覧:'repeatTime', 'drivingX', 'drivingY', 'drivingZ', 'DrivingTimePiezo', 'DampingTime', 'DrivingTimeAll',
+     'ElapsedTime'
     """
     global index_list1, index_list2
 
@@ -157,7 +167,7 @@ def initial(vvh_json: dict, sap_json: dict, basepath: str, mode: int = 0):
         sys.exit()
     imager_num = module * sensor
     layer = sap_json['Layer']
-    not_txtdata, rl_mode = read_not(basepath, module=module, sensor=sensor)
+    not_txtdata = read_not(basepath, module=module, sensor=sensor)
 
     tmp_list1 = []
     tmp_list2 = []
@@ -216,18 +226,16 @@ def initial(vvh_json: dict, sap_json: dict, basepath: str, mode: int = 0):
             else:
                 fine_z = vvh_json[view]['ScanLines']['Z'] * 1000 + (thickness / Npicthickness * StartPicNum)
             out1[index_list1[11]][L][id].append(fine_z)
-            # not
-            if rl_mode:
-                out1[index_list1[12]][L][id].append(int(not_txtdata[id][view].split(' ')[-3]))
-            else:
-                out1[index_list1[12]][L][id].append(int(not_txtdata[id][view].split(' ')[-2]))
+            out1[index_list1[12]][L][id].append(int(not_txtdata[id][view].split(' ')[1]))   # not
+            out1[index_list1[13]][L][id].append(float(not_txtdata[id][view].split(' ')[2])*1000)   # main_process
+            out1[index_list1[14]][L][id].append(int(not_txtdata[id][view].split(' ')[3]))  # not_uncrust
 
     return out1, out2, out3
 
 
 def check_flag(on: list, off: list):
-    flags = {'ex': True, 'nog': True, 'nog0': True, 'nog15': True, 'toptobottom': True, 'not': True,
-             'startpicnum': True, 'thickoflayer': True, 'base': True, 'freq': True, 'bright': True,
+    flags = {'ex': True, 'nog': True, 'nog0': True, 'nog15': True, 'toptobottom': True, 'not': True, 'not_un': True,
+             'mainprocess': True, 'startpicnum': True, 'thickoflayer': True, 'base': True, 'freq': True, 'bright': True,
              'nog_all': True, 'text': True}
     if len(on) != 0 and len(off) != 0:
         sys.exit('hts2_plot.py: error: argument.\nCannot use "-on" and "-off" at the same time')

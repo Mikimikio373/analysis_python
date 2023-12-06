@@ -143,6 +143,18 @@ if flags['not']:
     mylib.plot_sensor_not(scan_data1['not'], 'Number Of Tracks', y_sorted, outfile,
                           relative_min=args.not_relative_min, absolute_max=args.not_absolute_max)
 
+if flags['not_un']:
+    outfile = os.path.join(out_path, 'scan_area_not_unclust.png')
+    mylib.plot_area(scan_data1['not_uncrust'], 1, args.unclusst_not_max, step_x_num, step_y_num, 'Unclusterd Number of Tracks', y_sorted,
+                    outfile, startX, startY)
+
+    outfile = os.path.join(out_path, 'sensor_not_unclust.png')
+    mylib.plot_sensor(scan_data1['not_uncrust'], 1, args.unclusst_not_max, 'Unclusterd Number of Tracks', y_sorted, outfile)
+
+if flags['mainprocess']:
+    outfile = os.path.join(out_path, 'sensor_process.png')
+    mylib.plot_sensor(scan_data1['main_process'], 1, args.main_process_max, 'time of Main Process [ms]', y_sorted, outfile)
+
 if flags['startpicnum']:
     outfile = os.path.join(out_path, 'scan_area_StartPicNum.png')
     mylib.plot_area(scan_data1['start_picnum'], -0.5, npic - 15.5, step_x_num, step_y_num, 'StartPicNum',
@@ -153,14 +165,14 @@ if flags['startpicnum']:
 
 if flags['thickoflayer']:
     outfile = os.path.join(out_path, 'scan_area_ThickOfLayer.png')
-    mylib.plot_area_view(scan_data2['ThickOfLayer'], thick_min, thick_max, step_x_num, step_y_num, 'Thick Of Layer',
+    mylib.plot_area_view(scan_data2['ThickOfLayer'], thick_min, thick_max, step_x_num, step_y_num, 'Thick Of Layer [um]',
                          y_sorted, outfile)
 
 if flags['base']:
     outfile = os.path.join(out_path, 'Base_Surface.png')
     mylib.plot_base(scan_data1['fine_z'], args.base_surface_range[0], args.base_surface_range[1],
                     args.base_surface_range[2], args.base_surface_range[3], args.base_thickness_range[0],
-                    args.base_thickness_range[1], step_x_num, step_y_num, 'Base Surface', y_sorted, outfile)
+                    args.base_thickness_range[1], step_x_num, step_y_num, 'Base Surface [mm]', y_sorted, outfile)
 
 if flags['bright']:
     mylib.plot_TargetBright(evmg_json, y_sorted, out_path)
