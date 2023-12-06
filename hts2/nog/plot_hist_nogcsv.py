@@ -26,7 +26,7 @@ if not os.path.exists(pd_path):
     sys.exit('There in no file: {}'.format(pd_path))
 df = pd.read_csv(pd_path)
 
-for header in ['L0', 'L1']:
+for header in ['L0', 'L1', 'obj_L0', 'obj_L1']:
     mean = np.mean(df[header])
     dev = np.std(df[header])
     x_max = mean + 20000
