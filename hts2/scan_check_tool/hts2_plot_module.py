@@ -48,7 +48,7 @@ def get_option() -> ArgumentParser.parse_args:
                            default=30000,
                            metavar='max',
                            help='Maximum of not (absolute). default=30000')
-    argparser.add_argument('-not_un', '--unclusst_not_max', type=float,
+    argparser.add_argument('-not_un', '--unclust_not_max', type=float,
                            default=1000000,
                            metavar='max',
                            help='Maximum of not (absolute). default=1000000')

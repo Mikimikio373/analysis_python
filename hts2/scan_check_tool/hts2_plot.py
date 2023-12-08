@@ -151,11 +151,11 @@ if flags['not']:
 
 if flags['not_un']:
     outfile = os.path.join(out_path, 'scan_area_not_unclust.png')
-    mylib.plot_area(scan_data1['not_uncrust'], 1, args.unclusst_not_max, step_x_num, step_y_num, 'Unclusterd Number of Tracks', y_sorted,
+    mylib.plot_area(scan_data1['not_uncrust'], 1, args.unclust_not_max, step_x_num, step_y_num, 'Unclusterd Number of Tracks', y_sorted,
                     outfile, startX, startY, 0)
 
     outfile = os.path.join(out_path, 'sensor_not_unclust.png')
-    mylib.plot_sensor(scan_data1['not_uncrust'], 1, args.unclusst_not_max, 'Unclusterd Number of Tracks', y_sorted, outfile)
+    mylib.plot_sensor(scan_data1['not_uncrust'], 1, args.unclust_not_max, 'Unclusterd Number of Tracks', y_sorted, outfile)
 
 if flags['mainprocess']:
     outfile = os.path.join(out_path, 'sensor_process.png')
