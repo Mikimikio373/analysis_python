@@ -2,7 +2,7 @@ import os
 import sys
 import math
 import copy
-import json
+import shutil
 
 import pandas as pd
 import numpy as np
@@ -96,26 +96,36 @@ def get_option() -> ArgumentParser.parse_args:
     return argparser.parse_args()
 
 
-def check_notmode(basepath: str):
-    with open(os.path.join(basepath, 'ScanControllParam.json'), 'rb') as f:
-        scan_cont_json = json.load(f)
+def copy_notdata(basepath: str, not_path: str, mode):
+    if mode == 0:
+        module = 6
+        sensor = 12
+    elif mode == 1:
+        module = 2
+        sensor = 12
+    else:
+        module = None
+        sensor = None
+    for m in range(module):
+        for s in range(sensor):
+            target_txt = os.path.join(basepath, 'DATA', '{:02}_{:02}'.format(m, s), 'TrackHit2_0_99999999_0_000.txt')
+            target_json = os.path.join(basepath, 'DATA', '{:02}_{:02}'.format(m, s), 'TrackHit2_0_99999999_0_000.json')
+            if not os.path.exists(target_txt):
+                print('There is no file: {}'.format(target_txt))
+                continue
+            if not os.path.exists(target_json):
+                print('There is no file: {}'.format(target_json))
+                continue
 
-    flag = False
-    if 'PhCutParam' in scan_cont_json['TrackingParam']['CommonParamArray'][0]:
-        flag = True
-    if 'VolCutParam' in scan_cont_json['TrackingParam']['CommonParamArray'][0]:
-        flag = True
-    if 'ClusterRadialParam' in scan_cont_json['TrackingParam']['CommonParamArray'][0]:
-        flag = True
-    print('not_mode {}'.format(flag))
-
-    return flag
+            shutil.copy2(target_txt, os.path.join(not_path, '{:02}_{:02}_TrackHit2_0_99999999_0_000.txt'.format(m, s)))
+            shutil.copy2(target_json,
+                         os.path.join(not_path, '{:02}_{:02}_TrackHit2_0_99999999_0_000.json'.format(m, s)))
 
 
 def read_not(not_path: str, module: int = 6, sensor: int = 12):
     """
 
-    :param basepath: スキャンデータのbasepath
+    :param not_path: スキャンデータのbasepath
     :param module: module数, defaultは6
     :param sensor: 1module内でのsensor数, defaultは12
     :return: 1:txtのデータをreadlinesでimagerごとに配列にしたもの, 2:rlクラスタリングがある場合はTrue
@@ -266,20 +276,11 @@ def textbox(ax, flat_list, ax_x_max, ax_y_max, under: int, over: int, *, factor:
     ax.text(ax_x_max * factor, ax_y_max * factor, text, bbox=(dict(boxstyle='square', fc='w')))
 
 
-def plot_area(input_data: list, zmin: float, zmax: float, step_x_num: int, step_y_num: int, title: str,
-              sensor_pos_sorted: dict or list, out_file: str, startX: float, startY: float, *, bins: int = 100):
-    cmap = copy.copy(plt.get_cmap("jet"))
-    cmap.set_under('w', 0.0001)  # 下限以下の色を設定
-
+def append_area(input_data: list, scaned_area_view: int, sensor_pos_sorted: dict, step_x_num: int, step_y_num: int, mode: int):
     plot_array = [[], []]
     plot_array[0] = np.zeros((step_y_num * 9, step_x_num * 8))
     plot_array[1] = np.zeros((step_y_num * 9, step_x_num * 8))
-    if zmax - zmin < float(bins):
-        bins = int(zmax - zmin)
-
-    scaned_ara_view = step_x_num * step_y_num * 3  # step数から計算。1/3モードのため、view数は3倍
-
-    for i in range(scaned_ara_view):
+    for i in range(scaned_area_view):
         # 1/3でY方向を3分割しているため何レーン目かを判断
         y_lane = math.floor(i / step_x_num) % 3
         for py in range(9):
@@ -288,8 +289,14 @@ def plot_area(input_data: list, zmin: float, zmax: float, step_x_num: int, step_
                 id = sensor_pos_sorted[pos]['id']
                 if id > 23:
                     continue
-                tmp_l0 = input_data[0][id][i]
-                tmp_l1 = input_data[1][id][i]
+                if mode == 0:
+                    tmp_l0 = input_data[0][id][i]
+                    tmp_l1 = input_data[1][id][i]
+                elif mode == 1:
+                    tmp_l0 = input_data[0][i]
+                    tmp_l1 = input_data[1][i]
+                else:
+                    sys.exit('mode error in \"append_area\"')
                 # 全pcolermesh座標系におけるx,yの計算
                 array_x_l0 = (i % step_x_num) * 8 + px  # xはviewのx座標とpxで計算
                 array_x_l1 = (step_x_num - 1 - (i % step_x_num)) * 8 + px  # l1側はviewの順序を反転
@@ -297,6 +304,40 @@ def plot_area(input_data: list, zmin: float, zmax: float, step_x_num: int, step_
                     i / (step_x_num * 3)) * 9 + py + y_lane  # yはstep_x_numの三倍の商がフルセンサーのview_y + ３回のうち何回目か
                 plot_array[0][array_y][array_x_l0] = tmp_l0
                 plot_array[1][array_y][array_x_l1] = tmp_l1
+
+    return plot_array
+
+
+def append_sensor_array(average_data: list, sensor_pos_sorted: dict, *, mode: int = 0, z_max: list = None):
+    z = [[], []]
+    for L in range(2):
+        z[L] = np.zeros((9, 8))
+
+    for py in range(9):
+        for px in range(8):
+            id = sensor_pos_sorted[py * 8 + px]['id']
+            for L in range(2):
+                if id > 23:
+                    z[L][py][px] = 0
+                else:
+                    if mode == 1:
+                        z[L][py][px] = average_data[L][id] / z_max[L]
+                    else:
+                        z[L][py][px] = average_data[L][id]
+
+    return z
+
+
+def plot_area(input_data: list, zmin: float, zmax: float, step_x_num: int, step_y_num: int, title: str,
+              sensor_pos_sorted: dict or list, out_file: str, startX: float, startY: float, *, bins: int = 100):
+    cmap = copy.copy(plt.get_cmap("jet"))
+    cmap.set_under('w', 0.0001)  # 下限以下の色を設定
+
+    if zmax - zmin < float(bins):
+        bins = int(zmax - zmin)
+    scaned_ara_view = step_x_num * step_y_num * 3  # step数から計算。1/3モードのため、view数は3倍
+
+    plot_array = append_area(input_data, scaned_ara_view, sensor_pos_sorted, step_x_num, step_y_num, 0)
 
     x = np.arange(step_x_num * 8)
     x = x * step_x / 8 + startX
@@ -355,24 +396,7 @@ def plot_area_view(input_data: list, zmin: float, zmax: float, step_x_num: int, 
 
     scaned_ara_view = step_x_num * step_y_num * 3  # step数から計算。1/3モードのため、view数は3倍
 
-    for i in range(scaned_ara_view):
-        # 1/3でY方向を3分割しているため何レーン目かを判断
-        y_lane = math.floor(i / step_x_num) % 3
-        for py in range(9):
-            for px in range(8):
-                pos = py * 8 + px
-                id = sensor_pos_sorted[pos]['id']
-                if id > 23:
-                    continue
-                tmp_l0 = input_data[0][i]
-                tmp_l1 = input_data[1][i]
-                # 全pcolermesh座標系におけるx,yの計算
-                array_x_l0 = (i % step_x_num) * 8 + px  # xはviewのx座標とpxで計算
-                array_x_l1 = (step_x_num - 1 - (i % step_x_num)) * 8 + px  # l1側はviewの順序を反転
-                array_y = math.floor(
-                    i / (step_x_num * 3)) * 9 + py + y_lane  # yはstep_x_numの三倍の商がフルセンサーのview_y + ３回のうち何回目か
-                plot_array[0][array_y][array_x_l0] = tmp_l0
-                plot_array[1][array_y][array_x_l1] = tmp_l1
+    plot_array = append_area(input_data, scaned_ara_view, sensor_pos_sorted, step_x_num, step_y_num, 1)
 
     x = np.arange(step_x_num * 8)
     x = x * step_x / 8
@@ -425,30 +449,9 @@ def plot_base(input_data: list, zmin0: float, zmax0: float, zmin1: float, zmax1:
     cmap = copy.copy(plt.get_cmap("jet"))
     cmap.set_under('w', 0.0001)  # 下限以下の色を設定
 
-    plot_array = [[], []]
-    plot_array[0] = np.zeros((step_y_num * 9, step_x_num * 8))
-    plot_array[1] = np.zeros((step_y_num * 9, step_x_num * 8))
-
     scaned_ara_view = step_x_num * step_y_num * 3  # step数から計算。1/3モードのため、view数は3倍
 
-    for i in range(scaned_ara_view):
-        # 1/3でY方向を3分割しているため何レーン目かを判断
-        y_lane = math.floor(i / step_x_num) % 3
-        for py in range(9):
-            for px in range(8):
-                pos = py * 8 + px
-                id = sensor_pos_sorted[pos]['id']
-                if id > 23:
-                    continue
-                tmp_l0 = input_data[0][id][i]
-                tmp_l1 = input_data[1][id][i]
-                # 全pcolermesh座標系におけるx,yの計算
-                array_x_l0 = (i % step_x_num) * 8 + px  # xはviewのx座標とpxで計算
-                array_x_l1 = (step_x_num - 1 - (i % step_x_num)) * 8 + px  # l1側はviewの順序を反転
-                array_y = math.floor(
-                    i / (step_x_num * 3)) * 9 + py + y_lane  # yはstep_x_numの三倍の商がフルセンサーのview_y + ３回のうち何回目か
-                plot_array[0][array_y][array_x_l0] = tmp_l0
-                plot_array[1][array_y][array_x_l1] = tmp_l1
+    plot_array = append_area(input_data, scaned_ara_view, sensor_pos_sorted, step_x_num, step_y_num, 0)
 
     x = np.arange(step_x_num * 8)
     x = x * step_x / 8
@@ -527,18 +530,8 @@ def plot_sensor(input_data: list, zmin: float, zmax: float, title: str,
     x = np.arange(8)
     y = np.arange(9)
     x, y = np.meshgrid(x, y)
-    z = [[], []]
-    for L in range(2):
-        z[L] = np.zeros((9, 8))
 
-    for py in range(9):
-        for px in range(8):
-            id = sensor_pos_sorted[py * 8 + px]['id']
-            for L in range(2):
-                if id > 23:
-                    z[L][py][px] = 0
-                else:
-                    z[L][py][px] = average_data[L][id]
+    z = append_sensor_array(average_data, sensor_pos_sorted)
 
     fig = plt.figure(figsize=(11.69, 8.27), tight_layout=True)
     fig.suptitle(title, fontsize=20)
@@ -588,18 +581,8 @@ def plot_sensor_not(input_data: list, title: str,
     y = np.arange(9)
     x, y = np.meshgrid(x, y)
     not_max = [max(average_data[0]), max(average_data[1])]
-    z = [[], []]
-    for L in range(2):
-        z[L] = np.zeros((9, 8))
 
-    for py in range(9):
-        for px in range(8):
-            id = sensor_pos_sorted[py * 8 + px]['id']
-            for L in range(2):
-                if id > 23:
-                    z[L][py][px] = 0
-                else:
-                    z[L][py][px] = average_data[L][id] / not_max[L]
+    z = append_sensor_array(average_data, sensor_pos_sorted, mode=1, z_max=not_max)
 
     fig = plt.figure(figsize=(8.27 * 1.5, 11.69 * 1.5), tight_layout=True)
     fig.suptitle('Number Of Tracks', fontsize=20)
