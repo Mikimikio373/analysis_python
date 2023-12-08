@@ -1,9 +1,10 @@
 import os
 import sys
 import json
+import math
 
 import yaml
-import math
+
 
 import hts2_plot_module as mylib
 

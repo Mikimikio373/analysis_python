@@ -3,13 +3,14 @@ import sys
 import math
 import copy
 import shutil
+import itertools
+from argparse import ArgumentParser
 
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
-import itertools
-from argparse import ArgumentParser
+
 
 step_x = 9.0
 step_y = 5.0
