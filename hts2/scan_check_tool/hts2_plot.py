@@ -1,7 +1,6 @@
 import os
 import sys
 import json
-import shutil
 
 import yaml
 import math
@@ -107,7 +106,7 @@ else:
 if flags['ex']:
     outfile = os.path.join(out_path, 'scan_area_excount.png')
     mylib.plot_area(scan_data1['excount'], args.exposure_range[0], args.exposure_range[1], step_x_num, step_y_num,
-                    'Exposure Count', y_sorted, outfile, startX, startY)
+                    'Exposure Count', y_sorted, outfile, startX, startY, 0)
 
     outfile = os.path.join(out_path, 'sensor_excount.png')
     mylib.plot_sensor(scan_data1['excount'], args.exposure_range[0], args.exposure_range[1], 'Exposure Count',
@@ -116,7 +115,7 @@ if flags['ex']:
 if flags['nog']:
     outfile = os.path.join(out_path, 'scan_area_nog.png')
     mylib.plot_area(scan_data1['nog_over_thr'], args.nog_range[0], args.nog_range[1], step_x_num, step_y_num, 'nog',
-                    y_sorted, outfile, startX, startY)
+                    y_sorted, outfile, startX, startY, 0)
 
     outfile = os.path.join(out_path, 'sensor_nog.png')
     mylib.plot_sensor(scan_data1['nog_over_thr'], args.nog_range[0], args.nog_range[1], 'nog', y_sorted, outfile)
@@ -124,16 +123,17 @@ if flags['nog']:
 if flags['nog0']:
     outfile = os.path.join(out_path, 'scan_area_nog0.png')
     mylib.plot_area(scan_data1['nog0'], args.nog0_range[0], args.nog0_range[1], step_x_num, step_y_num, 'nog0',
-                    y_sorted, outfile, startX, startY)
+                    y_sorted, outfile, startX, startY, 0)
 
+if flags['nog15']:
     outfile = os.path.join(out_path, 'scan_area_nog15.png')
     mylib.plot_area(scan_data1['nog15'], args.nog15_range[0], args.nog15_range[1], step_x_num, step_y_num, 'nog15',
-                    y_sorted, outfile, startX, startY)
+                    y_sorted, outfile, startX, startY, 0)
 
 if flags['toptobottom']:
     outfile = os.path.join(out_path, 'scan_area_topbottom.png')
     mylib.plot_area(scan_data1['top2bottom'], -0.5, npic + 0.5, step_x_num, step_y_num, 'bottom - top', y_sorted,
-                    outfile, startX, startY)
+                    outfile, startX, startY, 0)
 
     outfile = os.path.join(out_path, 'sensor_topbottom.png')
     mylib.plot_sensor(scan_data1['top2bottom'], 0.1, npic, 'bottom - top', y_sorted, outfile)
@@ -142,7 +142,7 @@ if flags['toptobottom']:
 if flags['not']:
     outfile = os.path.join(out_path, 'scan_area_not.png')
     mylib.plot_area(scan_data1['not'], 0.1, args.not_absolute_max, step_x_num, step_y_num, 'Number Of Tracks',
-                    y_sorted, outfile, startX, startY)
+                    y_sorted, outfile, startX, startY, 0)
 
     outfile = os.path.join(out_path, 'sensor_not.png')
     mylib.plot_sensor_not(scan_data1['not'], 'Number Of Tracks', y_sorted, outfile,
@@ -151,7 +151,7 @@ if flags['not']:
 if flags['not_un']:
     outfile = os.path.join(out_path, 'scan_area_not_unclust.png')
     mylib.plot_area(scan_data1['not_uncrust'], 1, args.unclusst_not_max, step_x_num, step_y_num, 'Unclusterd Number of Tracks', y_sorted,
-                    outfile, startX, startY)
+                    outfile, startX, startY, 0)
 
     outfile = os.path.join(out_path, 'sensor_not_unclust.png')
     mylib.plot_sensor(scan_data1['not_uncrust'], 1, args.unclusst_not_max, 'Unclusterd Number of Tracks', y_sorted, outfile)
@@ -163,15 +163,15 @@ if flags['mainprocess']:
 if flags['startpicnum']:
     outfile = os.path.join(out_path, 'scan_area_StartPicNum.png')
     mylib.plot_area(scan_data1['start_picnum'], -0.5, npic - 15.5, step_x_num, step_y_num, 'StartPicNum',
-                    y_sorted, outfile, startX, startY)
+                    y_sorted, outfile, startX, startY, 0)
 
     outfile = os.path.join(out_path, 'sensor_StartPicNum.png')
     mylib.plot_sensor(scan_data1['start_picnum'], 0.1, npic - 15.5, 'StartPicNum', y_sorted, outfile)
 
 if flags['thickoflayer']:
     outfile = os.path.join(out_path, 'scan_area_ThickOfLayer.png')
-    mylib.plot_area_view(scan_data2['ThickOfLayer'], thick_min, thick_max, step_x_num, step_y_num, 'Thick Of Layer [um]',
-                         y_sorted, outfile)
+    mylib.plot_area(scan_data2['ThickOfLayer'], thick_min, thick_max, step_x_num, step_y_num, 'Thick Of Layer [um]',
+                         y_sorted, outfile, startX, startY, 1)
 
 if flags['base']:
     outfile = os.path.join(out_path, 'Base_Surface.png')

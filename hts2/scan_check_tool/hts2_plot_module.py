@@ -276,7 +276,8 @@ def textbox(ax, flat_list, ax_x_max, ax_y_max, under: int, over: int, *, factor:
     ax.text(ax_x_max * factor, ax_y_max * factor, text, bbox=(dict(boxstyle='square', fc='w')))
 
 
-def append_area(input_data: list, scaned_area_view: int, sensor_pos_sorted: dict, step_x_num: int, step_y_num: int, mode: int):
+def append_area(input_data: list, scaned_area_view: int, sensor_pos_sorted: dict, step_x_num: int, step_y_num: int,
+                mode: int):
     plot_array = [[], []]
     plot_array[0] = np.zeros((step_y_num * 9, step_x_num * 8))
     plot_array[1] = np.zeros((step_y_num * 9, step_x_num * 8))
@@ -328,8 +329,45 @@ def append_sensor_array(average_data: list, sensor_pos_sorted: dict, *, mode: in
     return z
 
 
+def meshplot_area(fig, pos: int, x: list, y: list, z: list, zmin: float, zmax: float, cmap, title: str, xlabel: str, ylabel: str, *, aspect_mode: bool = False):
+    ax = fig.add_subplot(pos, title=title)
+    z_ber = ax.pcolormesh(x, y, z, cmap=cmap, vmin=zmin, vmax=zmax)
+    divider = make_axes_locatable(ax)  # axに紐付いたAxesDividerを取得
+    cax = divider.append_axes("right", size="5%", pad=0.1)  # append_axesで新しいaxesを作成
+    fig.colorbar(z_ber, orientation="vertical", cax=cax)
+    if aspect_mode:
+        ax.set_aspect('equal')
+    ax.set_xlabel(xlabel)
+    ax.set_ylabel(ylabel)
+
+    return ax
+
+
+def meshplot_sensor(fig, pos: int, x: list, y: list, z: np.ndarray, zmin: float, zmax: float, cmap, title: str):
+    ax = fig.add_subplot(pos, title=title)
+    z_ber = ax.pcolormesh(x, y, z, cmap=cmap, vmin=zmin, vmax=zmax, edgecolors="black")
+    text(z, ax, 'black')
+    divider0 = make_axes_locatable(ax)  # axに紐付いたAxesDividerを取得
+    cax0 = divider0.append_axes("right", size="5%", pad=0.1)  # append_axesで新しいaxesを作成
+    fig.colorbar(z_ber, orientation="vertical", cax=cax0)
+
+    return ax
+
+
+def hist(fig, flat_data: list, pos: int, bins: int, zmin: float, zmax:float, title: str, color: str, *, xlabel: str = None, factor: float = 0.9):
+    ax = fig.add_subplot(pos, title=title)
+    hist_return = ax.hist(flat_data, histtype='step', bins=bins, range=(zmin, zmax), color='w', ec=color)
+    under = np.count_nonzero(np.asarray(flat_data) < zmin)
+    over = np.count_nonzero(np.asarray(flat_data) > zmax)
+    if not xlabel == None:
+        ax.set_xlabel(xlabel)
+    textbox(ax, flat_data, zmax, max(hist_return[0]), under, over, factor=factor)
+
+    return ax
+
+
 def plot_area(input_data: list, zmin: float, zmax: float, step_x_num: int, step_y_num: int, title: str,
-              sensor_pos_sorted: dict or list, out_file: str, startX: float, startY: float, *, bins: int = 100):
+              sensor_pos_sorted: dict or list, out_file: str, startX: float, startY: float, mode: int, *, bins: int = 100):
     cmap = copy.copy(plt.get_cmap("jet"))
     cmap.set_under('w', 0.0001)  # 下限以下の色を設定
 
@@ -337,7 +375,7 @@ def plot_area(input_data: list, zmin: float, zmax: float, step_x_num: int, step_
         bins = int(zmax - zmin)
     scaned_ara_view = step_x_num * step_y_num * 3  # step数から計算。1/3モードのため、view数は3倍
 
-    plot_array = append_area(input_data, scaned_ara_view, sensor_pos_sorted, step_x_num, step_y_num, 0)
+    plot_array = append_area(input_data, scaned_ara_view, sensor_pos_sorted, step_x_num, step_y_num, mode)
 
     x = np.arange(step_x_num * 8)
     x = x * step_x / 8 + startX
@@ -347,98 +385,21 @@ def plot_area(input_data: list, zmin: float, zmax: float, step_x_num: int, step_
 
     fig = plt.figure(figsize=(11.69, 8.27), tight_layout=True)
     fig.suptitle(title, fontsize=20)
-    ax1 = fig.add_subplot(221, title='Layer0')
-    z_ber0 = ax1.pcolormesh(x, y, plot_array[0], cmap=cmap, vmin=zmin, vmax=zmax)
-    divider0 = make_axes_locatable(ax1)  # axに紐付いたAxesDividerを取得
-    cax0 = divider0.append_axes("right", size="5%", pad=0.1)  # append_axesで新しいaxesを作成
-    pp0 = fig.colorbar(z_ber0, orientation="vertical", cax=cax0)
-    ax1.set_aspect('equal')
-    ax1.set_xlabel('X [mm]')
-    ax1.set_ylabel('Y [mm]')
+    ax1 = meshplot_area(fig, 221, x, y, plot_array[0], zmin, zmax, cmap, 'Layer0', 'X [mm]', 'Y [mm]',
+                            aspect_mode=True)
 
-    ax2 = fig.add_subplot(222, title='Layer1')
-    z_ber1 = ax2.pcolormesh(x, y, plot_array[1], cmap=cmap, vmin=zmin, vmax=zmax)
-    divider1 = make_axes_locatable(ax2)  # axに紐付いたAxesDividerを取得
-    cax1 = divider1.append_axes("right", size="5%", pad=0.1)  # append_axesで新しいaxesを作成
-    pp1 = fig.colorbar(z_ber1, orientation="vertical", cax=cax1)
-    ax2.set_aspect('equal')
-    ax2.set_xlabel('X [mm]')
-    ax2.set_ylabel('Y [mm]')
+    ax2 = meshplot_area(fig, 222, x, y, plot_array[1], zmin, zmax, cmap, 'Layer1', 'X [mm]', 'Y [mm]',
+                            aspect_mode=True)
 
-    ax3 = fig.add_subplot(223, title='Layer0')
     flat_data_l0 = list(itertools.chain.from_iterable(plot_array[0]))
-    hist_return0 = ax3.hist(flat_data_l0, histtype='step', bins=bins, range=(zmin, zmax), color='w', ec='r')
-    under0 = np.count_nonzero(np.asarray(flat_data_l0) < zmin)
-    over0 = np.count_nonzero(np.asarray(flat_data_l0) > zmax)
-    textbox(ax3, flat_data_l0, zmax, max(hist_return0[0]), under0, over0)
+    ax3 = hist(fig, flat_data_l0, 223, bins, zmin, zmax, 'Layer0', 'r')
 
-    ax4 = fig.add_subplot(224, title='Layer1')
     flat_data_l1 = list(itertools.chain.from_iterable(plot_array[1]))
-    hist_return1 = ax4.hist(flat_data_l1, histtype='step', bins=bins, range=(zmin, zmax), color='w', ec='b')
-    under1 = np.count_nonzero(np.asarray(flat_data_l1) < zmin)
-    over1 = np.count_nonzero(np.asarray(flat_data_l1) > zmax)
-    textbox(ax4, flat_data_l1, zmax, max(hist_return1[0]), under1, over1)
+    ax4 = hist(fig, flat_data_l1, 224, bins, zmin, zmax, 'Layer1', 'b')
 
     plt.savefig(out_file, dpi=300)
-    print('{} written'.format(out_file))
-
-    return [np.mean(flat_data_l0), np.mean(flat_data_l1)]
-
-
-def plot_area_view(input_data: list, zmin: float, zmax: float, step_x_num: int, step_y_num: int, title: str,
-                   sensor_pos_sorted: dict or list, out_file: str, *, bins: int = 100):
-    cmap = copy.copy(plt.get_cmap("jet"))
-    cmap.set_under('w', 0.0001)  # 下限以下の色を設定
-
-    plot_array = [[], []]
-    plot_array[0] = np.zeros((step_y_num * 9, step_x_num * 8))
-    plot_array[1] = np.zeros((step_y_num * 9, step_x_num * 8))
-
-    scaned_ara_view = step_x_num * step_y_num * 3  # step数から計算。1/3モードのため、view数は3倍
-
-    plot_array = append_area(input_data, scaned_ara_view, sensor_pos_sorted, step_x_num, step_y_num, 1)
-
-    x = np.arange(step_x_num * 8)
-    x = x * step_x / 8
-    y = np.arange(step_y_num * 9)
-    y = y * step_y / 9
-    x, y = np.meshgrid(x, y)
-
-    fig = plt.figure(figsize=(11.69, 8.27), tight_layout=True)
-    fig.suptitle(title, fontsize=20)
-    ax1 = fig.add_subplot(221, title='Layer0')
-    z_ber0 = ax1.pcolormesh(x, y, plot_array[0], cmap=cmap, vmin=zmin, vmax=zmax)
-    divider0 = make_axes_locatable(ax1)  # axに紐付いたAxesDividerを取得
-    cax0 = divider0.append_axes("right", size="5%", pad=0.1)  # append_axesで新しいaxesを作成
-    pp0 = fig.colorbar(z_ber0, orientation="vertical", cax=cax0)
-    ax1.set_aspect('equal')
-    ax1.set_xlabel('X [mm]')
-    ax1.set_ylabel('Y [mm]')
-
-    ax2 = fig.add_subplot(222, title='Layer1')
-    z_ber1 = ax2.pcolormesh(x, y, plot_array[1], cmap=cmap, vmin=zmin, vmax=zmax)
-    divider1 = make_axes_locatable(ax2)  # axに紐付いたAxesDividerを取得
-    cax1 = divider1.append_axes("right", size="5%", pad=0.1)  # append_axesで新しいaxesを作成
-    pp1 = fig.colorbar(z_ber1, orientation="vertical", cax=cax1)
-    ax2.set_aspect('equal')
-    ax2.set_xlabel('X [mm]')
-    ax2.set_ylabel('Y [mm]')
-
-    ax3 = fig.add_subplot(223, title='Layer0')
-    flat_data_l0 = list(itertools.chain.from_iterable(plot_array[0]))
-    hist_return0 = ax3.hist(flat_data_l0, histtype='step', bins=bins, range=(zmin, zmax), color='w', ec='r')
-    under0 = np.count_nonzero(np.asarray(flat_data_l0) < zmin)
-    over0 = np.count_nonzero(np.asarray(flat_data_l0) > zmax)
-    textbox(ax3, flat_data_l0, zmax, max(hist_return0[0]), under0, over0)
-
-    ax4 = fig.add_subplot(224, title='Layer1')
-    flat_data_l1 = list(itertools.chain.from_iterable(plot_array[1]))
-    hist_return1 = ax4.hist(flat_data_l1, histtype='step', bins=bins, range=(zmin, zmax), color='w', ec='b')
-    under1 = np.count_nonzero(np.asarray(flat_data_l1) < zmin)
-    over1 = np.count_nonzero(np.asarray(flat_data_l1) > zmax)
-    textbox(ax4, flat_data_l1, zmax, max(hist_return1[0]), under1, over1)
-
-    plt.savefig(out_file, dpi=300)
+    plt.clf()
+    plt.close()
     print('{} written'.format(out_file))
 
 
@@ -461,58 +422,30 @@ def plot_base(input_data: list, zmin0: float, zmax0: float, zmin1: float, zmax1:
 
     fig = plt.figure(figsize=(8.27 * 1.5, 11.69 * 1.5), tight_layout=True)
     fig.suptitle(title, fontsize=20)
-    ax1 = fig.add_subplot(321, title='Z of base surface Layer0')
-    z_ber0 = ax1.pcolormesh(x, y, plot_array[0], cmap=cmap, vmin=zmin0, vmax=zmax0)
-    divider0 = make_axes_locatable(ax1)  # axに紐付いたAxesDividerを取得
-    cax0 = divider0.append_axes("right", size="5%", pad=0.1)  # append_axesで新しいaxesを作成
-    pp0 = fig.colorbar(z_ber0, orientation="vertical", cax=cax0)
-    ax1.set_aspect('equal')
-    ax1.set_xlabel('X [mm]')
-    ax1.set_ylabel('Y [mm]')
+    ax1 = meshplot_area(fig, 321, x, y, plot_array[0], zmin0, zmax0, cmap, 'Z of base surface Layer0', 'X [mm]',
+                            'Y [mm]', aspect_mode=True)
 
-    ax2 = fig.add_subplot(322, title='Z of base surface Layer1')
-    z_ber1 = ax2.pcolormesh(x, y, plot_array[1], cmap=cmap, vmin=zmin1, vmax=zmax1)
-    divider1 = make_axes_locatable(ax2)  # axに紐付いたAxesDividerを取得
-    cax1 = divider1.append_axes("right", size="5%", pad=0.1)  # append_axesで新しいaxesを作成
-    pp1 = fig.colorbar(z_ber1, orientation="vertical", cax=cax1)
-    ax2.set_aspect('equal')
-    ax2.set_xlabel('X [mm]')
-    ax2.set_ylabel('Y [mm]')
+    ax2 = meshplot_area(fig, 322, x, y, plot_array[1], zmin1, zmax1, cmap, 'Z of base surface Layer1', 'X [mm]',
+                            'Y [mm]', aspect_mode=True)
 
-    ax3 = fig.add_subplot(323, title='Z of base surface Layer0')
     flat_data_l0 = list(itertools.chain.from_iterable(plot_array[0]))
-    hist_return0 = ax3.hist(flat_data_l0, histtype='step', bins=bins, range=(zmin0, zmax0), color='w', ec='r')
-    ax3.set_xlabel('Z0 [um]')
-    under0 = np.count_nonzero(np.asarray(flat_data_l0) < zmin0)
-    over0 = np.count_nonzero(np.asarray(flat_data_l0) > zmax0)
-    textbox(ax3, flat_data_l0, zmax0, max(hist_return0[0]), under0, over0, factor=0.99)
+    ax3 = hist(fig, flat_data_l0, 323, bins, zmin0, zmax0, 'Z of base surface Layer0', color='r', xlabel='Z0 [um]',
+               factor=0.99)
 
-    ax4 = fig.add_subplot(324, title='Z of base surface Layer1')
     flat_data_l1 = list(itertools.chain.from_iterable(plot_array[1]))
-    hist_return1 = ax4.hist(flat_data_l1, histtype='step', bins=bins, range=(zmin1, zmax1), color='w', ec='b')
-    ax4.set_xlabel('Z1 [um]')
-    under1 = np.count_nonzero(np.asarray(flat_data_l1) < zmin1)
-    over1 = np.count_nonzero(np.asarray(flat_data_l1) > zmax1)
-    textbox(ax4, flat_data_l1, zmax1, max(hist_return1[0]), under1, over1, factor=0.99)
+    ax3 = hist(fig, flat_data_l1, 324, bins, zmin1, zmax1, 'Z of base surface Layer1', color='b', xlabel='Z1 [um]',
+               factor=0.99)
 
-    ax5 = fig.add_subplot(325, title='Thickness of Base (2D)')
-    z_ber3 = ax5.pcolormesh(x, y, plot_array[1] - plot_array[0], cmap=cmap, vmin=basemin, vmax=basemax)
-    divider3 = make_axes_locatable(ax5)  # axに紐付いたAxesDividerを取得
-    cax3 = divider3.append_axes("right", size="5%", pad=0.1)  # append_axesで新しいaxesを作成
-    pp3 = fig.colorbar(z_ber3, orientation="vertical", cax=cax3)
-    ax5.set_aspect('equal')
-    ax5.set_xlabel('X [mm]')
-    ax5.set_ylabel('Y [mm]')
+    ax5 = meshplot_area(fig, 325, x, y, plot_array[1] - plot_array[0], basemin, basemax, cmap, 
+                            'Thickness of Base (2D)', 'X [mm]', 'Y [mm]', aspect_mode=True)
 
-    ax6 = fig.add_subplot(326, title='Thickness of Base')
     flat_data_base = list(itertools.chain.from_iterable(plot_array[1] - plot_array[0]))
-    hist_return2 = ax6.hist(flat_data_base, histtype='step', bins=basebins, range=(basemin, basemax), color='w', ec='r')
-    ax6.set_xlabel('base [um]')
-    under_base = np.count_nonzero(np.asarray(flat_data_base) < basemin)
-    over_base = np.count_nonzero(np.asarray(flat_data_base) > basemax)
-    textbox(ax6, flat_data_base, basemax, max(hist_return2[0]), under_base, over_base, factor=0.95)
+    ax6 = hist(fig, flat_data_base, 326, basebins, basemin, basemax, 'Thickness of Base', 'r', xlabel='base [um]', 
+               factor=0.95)
 
     plt.savefig(out_file, dpi=300)
+    plt.clf()
+    plt.close()
     print('{} written'.format(out_file))
 
     return flat_data_base
@@ -535,19 +468,9 @@ def plot_sensor(input_data: list, zmin: float, zmax: float, title: str,
 
     fig = plt.figure(figsize=(11.69, 8.27), tight_layout=True)
     fig.suptitle(title, fontsize=20)
-    ax0 = fig.add_subplot(221, title='Layer0 array')
-    z_ber0 = ax0.pcolormesh(x, y, z[0], cmap=cmap, vmin=zmin, vmax=zmax, edgecolors="black")
-    text(z[0], ax0, 'black')
-    divider0 = make_axes_locatable(ax0)  # axに紐付いたAxesDividerを取得
-    cax0 = divider0.append_axes("right", size="5%", pad=0.1)  # append_axesで新しいaxesを作成
-    pp0 = fig.colorbar(z_ber0, orientation="vertical", cax=cax0)
+    ax0 = meshplot_sensor(fig, 221, x, y, z[0], zmin, zmax, cmap, 'Layer0 array')
 
-    ax1 = fig.add_subplot(222, title='Layer1 array')
-    z_ber1 = ax1.pcolormesh(x, y, z[1], cmap=cmap, vmin=zmin, vmax=zmax, edgecolors="black")
-    text(z[1], ax1, 'black')
-    divider1 = make_axes_locatable(ax1)  # axに紐付いたAxesDividerを取得
-    cax1 = divider1.append_axes("right", size="5%", pad=0.1)  # append_axesで新しいaxesを作成
-    pp1 = fig.colorbar(z_ber1, orientation="vertical", cax=cax1)
+    ax1 = meshplot_sensor(fig, 222, x, y, z[1], zmin, zmax, cmap, 'Layer1 array')
 
     ax2 = fig.add_subplot(223, title='Layer0')
     x = np.arange(24)
@@ -564,6 +487,8 @@ def plot_sensor(input_data: list, zmin: float, zmax: float, title: str,
     ax3.grid()
 
     plt.savefig(out_file, dpi=300)
+    plt.clf()
+    plt.close()
     print('{} written'.format(out_file))
 
 
@@ -606,19 +531,9 @@ def plot_sensor_not(input_data: list, title: str,
     x = np.arange(8)
     y = np.arange(9)
     x, y = np.meshgrid(x, y)
-    ax3 = fig.add_subplot(323, title='Layer0  (relative, sensor array)')
-    z_ber0 = ax3.pcolormesh(x, y, z[0], cmap=cmap, vmax=1, vmin=relative_min, edgecolors="black")
-    divider0 = make_axes_locatable(ax3)  # axに紐付いたAxesDividerを取得
-    cax0 = divider0.append_axes("right", size="5%", pad=0.1)  # append_axesで新しいaxesを作成
-    text(z[0], ax3, 'black')
-    pp0 = fig.colorbar(z_ber0, orientation="vertical", cax=cax0)
+    ax3 = meshplot_sensor(fig, 323, x, y, z[0], relative_min, 1, cmap, 'Layer0  (relative, sensor array)')
 
-    ax4 = fig.add_subplot(324, title='Layer1 (relative, sensor array)')
-    z_ber1 = ax4.pcolormesh(x, y, z[1], cmap=cmap, vmax=1, vmin=relative_min, edgecolors="black")
-    divider1 = make_axes_locatable(ax4)  # axに紐付いたAxesDividerを取得
-    cax1 = divider1.append_axes("right", size="5%", pad=0.1)  # append_axesで新しいaxesを作成
-    text(z[1], ax4, 'black')
-    pp1 = fig.colorbar(z_ber1, orientation="vertical", cax=cax1)
+    ax4 = meshplot_sensor(fig, 324, x, y, z[1], relative_min, 1, cmap, 'Layer1  (relative, sensor array)')
 
     average_data_relative = [[], []]
     average_data_relative[0] = np.asarray(average_data[0]) / not_max[0]
@@ -635,6 +550,8 @@ def plot_sensor_not(input_data: list, title: str,
     ax5.grid()
 
     plt.savefig(os.path.join(out_file), dpi=300)
+    plt.clf()
+    plt.close()
     print('{} written'.format(out_file))
 
 
