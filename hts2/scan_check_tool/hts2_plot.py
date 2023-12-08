@@ -1,58 +1,67 @@
-import copy
 import os
 import sys
 import json
 
 import yaml
 import math
-from argparse import ArgumentParser
-import pandas as pd
-import matplotlib.pyplot as plt
 
 import hts2_plot_module as mylib
 
 step_x = mylib.step_x
 step_y = mylib.step_y
 
+# current directoryの取得
 basepath = os.getcwd()
 
+# オプション情報の取得
 args = mylib.get_option()
-# on offの情報を取得
+
+# オプションからon offの情報を取得
 flags = mylib.check_flag(args.only_plot, args.off_plot)
 
 # sensor_exposureをたたいているコマンドから、scan_chech_toolの場所を特定
 pythonpath = os.path.split(sys.argv[0])[0]
-# sensorの場所情報を書いてあるフォルダを読み込み
+
+# sensorの配置情報が書いてあるymlファイルの読み込み
 with open(os.path.join(pythonpath, 'sensor_pos.yml'), 'rb') as f:
     y_load = yaml.safe_load(f)
 y_sorted = sorted(y_load, key=lambda x: x['pos'])
 
+# スキャンパラメータの取得
 ScanControllParam = os.path.join(basepath, 'ScanControllParam.json')
-
 if not os.path.exists(ScanControllParam):
     sys.exit('There is no file: {}'.format(ScanControllParam))
-
 with open(ScanControllParam, 'rb') as scp:
     scp_json = json.load(scp)
-
+# スキャンエリア情報
 sideX = scp_json['ScanAreaParam']['SideX']
 centerX = scp_json['ScanAreaParam']['CenterX']
 sideY = scp_json['ScanAreaParam']['SideY']
 centerY = scp_json['ScanAreaParam']['CenterY']
+layer = scp_json['ScanAreaParam']['Layer']
 step_x_num = math.ceil(sideX / step_x)
 step_y_num = math.ceil(sideY / step_y)
 startX = centerX - float(step_x_num) / 2.0 * step_x
 startY = centerY - float(step_y_num) / 2.0 * step_y
-
+# プロットする際に使う情報
 npic = scp_json['LayerParam']['CommonParamArray'][0]['NPicSnap']
-
 thick_min = 20
 thick_max = 100
+nog_thr_list = []
+for i in range(int(scp_json['LayerParam']['LayerNum'])):
+    tmp = []
+    if 'NogTop' in scp_json['LayerParam']['CommonParamArray'][i]:
+        tmp.append(scp_json['LayerParam']['CommonParamArray'][i]['NogTop'])
+    if 'NogBottom' in scp_json['LayerParam']['CommonParamArray'][i]:
+        tmp.append(scp_json['LayerParam']['CommonParamArray'][i]['NogBottom'])
+    nog_thr_list.append(tmp)
+
 if 'MaxThickness' in scp_json['LayerParam']['CommonParamArray'][0]:
     thick_max = scp_json['LayerParam']['CommonParamArray'][0]['MaxThickness']
 if 'MinThickness' in scp_json['LayerParam']['CommonParamArray'][0]:
     thick_min = scp_json['LayerParam']['CommonParamArray'][0]['MinThickness']
 
+# スキャン方法によるプロットモードの選択
 mode = 0  # 0: フルセンサー, 1: 1/3モード
 if scp_json['ScanAreaParam']['Algorithm'] == 'One_Third_Half_HTS2':
     mode = 1
@@ -61,7 +70,7 @@ else:
     print('現在One_Third_Half_HTS2以外対応していません')
     sys.exit()
 
-sap = copy.deepcopy(scp_json['ScanAreaParam'])
+# ターゲット輝度値分布を書くためにpathとjsonデータを取得
 if 'ImagerControllerParamFilePath' in scp_json['OtherPathParam']:
     evmg_path = scp_json['OtherPathParam']['ImagerControllerParamFilePath']
     with open(evmg_path, 'rb') as f:
@@ -70,25 +79,16 @@ else:
     evwg_json = None
     flags['bright'] = False
 
+# VaridViewHistryの取得(プロットデータはほぼすべてここから取得している)
 with open(os.path.join(basepath, 'ValidViewHistory.json'), 'rb') as f:
     vvh_json = json.load(f)
-
-with open(os.path.join(basepath, 'PARAMS', 'UserParam.json'), 'rb') as f:
-    user_json = json.load(f)
-nog_thr_list = []
-for i in range(int(user_json['LayerParam']['LayerNum'])):
-    tmp = []
-    if 'NogTop' in user_json['LayerParam']['CommonParamArray'][i]:
-        tmp.append(user_json['LayerParam']['CommonParamArray'][i]['NogTop'])
-    if 'NogBottom' in user_json['LayerParam']['CommonParamArray'][i]:
-        tmp.append(user_json['LayerParam']['CommonParamArray'][i]['NogBottom'])
-    nog_thr_list.append(tmp)
 
 out_path = os.path.join(basepath, 'GRAPH')
 if not os.path.exists(out_path):
     os.makedirs(out_path)
 
-scan_data1, scan_data2, scan_data3 = mylib.initial(vvh_json, sap, basepath, mode)
+# initialプロットするためのデータ取得
+scan_data1, scan_data2, scan_data3 = mylib.initial(vvh_json, basepath, layer, mode)
 
 # 実データから実際のy_step数を計算(Xは端から端までプロット)
 if mode == 0:
@@ -99,6 +99,7 @@ else:
     step_y_num = None
 
 
+# plot開始
 if flags['ex']:
     outfile = os.path.join(out_path, 'scan_area_excount.png')
     mylib.plot_area(scan_data1['excount'], args.exposure_range[0], args.exposure_range[1], step_x_num, step_y_num,
@@ -187,4 +188,5 @@ if flags['nog_all']:
 if flags['text']:
     mylib.text_dump(scan_data1, scan_data2, out_path)
 
+# GRAPHフォルダを開く
 os.startfile(out_path)

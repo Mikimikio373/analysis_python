@@ -136,12 +136,12 @@ def read_not(basepath: str, module: int = 6, sensor: int = 12):
     return txt_data
 
 
-def initial(vvh_json: dict, sap_json: dict, basepath: str, mode: int = 0):
+def initial(vvh_json: dict, basepath: str, layer: int = 2, mode: int = 0):
     """
 
     :param vvh_json: ValidViewHistryのjsonデータ
-    :param sap_json: ScanAreaParamのjsonデータ
     :param basepath: スキャンの出力フォルダ
+    :param layer: スキャン時のlayer数
     :param mode: 0:フルセンサー, 1:1/3モード
     :return: 1:センサーごとのdict['index'][layer][imager id][data*view数], 2:センサーに依存しないdict['index'][layer][view数], 3:センサーにもlayerにも依存しないdict['index'][view数]
 
@@ -166,7 +166,6 @@ def initial(vvh_json: dict, sap_json: dict, basepath: str, mode: int = 0):
         print('未対応modeです')
         sys.exit()
     imager_num = module * sensor
-    layer = sap_json['Layer']
     not_txtdata = read_not(basepath, module=module, sensor=sensor)
 
     tmp_list1 = []
