@@ -51,11 +51,11 @@ def get_option() -> ArgumentParser.parse_args:
     argparser.add_argument('-not_un', '--unclust_not_max', type=float,
                            default=1000000,
                            metavar='max',
-                           help='Maximum of not (absolute). default=1000000')
+                           help='Maximum of not unclusterd (absolute). default=1000000')
     argparser.add_argument('-process', '--main_process_max', type=float,
                            default=400,
                            metavar='max',
-                           help='Maximum of not (absolute). default=400')
+                           help='Maximum of main time prosess. default=400')
     argparser.add_argument('-notrmin', '--not_relative_min', type=float,
                            default=0.7,
                            metavar='min',
