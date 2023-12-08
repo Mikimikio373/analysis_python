@@ -112,7 +112,7 @@ def check_notmode(basepath: str):
     return flag
 
 
-def read_not(basepath: str, module: int = 6, sensor: int = 12):
+def read_not(not_path: str, module: int = 6, sensor: int = 12):
     """
 
     :param basepath: スキャンデータのbasepath
@@ -124,8 +124,7 @@ def read_not(basepath: str, module: int = 6, sensor: int = 12):
     txt_data = []
     for m in range(module):
         for s in range(sensor):
-            nottxt_path = os.path.join(basepath, 'DATA', '{:02}_{:02}'.format(m, s),
-                                       'TrackHit2_0_99999999_0_000.txt')
+            nottxt_path = os.path.join(not_path, '{:02}_{:02}_TrackHit2_0_99999999_0_000.txt'.format(m, s))
             if not os.path.exists(nottxt_path):
                 sys.exit('there is no file: {}'.format(nottxt_path))
 
@@ -136,11 +135,11 @@ def read_not(basepath: str, module: int = 6, sensor: int = 12):
     return txt_data
 
 
-def initial(vvh_json: dict, basepath: str, layer: int = 2, mode: int = 0):
+def initial(vvh_json: dict, not_path: str, layer: int = 2, mode: int = 0):
     """
 
     :param vvh_json: ValidViewHistryのjsonデータ
-    :param basepath: スキャンの出力フォルダ
+    :param not_path: not dataの出力先path
     :param layer: スキャン時のlayer数
     :param mode: 0:フルセンサー, 1:1/3モード
     :return: 1:センサーごとのdict['index'][layer][imager id][data*view数], 2:センサーに依存しないdict['index'][layer][view数], 3:センサーにもlayerにも依存しないdict['index'][view数]
@@ -166,7 +165,7 @@ def initial(vvh_json: dict, basepath: str, layer: int = 2, mode: int = 0):
         print('未対応modeです')
         sys.exit()
     imager_num = module * sensor
-    not_txtdata = read_not(basepath, module=module, sensor=sensor)
+    not_txtdata = read_not(not_path, module=module, sensor=sensor)
 
     tmp_list1 = []
     tmp_list2 = []

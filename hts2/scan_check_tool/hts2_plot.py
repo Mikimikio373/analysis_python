@@ -1,6 +1,7 @@
 import os
 import sys
 import json
+import shutil
 
 import yaml
 import math
@@ -22,6 +23,7 @@ flags = mylib.check_flag(args.only_plot, args.off_plot)
 # sensor_exposureをたたいているコマンドから、scan_chech_toolの場所を特定
 pythonpath = os.path.split(sys.argv[0])[0]
 
+print('reading json files')
 # sensorの配置情報が書いてあるymlファイルの読み込み
 with open(os.path.join(pythonpath, 'sensor_pos.yml'), 'rb') as f:
     y_load = yaml.safe_load(f)
@@ -83,12 +85,35 @@ else:
 with open(os.path.join(basepath, 'ValidViewHistory.json'), 'rb') as f:
     vvh_json = json.load(f)
 
+# GRAPHファイルの作成
 out_path = os.path.join(basepath, 'GRAPH')
-if not os.path.exists(out_path):
-    os.makedirs(out_path)
+not_path = os.path.join(out_path, 'NOT')
+os.makedirs(not_path, exist_ok=True)
+if mode == 0:
+    module = 6
+    sensor = 12
+elif mode == 1:
+    module = 2
+    sensor = 12
+else:
+    module = None
+    sensor = None
+for m in range(module):
+    for s in range(sensor):
+        target_txt = os.path.join(basepath, 'DATA', '{:02}_{:02}'.format(m, s), 'TrackHit2_0_99999999_0_000.txt')
+        target_json = os.path.join(basepath, 'DATA', '{:02}_{:02}'.format(m, s), 'TrackHit2_0_99999999_0_000.json')
+        if not os.path.exists(target_txt):
+            print('There is no file: {}'.format(target_txt))
+            continue
+        if not os.path.exists(target_json):
+            print('There is no file: {}'.format(target_json))
+            continue
+
+        shutil.copy2(target_txt, os.path.join(not_path, '{:02}_{:02}_TrackHit2_0_99999999_0_000.txt'.format(m, s)))
+        shutil.copy2(target_json, os.path.join(not_path, '{:02}_{:02}_TrackHit2_0_99999999_0_000.json'.format(m, s)))
 
 # initialプロットするためのデータ取得
-scan_data1, scan_data2, scan_data3 = mylib.initial(vvh_json, basepath, layer, mode)
+scan_data1, scan_data2, scan_data3 = mylib.initial(vvh_json, not_path, layer, mode)
 
 # 実データから実際のy_step数を計算(Xは端から端までプロット)
 if mode == 0:
