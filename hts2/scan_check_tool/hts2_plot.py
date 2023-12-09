@@ -101,8 +101,10 @@ elif mode == 1:
     step_y_num = math.floor(math.floor(len(scan_data1['excount'][1][0]) / step_x_num) / 3)
 else:
     step_y_num = None
-
-print('plot view num: {}'.format(int(step_x_num * step_y * 2)))
+if mode == 0:
+    print('plot view num: {}'.format(int(step_x_num * step_y_num * 2)))
+if mode == 1:
+    print('plot view num: {}'.format(int(step_x_num * step_y_num * 6)))
 
 # plot開始
 if flags['ex']:
