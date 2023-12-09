@@ -670,7 +670,7 @@ def plot_TargetBright(evmg_json: dict, sensor_pos_sorted: dict or list, out_path
     print('{} written'.format(outfile))
 
 
-def text_dump(data1: dict, data2: dict, out_path: str):
+def text_dump(data1: dict, data2: dict, out_path: str, view_num_plot: int):
     outfile = os.path.join(out_path, 'summary.txt')
     with open(outfile, 'w') as f:
         for i in range(2):
@@ -688,5 +688,5 @@ def text_dump(data1: dict, data2: dict, out_path: str):
                                                                        len(data1['top2bottom'][i][0])), file=f)
             print('', file=f)
 
-        base_thickness = np.asarray(data1['fine_z'][1]) - np.asarray(data1['fine_z'][0])
+        base_thickness = np.asarray(data1['fine_z'][1])[:, :view_num_plot] - np.asarray(data1['fine_z'][0])[:, :view_num_plot]
         print('{:33}:  {:g}'.format('Ave. Thickness of base', np.mean(base_thickness)), file=f)

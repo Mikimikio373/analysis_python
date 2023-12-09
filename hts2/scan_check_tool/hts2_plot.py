@@ -4,7 +4,7 @@ import json
 import math
 
 import yaml
-
+import numpy as np
 
 import hts2_plot_module as mylib
 
@@ -102,6 +102,7 @@ elif mode == 1:
 else:
     step_y_num = None
 
+print('plot view num: {}'.format(int(step_x_num * step_y * 2)))
 
 # plot開始
 if flags['ex']:
@@ -191,7 +192,7 @@ if flags['nog_all']:
     mylib.plot_nogall(scan_data1['nog_all'], args.imager_id, args.nog_all_max, nog_thr_list, out_path, alpha=0.15)
 
 if flags['text']:
-    mylib.text_dump(scan_data1, scan_data2, out_path)
+    mylib.text_dump(scan_data1, scan_data2, out_path, step_x_num * step_y_num)
 
 # GRAPHフォルダを開く
 os.startfile(out_path)
