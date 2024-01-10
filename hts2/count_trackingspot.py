@@ -27,3 +27,29 @@ print(all, sum)
 print(sum/all)
 print(all - sum)
 
+all = 2896*1538*121*121
+
+sum = 0
+# 四隅
+for x in range(180):
+    for y in range(180):
+        a = (60 - math.floor(x/3))*61
+        b = (60 - math.floor(y/3))*61
+        c = (60 - math.floor(x/3))*(60 - math.floor(y/3))
+        sum += a + b + c
+sum *= 4
+
+# 短辺端
+for x in range(180):
+    a = (60 - math.floor(x/3)) * 121 * (1538 - 180*2)
+    sum += a * 2
+
+# 長辺端
+for y in range(180):
+    b = (60 - math.floor(y/3)) * 121 * (2896 - 180*2)
+    sum += b * 2
+
+print(all, sum)
+print(sum/all)
+print(all - sum)
+
