@@ -56,6 +56,12 @@ def plot_stage_shift_scatter(fig, pdf, X: list, Y: list, U: list, V: list, title
 
 
 def read_ali_stage(path):
+    """
+    shiftdata[layer]
+    flag: 1,X overlap, 2, Y overlap
+    :param path:
+    :return:
+    """
     with open(path, 'rb') as f:
         obj = json.load(f)
 
@@ -103,7 +109,7 @@ def read_ali_stage(path):
         shift_data[i]["hit_num"] = hit_num_tmp[i]
 
     for i in range(2):
-        drop_index = shift_data[i].index[(shift_data[i]['hit_num'] < 50)]
+        drop_index = shift_data[i].index[(shift_data[i]['hit_num'] < 100)]
         shift_data[i] = shift_data[i].drop(drop_index)
         shift_data[i] = shift_data[i].reset_index(drop=True)
         shift_data[i] = shift_data[i].sort_values(["X", "Y"])
@@ -114,7 +120,7 @@ def read_ali_stage(path):
     return shift_data, int_df, stage
 
 def plot_xydivide(json_path: str, out_pdf_path: str):
-    shift_data, int_data, stage = read_ali_stage(json_path)
+    shift_data, int_data, stage = read_ali_stage(json_path)  # データの読み取り
     pdf = PdfPages(out_pdf_path)
 
     for layer in range(2):
@@ -135,3 +141,18 @@ def plot_xydivide(json_path: str, out_pdf_path: str):
             plt.clf()
 
     pdf.close()
+
+
+def plot_2dif(x: list, dx1: list, dx1_err: list, dx2: list, xlabel: str, ylabel: str, fname: str):
+    plt.errorbar(x, dx1, yerr=dx1_err, fmt='x', label='overlap difference')
+    plt.plot(x, dx2, 'x', label='total difference')
+    plt.xticks(range(0, 251, 25))
+    plt.ylim(-12.5, 12.5)
+    plt.yticks(range(-12, 13, 2))
+    plt.xlabel(xlabel)
+    plt.ylabel(ylabel)
+    plt.grid()
+    plt.legend()
+    plt.savefig(fname, dpi=300)
+    plt.clf()
+    plt.close()
