@@ -3,18 +3,15 @@ import sys
 
 import yaml
 import cv2
-import matplotlib.pyplot as plt
 import pandas as pd
 
-# basepath = 'Q:/minami/20220429_suganami/006/IMAGE00_AREA-1/png_thr_dilate/png_thr10_9'
 
-# yaml_path = 'Q:/minami/20220429_suganami/006/IMAGE00_AREA-1/AreaScan4Param.yml'
-
-if not len(sys.argv) == 3:
-    sys.exit('command line error. please input [basepath], [AreaScanParam_path]')
+if not len(sys.argv) == 4:
+    sys.exit('command line error. please input [basepath], [AreaScanParam_path], [picnum]')
 
 basepath = sys.argv[1]
 yaml_path = sys.argv[2]
+picnum = int(sys.argv[3])
 
 with open(yaml_path, 'rb') as f:
     param = yaml.safe_load(f)
@@ -29,7 +26,7 @@ for layer in range(l):
     for vy in range(ny):
         for vx in range(nx):
             fname = 'L{}_VX{:04}_VY{:04}'.format(layer, vx, vy)
-            png_path = os.path.join(basepath, fname, fname + '_11.png')
+            png_path = os.path.join(basepath, fname, fname + '_{}.png'.format(picnum))
 
             if not os.path.exists(png_path):
                 sys.exit('There is no file: {}'.format(png_path))
