@@ -46,11 +46,11 @@ for i in range(2, len(txt)):
     lateral2.append(float(line[2]))
 
 plt.figure(tight_layout=True)
-plt.plot(x2, radial1, marker='o', mfc='None', ms=8, label='HTS radial', linestyle="None")
-plt.plot(x2, lateral1, marker='s', mfc='None', ms=8, label='HTS lateral', linestyle="None")
+plt.plot(x2, radial1, marker='o', mfc='None', ms=8, label='GRAINE2018(HTS) radial', linestyle="None")
+plt.plot(x2, lateral1, marker='s', mfc='None', ms=8, label='GRAINE2018(HTS) lateral', linestyle="None")
 
-plt.plot(x2, radial2, marker='^', mfc='None', ms=8, label='HTS-2 radial', linestyle="None")
-plt.plot(x2, lateral2, marker='v', mfc='None', ms=8, label='HTS-2 lateral', linestyle="None")
+plt.plot(x2, radial2, marker='^', mfc='None', ms=8, label='GRAINE2023(HTS-2) radial', linestyle="None")
+plt.plot(x2, lateral2, marker='v', mfc='None', ms=8, label='GRAINE2023(HTS-2) lateral', linestyle="None")
 plt.title('Angler diffarence', fontsize=20)
 plt.legend()
 plt.grid()
