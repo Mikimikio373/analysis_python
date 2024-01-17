@@ -5,13 +5,18 @@ import numpy as np
 import cv2
 import yaml
 
-width = 2048
-height = 1088
+width = 2896
+height = 1538
+width_max = 3072
+height_max = 1632
+toptottom = int((height_max - height) / 2)
+lefttoright = int((width_max - width) / 2)
 dilate_mode = True
 # p = float(136541/(width * height))
-for p in [0.01]:
+cubic_root2_dilate = 146256 / (width * height)
+for p in [cubic_root2_dilate]:
     if dilate_mode:
-        basepath = 'Q:/minami/20231204_fakeimg/IMAGE00_AREA-1-{}_dilate'.format(p)
+        basepath = 'Q:/minami/20231204_fakeimg/IMAGE00_AREA-1-{}_dilate_1.4'.format(p)
     else:
         basepath = 'Q:/minami/20231204_fakeimg/IMAGE00_AREA-1-{}'.format(p)
     os.makedirs(basepath)
@@ -33,6 +38,7 @@ for p in [0.01]:
                     if dilate_mode:
                         thr_img = cv2.dilate(thr_img, np.ones((2, 2), np.uint8))
 
+                    thr_img = cv2.copyMakeBorder(thr_img, toptottom, toptottom, lefttoright, lefttoright, cv2.BORDER_CONSTANT, value=0)
                     out_name = os.path.join(out_dir, 'L{}_VX{:04}_VY{:04}_{}.png'.format(layer, vx, vy, i))
                     cv2.imwrite(out_name, thr_img)
 
