@@ -1,16 +1,29 @@
-import json
 import math
+import random
 
-ori_path = 'A:/Test/20231026_for_beta_ali/Beta_EachShotParam_org.json'
-path = 'A:/Test/20231026_for_beta_ali/Beta_EachShotParam.json'
+all = 2048*1088*121*121
 
-with open(path, 'rb') as f:
-    sjson = json.load(f)
-with open(ori_path, 'rb') as f:
-    sjson_ori = json.load(f)
+sum = 0
+# 四隅
+for x in range(180):
+    for y in range(180):
+        a = (60 - math.floor(x/3))*61
+        b = (60 - math.floor(y/3))*61
+        c = (60 - math.floor(x/3))*(60 - math.floor(y/3))
+        sum += a + b + c
+sum *= 4
 
-for i in range(0, len(sjson), 24):
-    print(sjson[i]['View'], sjson_ori[i]['View'])
+# 短辺端
+for x in range(180):
+    a = (60 - math.floor(x/3)) * 121 * (1088 - 180*2)
+    sum += a * 2
 
-# for i in range(1764):
-#     print(math.floor(i / 84) * 28 + (i % 28))
+# 長辺端
+for y in range(180):
+    b = (60 - math.floor(y/3)) * 121 * (2048 - 180*2)
+    sum += b * 2
+
+print(all, sum)
+print(sum/all)
+print(all - sum)
+
