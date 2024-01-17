@@ -41,11 +41,6 @@ def plot_stage_shift_scatter(fig, pdf, X: list, Y: list, U: list, V: list, title
             plt.clf()
             i += 1
 
-# if len(sys.argv) != 3:
-#     sys.exit('exception: usage .py [input path], [output path]')
-
-# basepath = sys.argv[1]
-# out_dir = sys.argv[2]
 
 basepath = os.getcwd()
 
@@ -58,8 +53,6 @@ print('open: {}'.format(path))
 with open(path, 'rb') as f:
     vvh = json.load(f)
 
-# if not os.path.exists(out_dir):
-#     sys.exit('there are no dir: {}'.format(out_dir))
 
 pdf_path = os.path.join(basepath, '{}_pos.pdf'.format(os.path.basename(basepath)))
 print('open to write: {}'.format(pdf_path))
@@ -90,9 +83,11 @@ width = 0.5
 
 fig = plt.figure()
 
+# エンコード値 - 指令値のプロット
+# Encode Value0がXY駆動直後、Encode Value1が表面認識待ち時間
 for i in range(2):
     for num, pos in enumerate([pos0, pos1]):
-        title = 'Command Value - Encod Value{} (Layer={})'.format(num, i)
+        title = 'Encode Value{} - Command Value (Layer={})'.format(num, i)
         X = command[i]['X']
         Y = command[i]['Y']
         U = [(x - y) * factor for (x, y) in zip(pos[i]['X'], command[i]['X'])]
@@ -102,5 +97,22 @@ for i in range(2):
         U = [(x - y) * 1000 for (x, y) in zip(pos[i]['X'], command[i]['X'])]
         V = [(x - y) * 1000 for (x, y) in zip(pos[i]['Y'], command[i]['Y'])]
         plot_stage_shift_scatter(fig, pdf, X, Y, U, V, title, ymin=-1.5, ymax=1.5)
+
+# 上で描画したベクトル量の、L0 - L1の値
+for i, pos in enumerate([pos0, pos1]):
+    title = 'Layer0 - Layer1 (Encode Value{} - Command Value)'.format(i)
+    X = command[0]['X']
+    Y = command[0]['Y']
+    U = [((ex0 - cx0) - (ex1 - cx1)) * factor for (ex0, cx0, ex1, cx1) in
+         zip(pos[0]['X'], command[0]['X'], pos[1]['X'], command[1]['X'])]
+    V = [((ey0 - cy0) - (ey1 - cy1)) * factor for (ey0, cy0, ey1, cy1) in
+         zip(pos[0]['Y'], command[0]['Y'], pos[1]['Y'], command[1]['Y'])]
+    plot_vec(fig, pdf, X, Y, U, V, title, factor, width=width)
+
+    U = [((ex0 - cx0) - (ex1 - cx1)) * 1000 for (ex0, cx0, ex1, cx1) in
+         zip(pos[0]['X'], command[0]['X'], pos[1]['X'], command[1]['X'])]
+    V = [((ey0 - cy0) - (ey1 - cy1)) * 1000 for (ey0, cy0, ey1, cy1) in
+         zip(pos[0]['Y'], command[0]['Y'], pos[1]['Y'], command[1]['Y'])]
+    plot_stage_shift_scatter(fig, pdf, X, Y, U, V, title, ymin=-1.5, ymax=1.5)
 
 pdf.close()
