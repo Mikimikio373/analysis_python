@@ -6,7 +6,9 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
-basepath = 'R:/usuda/GRAINE2023_u4/PL088_0906gap4.8um/IMAGE00_AREA-1/png_thr_noncubic_freq0.08_z0.3/png_thr14_13'
+# basepath = 'R:/usuda/GRAINE2023_u4/PL088_0906gap4.8um/IMAGE00_AREA-1/png_thr_noncubic_freq0.08_z0.3/png_thr14_13'
+# basepath = 'R:/usuda/GRAINE2023_u4/PL088_0906gap4.8um/IMAGE00_AREA-1/png_thr_cubic11_10_zfilt-0.00'
+basepath = 'Q:/minami/20231204_fakeimg/p-0.0321-z0.325_cubic_dilate/IMAGE00_AREA-1/png'
 
 json_base = 'R:/usuda/GRAINE2023_u4/PL088_0906gap4.8um/IMAGE00_AREA-1'
 
@@ -14,7 +16,8 @@ nx = 27
 ny = 55
 npicture = 27
 z_relation = []
-
+json_mode = False
+erode_mode = True
 l = 0
 
 for vy in range(ny):
@@ -25,12 +28,15 @@ for vy in range(ny):
         with open(json_file, 'rb') as f:
             j = json.load(f)
 
-        if l == 0:
-            last = j['Last'] - 1
-            first = last - 15
-        else:
-            first = j['First']
-            last = first + 15
+        first = 0
+        last = 15
+        if json_mode:
+            if l == 0:
+                last = j['Last'] - 1
+                first = last - 15
+            else:
+                first = j['First']
+                last = first + 15
 
         for i in range(first, last):
             png0 = os.path.join(basepath, 'L{}_VX{:04}_VY{:04}'.format(l, vx, vy), 'L{}_VX{:04}_VY{:04}_{}.png'.format(l ,vx, vy, i))
@@ -42,7 +48,11 @@ for vy in range(ny):
                 print('there is no file: {}'.format(png1))
                 continue
             img0 = cv2.imread(png0, 0)
+            if erode_mode:
+                img0 = cv2.erode(img0, np.ones((2, 2), np.uint8))
             img1 = cv2.imread(png1, 0)
+            if erode_mode:
+                img1 = cv2.erode(img1, np.ones((2, 2), np.uint8))
             img_and = cv2.bitwise_and(img0, img1)
             z_relation.append(float(cv2.countNonZero(img_and) / cv2.countNonZero(img0)))
 
@@ -64,5 +74,15 @@ factor = 0.9
 text = 'Entries: {:d}\nMean: {:.4f}\nStd_dev: {:.4f}'.format(entries, ave, std_dev)
 plt.text(max(histreturn[1]) * factor, max(histreturn[0]) * factor, text, bbox=(dict(boxstyle='square', fc='w')))
 # plt.show()
-out_png = os.path.join(basepath, 'z-relation.png')
+if erode_mode:
+    out_png = os.path.join(basepath, 'z-relation_L{}_erode.png'.format(l))
+else:
+    out_png = os.path.join(basepath, 'z-relation_L{}.png'.format(l))
 plt.savefig(out_png, dpi=300)
+if erode_mode:
+    out_txt = os.path.join(basepath, 'z-relation_L{}_erode.txt'.format(l))
+else:
+    out_txt = os.path.join(basepath, 'z-relation_L{}.txt'.format(l))
+with open(out_txt, 'w') as f:
+    f.write('entries,average,std\n{},{},{}'.format(entries, ave, std_dev))
+
