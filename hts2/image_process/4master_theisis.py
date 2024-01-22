@@ -15,6 +15,12 @@ imgdown = cv2.imread(png_pathdown, 0)
 
 roi = img[350:510, 420:580]
 roi_path = os.path.join(outpath, 'roi.png')
+nearest15 = cv2.resize(roi, None, fx=1.5, fy=1.5, interpolation=cv2.INTER_NEAREST)
+cv2.imwrite(os.path.join(outpath, 'nearest.png'), nearest15)
+linear15 = cv2.resize(roi, None, fx=1.5, fy=1.5, interpolation=cv2.INTER_LINEAR)
+cv2.imwrite(os.path.join(outpath, 'linear.png'), linear15)
+bicubic15 = cv2.resize(roi, None, fx=1.5, fy=1.5, interpolation=cv2.INTER_CUBIC)
+cv2.imwrite(os.path.join(outpath, 'bicubic.png'), bicubic15)
 cv2.imwrite(roi_path, roi)
 roiup = imgup[350:510, 420:580]
 roidown = imgdown[350:510, 420:580]
