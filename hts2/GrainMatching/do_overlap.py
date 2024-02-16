@@ -62,7 +62,7 @@ for i in range(12):
     df = pd.read_csv(overlap_csv)
     # print(df['x_max'][0] - df['x_min'][0])
     # x_list.append((df['x_max'][0] - df['x_min'][0])*1000)
-    x_list.append(df['x_mean'][0]*1000)
+    x_list.append(df['y_mean'][0]*1000)
 
 print(len(x_list))
 plt.hist(x_list, bins=50, range=(-0.3, 0.3))
