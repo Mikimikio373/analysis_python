@@ -53,7 +53,7 @@ for i in range(3):
     plt.xticks(x)
 plt.legend()
 plt.grid()
-plt.savefig(os.path.join(basepath, 'shrink_x.png'), dpi=300)
+# plt.savefig(os.path.join(basepath, 'shrink_x.png'), dpi=300)
 plt.clf()
 
 for i in range(8):
@@ -65,7 +65,7 @@ for i in range(8):
     plt.xticks(y)
 plt.legend()
 plt.grid()
-plt.savefig(os.path.join(basepath, 'shrink_y.png'), dpi=300)
+# plt.savefig(os.path.join(basepath, 'shrink_y.png'), dpi=300)
 
 plt.errorbar(id, rotation, yerr=rotation_err, marker='x', linestyle='None')
 plt.xticks(np.arange(1, 25))
@@ -73,7 +73,7 @@ plt.yticks(np.arange(-6, 7))
 plt.xlabel('sensor ID')
 plt.ylabel('回転量 [mrad]', fontname='MS Gothic')
 plt.grid()
-plt.savefig(os.path.join(basepath, 'rotation_all.png'), dpi=300)
+# plt.savefig(os.path.join(basepath, 'rotation_all.png'), dpi=300)
 plt.clf()
 
 #要汎用化
@@ -81,7 +81,7 @@ x = np.arange(1, 9)
 y = np.arange(1, 10)
 x, y = np.meshgrid(x, y)
 z = np.zeros((9, 8))
-cmap = copy.copy(plt.get_cmap("jet"))
+cmap = copy.copy(plt.get_cmap("rainbow"))
 cmap.set_under('w', 1) # 下限以下の色を設定
 base_shrink_x = shrink_x[3+8*1]
 base_shrink_y = shrink_y[3+8*1]
@@ -92,7 +92,7 @@ for i in range(8):
             z[j][i] = math.sqrt(shrink_x[i+8*math.floor(j/3)]**2 + shrink_y[i+8*math.floor(j/3)]**2) / base_shrink
             # z[j][i] = shrink_y[i + 8 * math.floor(j / 3)] / base_shrink_y
             # print(shrink_x[i + 8 * math.floor(j / 3)] / base_shrink_x)
-z_ber = plt.pcolormesh(x, y, z, cmap=cmap, vmin=0.998, vmax=1.0003, edgecolors="black")
+z_ber = plt.pcolormesh(x, y, z, cmap=cmap, vmin=0.998, vmax=1.0, edgecolors="black")
 # z_ber = plt.pcolormesh(x, y, z, cmap=cmap, vmin=0.6306, vmax=0.6324, edgecolors="black")
 pp = plt.colorbar(z_ber, orientation="vertical")
 # plt.axis([0, 8, 0, 9])
@@ -109,7 +109,7 @@ for i in range(3):
     # plt.xlabel('sensor ID')
     # plt.ylabel('回転量 [mrad]', fontname='MS Gothic')
 plt.grid()
-plt.savefig(os.path.join(basepath, 'rotation_line.png'), dpi=300)
+# plt.savefig(os.path.join(basepath, 'rotation_line.png'), dpi=300)
 plt.clf()
 
 rotation_module = []
