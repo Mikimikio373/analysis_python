@@ -4,31 +4,22 @@ import cv2
 import numpy as np
 import json
 
-basepath = 'A:/Test/0035'
-imager_id = 0
-deadpixel_json_path = 'X:/Project_v3/AdminParam/HTS2/DeadPixel.json'
-with open(deadpixel_json_path, 'rb') as f:
-    deadpixel_json = json.load(f)
+i = 0
+img_list = []
+nog = []
+z_relate = []
+for i in range(16):
+    path = 'Q:/minami/20231204_fakeimg/noncubic1615/IMAGE00_AREA-1/png/L0_VX0000_VY0000/L0_VX0000_VY0000_{}.png'.format(i)
 
-with open(os.path.join(basepath, 'CameraParamList.json'), 'rb') as f:
-    camera_param = json.load(f)
+    img = cv2.imread(path, 0)
+    img_list.append(img)
+    print(cv2.countNonZero(img))
+    nog.append(cv2.countNonZero(img))
 
-print(camera_param[imager_id])
-print(deadpixel_json[imager_id])
+for i in range(15):
+    img_and = cv2.bitwise_and(img_list[i], img_list[i+1])
+    relate = cv2.countNonZero(img_and) / nog[i]
+    z_relate.append(relate)
 
-# for pic in range(24):
-#     img_path = os.path.join(basepath, 'IMAGE', '00_{:02}'.format(imager_id), 'ImageFilterWithInterpolation_GPU_0_00000000_0_{:03}.bmp'.format(pic))
-#     img = cv2.imread(img_path, 0)
-#
-#     for i in range(len(deadpixel_json[imager_id]['DeadPixel'])):
-#         x = int(deadpixel_json[imager_id]['DeadPixel'][i][0])
-#         y = int(deadpixel_json[imager_id]['DeadPixel'][i][1])
-#         print(img[y, x], x, y)
-
-img_path = os.path.join(basepath, 'IMAGE', '00_{:02}'.format(imager_id), 'ImageFilterWithInterpolation_GPU_0_00000000_0_{:03}.bmp'.format(0))
-img = cv2.imread(img_path, 0)
-
-for i in range(len(deadpixel_json[imager_id]['DeadPixel'])):
-    x = int(deadpixel_json[imager_id]['DeadPixel'][i][0])
-    y = int(deadpixel_json[imager_id]['DeadPixel'][i][1])
-    print(img[y, x], x, y)
+print(np.average(nog), np.std(nog))
+print(np.average(z_relate), np.std(z_relate))
