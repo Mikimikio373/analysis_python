@@ -30,8 +30,14 @@ def cubic_2var(x, y, coef):
     return z
 
 
+def quad(x, y, coef):
+    a, b, c, d, e, f, g, h, i, j, k, l ,m , n, o = coef
+    z = a*x*x*x*x + b*y*y*y*y + c*x*x*x*y + d*x*x*y*y + e*x*y*y*y + f*x*x*x + g*y*y*y + h*x*x*y + i*x*y*y + j*x*x + k*y*y + l*x*y + m*x + n*y + o
+    return z
+
+
 tar_dir = 'A:/Test/check_FASER/m222-pl002_30cm-1'
-fit_param_path = 'A:/Test/check_FASER/m222-pl002_30cm-1/fit_stage_ycut_cubic/ali_stage_fittig-data.csv'
+fit_param_path = 'A:/Test/check_FASER/m222-pl002_30cm-1/fit_stage_quad/ali_stage_fittig-data.csv'
 
 coef_dx, coef_dy = read_fitparam(fit_param_path)
 print(coef_dx)
@@ -43,8 +49,10 @@ y = np.arange(0, 251, 5)
 x, y = np.meshgrid(x, y)
 x = x.ravel()
 y = y.ravel()
-u = cubic_2var(x, y, coef_dx)
-v = cubic_2var(x, y, coef_dy)
+# u = cubic_2var(x, y, coef_dx)
+# v = cubic_2var(x, y, coef_dy)
+u = quad(x, y, coef_dx)
+v = quad(x, y, coef_dx)
 
 factor = 2000.0
 guide = 0.005
