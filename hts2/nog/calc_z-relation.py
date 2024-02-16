@@ -7,8 +7,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # basepath = 'R:/usuda/GRAINE2023_u4/PL088_0906gap4.8um/IMAGE00_AREA-1/png_thr_noncubic_freq0.08_z0.3/png_thr14_13'
-# basepath = 'R:/usuda/GRAINE2023_u4/PL088_0906gap4.8um/IMAGE00_AREA-1/png_thr_cubic11_10_zfilt-0.00'
-basepath = 'Q:/minami/20231204_fakeimg/p-0.0321-z0.325_cubic_dilate/IMAGE00_AREA-1/png'
+# basepath = 'R:/usuda/GRAINE2023_u4/PL088_0906gap4.8um/IMAGE00_AREA-1/png_thr_cubic9_8_zfilt-0.40'
+# basepath = 'R:/usuda/GRAINE2023_u4/PL088_0906gap4.8um/IMAGE00_AREA-1/png_thr_noncubic_freq0.08_z0.3/png_thr16_15'
+# basepath = 'Q:/minami/20231204_fakeimg/noncubic1514/IMAGE00_AREA-1/png'
+
+if len(sys.argv) != 2:
+    sys.exit('error. [basepath]')
+basepath = sys.argv[1]
 
 json_base = 'R:/usuda/GRAINE2023_u4/PL088_0906gap4.8um/IMAGE00_AREA-1'
 
@@ -16,8 +21,8 @@ nx = 27
 ny = 55
 npicture = 27
 z_relation = []
-json_mode = False
-erode_mode = True
+json_mode = True
+erode_mode = False
 l = 0
 
 for vy in range(ny):
@@ -72,7 +77,7 @@ histreturn = plt.hist(z_relation, bins=100, histtype='stepfilled',
 factor = 0.9
 
 text = 'Entries: {:d}\nMean: {:.4f}\nStd_dev: {:.4f}'.format(entries, ave, std_dev)
-plt.text(max(histreturn[1]) * factor, max(histreturn[0]) * factor, text, bbox=(dict(boxstyle='square', fc='w')))
+plt.text(histreturn[1][-10], max(histreturn[0]) * factor, text, bbox=(dict(boxstyle='square', fc='w')))
 # plt.show()
 if erode_mode:
     out_png = os.path.join(basepath, 'z-relation_L{}_erode.png'.format(l))
