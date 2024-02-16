@@ -8,7 +8,8 @@ import matplotlib.pyplot as plt
 # path = 'Q:/minami/20231204_fakeimg/IMAGE00_AREA-1-0.015_dilate/tracking_ph7/entries.csv'
 # path = 'Q:/minami/20231204_fakeimg/IMAGE00_AREA-1-0.0075_dilate_1.4/tracking_ph7/entries.csv'
 # path = 'Q:/minami/20231205_rand_grain2023/graine2023_thr11-10_cubic/tracking_ph7/entries.csv'
-path = 'Q:/minami/20231205_rand_grain2023/graine2023_noncubic_freq0.1_z0.3-thr14_13/tracking_ph7/entries.csv'
+# path = 'Q:/minami/20231205_rand_grain2023/graine2023_noncubic_freq0.1_z0.3-thr14_13/tracking_ph7/entries.csv'
+path = 'Q:/minami/20231204_fakeimg/p-0.0482-z0.404_dilate/IMAGE00_AREA-1/tracking_ph7/entries.csv'
 basepath, filename = os.path.split(path)
 filename = filename.split('.')[0]
 # index = 'Entries'
