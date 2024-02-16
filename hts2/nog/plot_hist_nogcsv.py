@@ -29,11 +29,11 @@ df = pd.read_csv(pd_path)
 for header in ['L0', 'L1', 'obj_L0', 'obj_L1']:
     mean = np.mean(df[header])
     dev = np.std(df[header])
-    x_max = mean + 20000
-    x_min = mean - 20000
+    # x_max = mean + 20000
+    # x_min = mean - 20000
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    histreturn = ax.hist(df[header], bins=100, histtype='stepfilled', facecolor='yellow', linewidth=1, edgecolor='black', range=(x_min, x_max))
-    textbox(ax, df[header], x_max, max(histreturn[0]), factor=0.95)
+    histreturn = ax.hist(df[header], bins=100, histtype='stepfilled', facecolor='yellow', linewidth=1, edgecolor='black')
+    textbox(ax, df[header], histreturn[1][-10], max(histreturn[0]), factor=0.95)
     plt.savefig(os.path.join(basepath, 'nog_list_{}.png'.format(header)), dpi=300)
     plt.clf()
