@@ -60,7 +60,7 @@ plt.clf()
 # plt.show()
 
 # 実績と予定
-df = pd.read_csv('B:/data/powerpoint/HTS2_data/4master_theisis/scan_schedule/scan_prog_20240210.csv', header=None)
+df = pd.read_csv('B:/data/powerpoint/HTS2_data/4master_theisis/scan_schedule/scan_prog_20240212.csv', header=None)
 date_list_result = pd.to_datetime(df[0].values)
 scan_num_list_result = df[1].values
 # 実績の日付が開いているところを補正一日ごとになるように
