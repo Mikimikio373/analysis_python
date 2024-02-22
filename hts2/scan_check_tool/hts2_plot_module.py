@@ -62,9 +62,9 @@ def get_option() -> ArgumentParser.parse_args:
                            help='Minimum of not (relative). default=0.7')
     argparser.add_argument('-bs', '--base_surface_range', nargs=4,
                            type=float,
-                           default=[11100, 11700, 11300, 11900],
+                           default=[10900, 11800, 11100, 12000],
                            metavar=('L0 min', 'L0 max', 'L1 min', 'L1 max'),
-                           help='Range of base surface. default=[11100, 11700, 11300, 11900]')
+                           help='Range of base surface. default=[10900, 11800, 11100, 12000]')
     argparser.add_argument('-bt', '--base_thickness_range', nargs=2,
                            type=float,
                            default=[180, 240],
@@ -437,11 +437,11 @@ def plot_base(input_data: list, zmin0: float, zmax0: float, zmin1: float, zmax1:
     ax3 = hist(fig, flat_data_l1, 324, bins, zmin1, zmax1, 'Z of base surface Layer1', color='b', xlabel='Z1 [um]',
                factor=0.99)
 
-    ax5 = meshplot_area(fig, 325, x, y, plot_array[1] - plot_array[0], basemin, basemax, cmap, 
+    ax5 = meshplot_area(fig, 325, x, y, plot_array[1] - plot_array[0], basemin, basemax, cmap,
                             'Thickness of Base (2D)', 'X [mm]', 'Y [mm]', aspect_mode=True)
 
     flat_data_base = list(itertools.chain.from_iterable(plot_array[1] - plot_array[0]))
-    ax6 = hist(fig, flat_data_base, 326, basebins, basemin, basemax, 'Thickness of Base', 'r', xlabel='base [um]', 
+    ax6 = hist(fig, flat_data_base, 326, basebins, basemin, basemax, 'Thickness of Base', 'r', xlabel='Thick of Base [um]',
                factor=0.95)
 
     plt.savefig(out_file, dpi=300)
@@ -615,9 +615,9 @@ def calc_df(input_df: dict):
     return out
 
 
-def plot_frequency(input_df: pd.DataFrame, out_path: str, *, plotmin: float = 0, plotmax: float = 6):
+def plot_frequency(input_df: pd.DataFrame, out_path: str, time_list: list, *, plotmin: float = 0, plotmax: float = 6):
     fig = plt.figure(figsize=(8.27, 11.69), tight_layout=True)
-    fig.suptitle('Frequency (RepeatTime = 0)')
+    fig.suptitle(str(time_list[0])+' -> '+str(time_list[1])+' total : '+str(time_list[2])+'[sec]\nFrequency (RepeatTime = 0)')
     ax1 = fig.add_subplot(211)
     ax1.plot(input_df.query('repeatTime == 0')['Hz'], 'x', ms=0.7)
     ax1.set_xlabel('Number of view')
@@ -670,7 +670,7 @@ def plot_TargetBright(evmg_json: dict, sensor_pos_sorted: dict or list, out_path
     print('{} written'.format(outfile))
 
 
-def text_dump(data1: dict, data2: dict, out_path: str, view_num_plot: int):
+def text_dump(data1: dict, data2: dict, time: str, out_path: str):
     outfile = os.path.join(out_path, 'summary.txt')
     with open(outfile, 'w') as f:
         for i in range(2):
@@ -681,12 +681,13 @@ def text_dump(data1: dict, data2: dict, out_path: str, view_num_plot: int):
             print('{:33}:  {:g}'.format('Ave. Thick Of Layer', np.mean(data2['ThickOfLayer'][i])), file=f)
             print('{:33}:  {:d} / {:d}'
                   .format('Number of false of surface judge',
-                          np.count_nonzero(data2['surf_judge'][i] == False), len(data2['surf_judge'][i])), file=f)
+                          np.count_nonzero(np.asarray(data2['surf_judge'][i]) == 0), len(data2['surf_judge'][i])), file=f)
             flat_top2bottom = np.asarray(list(itertools.chain.from_iterable(data1['top2bottom'][i])))
             print('{:33}:  {:d} / {:d}'.format('Number of thin (bottom-top<16)', np.count_nonzero(flat_top2bottom < 16),
                                                                        len(data1['top2bottom'][i]) *
                                                                        len(data1['top2bottom'][i][0])), file=f)
             print('', file=f)
 
-        base_thickness = np.asarray(data1['fine_z'][1])[:, :view_num_plot] - np.asarray(data1['fine_z'][0])[:, :view_num_plot]
-        print('{:33}:  {:g}'.format('Ave. Thickness of base', np.mean(base_thickness)), file=f)
+        base_thickness = np.asarray(data1['fine_z'][1]) - np.asarray(data1['fine_z'][0])
+        print('{:33}:  {:g}'.format('Ave. Thickness of base[um]', np.mean(base_thickness)), file=f)
+        print('{:33}:  {}'.format('Total Scanning Time[sec]', time), file=f)

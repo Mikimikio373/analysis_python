@@ -2,9 +2,10 @@ import os
 import sys
 import json
 import math
+import datetime
 
 import yaml
-import numpy as np
+
 
 import hts2_plot_module as mylib
 
@@ -81,6 +82,15 @@ else:
     evwg_json = None
     flags['bright'] = False
 
+#scan時間取得
+with open(os.path.join(basepath, 'EachScanParam.json'), 'rb') as f:
+    esp_json = json.load(f)
+    time_first = esp_json['TimeFirst']
+    time_last = esp_json['TimeLast']
+    time_total_dt = datetime.datetime.strptime(time_last, '%Y/%m/%d %H:%M:%S') - datetime.datetime.strptime(time_first, '%Y/%m/%d %H:%M:%S')
+    time_total = time_total_dt.seconds
+    time_list = [time_first, time_last, time_total]
+
 # VaridViewHistryの取得(プロットデータはほぼすべてここから取得している)
 with open(os.path.join(basepath, 'ValidViewHistory.json'), 'rb') as f:
     vvh_json = json.load(f)
@@ -101,10 +111,7 @@ elif mode == 1:
     step_y_num = math.floor(math.floor(len(scan_data1['excount'][1][0]) / step_x_num) / 3)
 else:
     step_y_num = None
-if mode == 0:
-    print('plot view num: {}'.format(int(step_x_num * step_y_num * 2)))
-if mode == 1:
-    print('plot view num: {}'.format(int(step_x_num * step_y_num * 6)))
+
 
 # plot開始
 if flags['ex']:
@@ -118,11 +125,11 @@ if flags['ex']:
 
 if flags['nog']:
     outfile = os.path.join(out_path, 'scan_area_nog.png')
-    mylib.plot_area(scan_data1['nog_over_thr'], args.nog_range[0], args.nog_range[1], step_x_num, step_y_num, 'nog',
+    mylib.plot_area(scan_data1['nog_over_thr'], args.nog_range[0], args.nog_range[1], step_x_num, step_y_num, 'Number of Grains (nog)',
                     y_sorted, outfile, startX, startY, 0)
 
     outfile = os.path.join(out_path, 'sensor_nog.png')
-    mylib.plot_sensor(scan_data1['nog_over_thr'], args.nog_range[0], args.nog_range[1], 'nog', y_sorted, outfile)
+    mylib.plot_sensor(scan_data1['nog_over_thr'], args.nog_range[0], args.nog_range[1], 'Number of Grains (nog)', y_sorted, outfile)
 
 if flags['nog0']:
     outfile = os.path.join(out_path, 'scan_area_nog0.png')
@@ -136,20 +143,20 @@ if flags['nog15']:
 
 if flags['toptobottom']:
     outfile = os.path.join(out_path, 'scan_area_topbottom.png')
-    mylib.plot_area(scan_data1['top2bottom'], -0.5, npic + 0.5, step_x_num, step_y_num, 'bottom - top', y_sorted,
+    mylib.plot_area(scan_data1['top2bottom'], -0.5, npic + 0.5, step_x_num, step_y_num, 'Number of Layer in Emulsion', y_sorted,
                     outfile, startX, startY, 0)
 
     outfile = os.path.join(out_path, 'sensor_topbottom.png')
-    mylib.plot_sensor(scan_data1['top2bottom'], 0.1, npic, 'bottom - top', y_sorted, outfile)
+    mylib.plot_sensor(scan_data1['top2bottom'], 0.1, npic, 'Number of Layer in Emulsion', y_sorted, outfile)
 
 
 if flags['not']:
     outfile = os.path.join(out_path, 'scan_area_not.png')
-    mylib.plot_area(scan_data1['not'], 0.1, args.not_absolute_max, step_x_num, step_y_num, 'Number Of Tracks',
+    mylib.plot_area(scan_data1['not'], 0.1, args.not_absolute_max, step_x_num, step_y_num, 'Number of Tracks (not)',
                     y_sorted, outfile, startX, startY, 0)
 
     outfile = os.path.join(out_path, 'sensor_not.png')
-    mylib.plot_sensor_not(scan_data1['not'], 'Number Of Tracks', y_sorted, outfile,
+    mylib.plot_sensor_not(scan_data1['not'], 'Number Of Tracks (not)', y_sorted, outfile,
                           relative_min=args.not_relative_min, absolute_max=args.not_absolute_max)
 
 if flags['not_un']:
@@ -188,13 +195,13 @@ if flags['bright']:
 
 if flags['freq']:
     df3 = mylib.calc_df(scan_data3)
-    mylib.plot_frequency(df3, out_path)
+    mylib.plot_frequency(df3, out_path, time_list)
 
 if flags['nog_all']:
     mylib.plot_nogall(scan_data1['nog_all'], args.imager_id, args.nog_all_max, nog_thr_list, out_path, alpha=0.15)
 
 if flags['text']:
-    mylib.text_dump(scan_data1, scan_data2, out_path, step_x_num * step_y_num)
+    mylib.text_dump(scan_data1, scan_data2, time_total, out_path)
 
 # GRAPHフォルダを開く
 os.startfile(out_path)
