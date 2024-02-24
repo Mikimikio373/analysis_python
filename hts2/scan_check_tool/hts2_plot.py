@@ -26,9 +26,12 @@ pythonpath = os.path.split(sys.argv[0])[0]
 
 print('reading json files')
 # sensorの配置情報が書いてあるymlファイルの読み込み
-with open(os.path.join(pythonpath, 'sensor_pos.yml'), 'rb') as f:
-    y_load = yaml.safe_load(f)
-y_sorted = sorted(y_load, key=lambda x: x['pos'])
+if os.path.exists(os.path.join(pythonpath, 'sensor_pos.yml')):
+    with open(os.path.join(pythonpath, 'sensor_pos.yml'), 'rb') as f:
+        y_load = yaml.safe_load(f)
+    y_sorted = sorted(y_load, key=lambda x: x['pos'])
+else:
+    sys.exit('there is no file: {}'.format(os.path.join(pythonpath, 'sensor_pos.yml')))
 
 # スキャンパラメータの取得
 ScanControllParam = os.path.join(basepath, 'ScanControllParam.json')
@@ -82,14 +85,14 @@ else:
     evwg_json = None
     flags['bright'] = False
 
-#scan時間取得
+# scan時間取得
 with open(os.path.join(basepath, 'EachScanParam.json'), 'rb') as f:
     esp_json = json.load(f)
-    time_first = esp_json['TimeFirst']
-    time_last = esp_json['TimeLast']
-    time_total_dt = datetime.datetime.strptime(time_last, '%Y/%m/%d %H:%M:%S') - datetime.datetime.strptime(time_first, '%Y/%m/%d %H:%M:%S')
-    time_total = time_total_dt.seconds
-    time_list = [time_first, time_last, time_total]
+time_first = esp_json['TimeFirst']
+time_last = esp_json['TimeLast']
+time_total_dt = datetime.datetime.strptime(time_last, '%Y/%m/%d %H:%M:%S') - datetime.datetime.strptime(time_first, '%Y/%m/%d %H:%M:%S')
+time_total = time_total_dt.seconds
+time_list = [time_first, time_last, time_total]
 
 # VaridViewHistryの取得(プロットデータはほぼすべてここから取得している)
 with open(os.path.join(basepath, 'ValidViewHistory.json'), 'rb') as f:
@@ -99,10 +102,11 @@ with open(os.path.join(basepath, 'ValidViewHistory.json'), 'rb') as f:
 out_path = os.path.join(basepath, 'GRAPH')
 not_path = os.path.join(out_path, 'NOT')
 os.makedirs(not_path, exist_ok=True)
+# notdataのコピー
 mylib.copy_notdata(basepath, not_path, mode)
 
 # initialプロットするためのデータ取得
-scan_data1, scan_data2, scan_data3 = mylib.initial(vvh_json, not_path, layer, mode)
+scan_data1, scan_data2, scan_data3 = mylib.initial(vvh_json, not_path, flags, layer, mode)
 
 # 実データから実際のy_step数を計算(Xは端から端までプロット)
 if mode == 0:
@@ -168,6 +172,8 @@ if flags['not_un']:
     mylib.plot_sensor(scan_data1['not_uncrust'], 1, args.unclust_not_max, 'Unclusterd Number of Tracks', y_sorted, outfile)
 
 if flags['mainprocess']:
+    outfile = os.path.join(out_path, 'scan_area_process.png')
+    mylib.plot_area(scan_data1['main_process'], 1, args.main_process_max, step_x_num, step_y_num, 'time of Main Process [ms]', y_sorted, outfile, startX, startY, 0)
     outfile = os.path.join(out_path, 'sensor_process.png')
     mylib.plot_sensor(scan_data1['main_process'], 1, args.main_process_max, 'time of Main Process [ms]', y_sorted, outfile)
 

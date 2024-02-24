@@ -11,7 +11,6 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
-
 step_x = 9.0
 step_y = 5.0
 index_list1 = ['excount', 'nog_all', 'nog_over_thr', 'start_picnum', 'nog0', 'nog15', 'top2bottom',
@@ -53,9 +52,9 @@ def get_option() -> ArgumentParser.parse_args:
                            metavar='max',
                            help='Maximum of not unclusterd (absolute). default=1000000')
     argparser.add_argument('-process', '--main_process_max', type=float,
-                           default=400,
+                           default=500,
                            metavar='max',
-                           help='Maximum of main time prosess. default=400')
+                           help='Maximum of main time prosess. default=500')
     argparser.add_argument('-notrmin', '--not_relative_min', type=float,
                            default=0.7,
                            metavar='min',
@@ -80,7 +79,8 @@ def get_option() -> ArgumentParser.parse_args:
                            help='Maximum of nog all. default=80000')
     argparser.add_argument('-on', '--only_plot', nargs='+',
                            type=str,
-                           choices=['ex', 'nog', 'nog0', 'nog15', 'toptobottom', 'not', 'not_un', 'mainprocess', 'startpicnum', 'thickoflayer',
+                           choices=['ex', 'nog', 'nog0', 'nog15', 'toptobottom', 'not', 'not_un', 'mainprocess',
+                                    'startpicnum', 'thickoflayer',
                                     'base', 'freq', 'bright', 'nog_all', 'text'],
                            default=[],
                            metavar='Names',
@@ -88,7 +88,8 @@ def get_option() -> ArgumentParser.parse_args:
                                 ', thickoflayer, base, freq, bright, nog_all, text]')
     argparser.add_argument('-off', '--off_plot', nargs='+',
                            type=str,
-                           choices=['ex', 'nog', 'nog0', 'nog15', 'toptobottom', 'not', 'not_un', 'mainprocess', 'startpicnum', 'thickoflayer',
+                           choices=['ex', 'nog', 'nog0', 'nog15', 'toptobottom', 'not', 'not_un', 'mainprocess',
+                                    'startpicnum', 'thickoflayer',
                                     'base', 'freq', 'bright', 'nog_all', 'text'],
                            default=[],
                            metavar='Names',
@@ -123,7 +124,7 @@ def copy_notdata(basepath: str, not_path: str, mode):
                          os.path.join(not_path, '{:02}_{:02}_TrackHit2_0_99999999_0_000.json'.format(m, s)))
 
 
-def read_not(not_path: str, module: int = 6, sensor: int = 12):
+def read_not(not_path: str, flags: dict, module: int = 6, sensor: int = 12):
     """
 
     :param not_path: スキャンデータのbasepath
@@ -136,17 +137,20 @@ def read_not(not_path: str, module: int = 6, sensor: int = 12):
     for m in range(module):
         for s in range(sensor):
             nottxt_path = os.path.join(not_path, '{:02}_{:02}_TrackHit2_0_99999999_0_000.txt'.format(m, s))
-            if not os.path.exists(nottxt_path):
-                sys.exit('there is no file: {}'.format(nottxt_path))
-
-            f = open(nottxt_path, 'r')
-            data_line = f.readlines()
-            txt_data.append(data_line)
+            if os.path.exists(nottxt_path):
+                f = open(nottxt_path, 'r')
+                data_line = f.readlines()
+                txt_data.append(data_line)
+            else:
+                print('there is no \"NOT\" file. \"NOT\" plot false.')
+                flags['not'] = False
+                flags['not_un'] = False
+                return txt_data
 
     return txt_data
 
 
-def initial(vvh_json: dict, not_path: str, layer: int = 2, mode: int = 0):
+def initial(vvh_json: dict, not_path: str, flags: dict, layer: int = 2, mode: int = 0):
     """
 
     :param vvh_json: ValidViewHistryのjsonデータ
@@ -173,10 +177,11 @@ def initial(vvh_json: dict, not_path: str, layer: int = 2, mode: int = 0):
         module = 2
         sensor = 12
     else:
-        print('未対応modeです')
-        sys.exit()
+        sys.exit('未対応modeです')
     imager_num = module * sensor
-    not_txtdata = read_not(not_path, module=module, sensor=sensor)
+
+    # txtデータからnot情報の読み取り
+    not_txtdata = read_not(not_path, flags, module=module, sensor=sensor)
 
     tmp_list1 = []
     tmp_list2 = []
@@ -235,9 +240,14 @@ def initial(vvh_json: dict, not_path: str, layer: int = 2, mode: int = 0):
             else:
                 fine_z = vvh_json[view]['ScanLines']['Z'] * 1000 + (thickness / Npicthickness * StartPicNum)
             out1[index_list1[11]][L][id].append(fine_z)
-            out1[index_list1[12]][L][id].append(int(not_txtdata[id][view].split(' ')[1]))   # not
-            out1[index_list1[13]][L][id].append(float(not_txtdata[id][view].split(' ')[2])*1000)   # main_process
-            out1[index_list1[14]][L][id].append(int(not_txtdata[id][view].split(' ')[3]))  # not_uncrust
+            if flags['not'] or flags['not_un']:
+                out1[index_list1[12]][L][id].append(int(not_txtdata[id][view].split(' ')[1]))  # not
+                out1[index_list1[13]][L][id].append(float(not_txtdata[id][view].split(' ')[2]) * 1000)  # main_process
+                out1[index_list1[14]][L][id].append(int(not_txtdata[id][view].split(' ')[3]))  # not_uncrust
+            else:
+                out1[index_list1[12]][L][id].append(0)  # not
+                out1[index_list1[13]][L][id].append(0)  # main_process
+                out1[index_list1[14]][L][id].append(0)  # not_uncrust
 
     return out1, out2, out3
 
@@ -330,7 +340,8 @@ def append_sensor_array(average_data: list, sensor_pos_sorted: dict, *, mode: in
     return z
 
 
-def meshplot_area(fig, pos: int, x: list, y: list, z: list, zmin: float, zmax: float, cmap, title: str, xlabel: str, ylabel: str, *, aspect_mode: bool = False):
+def meshplot_area(fig, pos: int, x: list, y: list, z: list, zmin: float, zmax: float, cmap, title: str, xlabel: str,
+                  ylabel: str, *, aspect_mode: bool = False):
     ax = fig.add_subplot(pos, title=title)
     z_ber = ax.pcolormesh(x, y, z, cmap=cmap, vmin=zmin, vmax=zmax)
     divider = make_axes_locatable(ax)  # axに紐付いたAxesDividerを取得
@@ -355,7 +366,8 @@ def meshplot_sensor(fig, pos: int, x: list, y: list, z: np.ndarray, zmin: float,
     return ax
 
 
-def hist(fig, flat_data: list, pos: int, bins: int, zmin: float, zmax:float, title: str, color: str, *, xlabel: str = None, factor: float = 0.9):
+def hist(fig, flat_data: list, pos: int, bins: int, zmin: float, zmax: float, title: str, color: str, *,
+         xlabel: str = None, factor: float = 0.9):
     ax = fig.add_subplot(pos, title=title)
     hist_return = ax.hist(flat_data, histtype='step', bins=bins, range=(zmin, zmax), color='w', ec=color)
     under = np.count_nonzero(np.asarray(flat_data) < zmin)
@@ -368,7 +380,8 @@ def hist(fig, flat_data: list, pos: int, bins: int, zmin: float, zmax:float, tit
 
 
 def plot_area(input_data: list, zmin: float, zmax: float, step_x_num: int, step_y_num: int, title: str,
-              sensor_pos_sorted: dict or list, out_file: str, startX: float, startY: float, mode: int, *, bins: int = 100):
+              sensor_pos_sorted: dict or list, out_file: str, startX: float, startY: float, mode: int, *,
+              bins: int = 100):
     cmap = copy.copy(plt.get_cmap("jet"))
     cmap.set_under('w', 0.0001)  # 下限以下の色を設定
 
@@ -387,10 +400,10 @@ def plot_area(input_data: list, zmin: float, zmax: float, step_x_num: int, step_
     fig = plt.figure(figsize=(11.69, 8.27), tight_layout=True)
     fig.suptitle(title, fontsize=20)
     ax1 = meshplot_area(fig, 221, x, y, plot_array[0], zmin, zmax, cmap, 'Layer0', 'X [mm]', 'Y [mm]',
-                            aspect_mode=True)
+                        aspect_mode=True)
 
     ax2 = meshplot_area(fig, 222, x, y, plot_array[1], zmin, zmax, cmap, 'Layer1', 'X [mm]', 'Y [mm]',
-                            aspect_mode=True)
+                        aspect_mode=True)
 
     flat_data_l0 = list(itertools.chain.from_iterable(plot_array[0]))
     ax3 = hist(fig, flat_data_l0, 223, bins, zmin, zmax, 'Layer0', 'r')
@@ -424,10 +437,10 @@ def plot_base(input_data: list, zmin0: float, zmax0: float, zmin1: float, zmax1:
     fig = plt.figure(figsize=(8.27 * 1.5, 11.69 * 1.5), tight_layout=True)
     fig.suptitle(title, fontsize=20)
     ax1 = meshplot_area(fig, 321, x, y, plot_array[0], zmin0, zmax0, cmap, 'Z of base surface Layer0', 'X [mm]',
-                            'Y [mm]', aspect_mode=True)
+                        'Y [mm]', aspect_mode=True)
 
     ax2 = meshplot_area(fig, 322, x, y, plot_array[1], zmin1, zmax1, cmap, 'Z of base surface Layer1', 'X [mm]',
-                            'Y [mm]', aspect_mode=True)
+                        'Y [mm]', aspect_mode=True)
 
     flat_data_l0 = list(itertools.chain.from_iterable(plot_array[0]))
     ax3 = hist(fig, flat_data_l0, 323, bins, zmin0, zmax0, 'Z of base surface Layer0', color='r', xlabel='Z0 [um]',
@@ -438,10 +451,11 @@ def plot_base(input_data: list, zmin0: float, zmax0: float, zmin1: float, zmax1:
                factor=0.99)
 
     ax5 = meshplot_area(fig, 325, x, y, plot_array[1] - plot_array[0], basemin, basemax, cmap,
-                            'Thickness of Base (2D)', 'X [mm]', 'Y [mm]', aspect_mode=True)
+                        'Thickness of Base (2D)', 'X [mm]', 'Y [mm]', aspect_mode=True)
 
     flat_data_base = list(itertools.chain.from_iterable(plot_array[1] - plot_array[0]))
-    ax6 = hist(fig, flat_data_base, 326, basebins, basemin, basemax, 'Thickness of Base', 'r', xlabel='Thick of Base [um]',
+    ax6 = hist(fig, flat_data_base, 326, basebins, basemin, basemax, 'Thickness of Base', 'r',
+               xlabel='Thick of Base [um]',
                factor=0.95)
 
     plt.savefig(out_file, dpi=300)
@@ -617,7 +631,8 @@ def calc_df(input_df: dict):
 
 def plot_frequency(input_df: pd.DataFrame, out_path: str, time_list: list, *, plotmin: float = 0, plotmax: float = 6):
     fig = plt.figure(figsize=(8.27, 11.69), tight_layout=True)
-    fig.suptitle(str(time_list[0])+' -> '+str(time_list[1])+' total : '+str(time_list[2])+'[sec]\nFrequency (RepeatTime = 0)')
+    fig.suptitle(str(time_list[0]) + ' -> ' + str(time_list[1]) + ' total : ' + str(
+        time_list[2]) + '[sec]\nFrequency (RepeatTime = 0)')
     ax1 = fig.add_subplot(211)
     ax1.plot(input_df.query('repeatTime == 0')['Hz'], 'x', ms=0.7)
     ax1.set_xlabel('Number of view')
@@ -670,7 +685,7 @@ def plot_TargetBright(evmg_json: dict, sensor_pos_sorted: dict or list, out_path
     print('{} written'.format(outfile))
 
 
-def text_dump(data1: dict, data2: dict, time: str, out_path: str):
+def text_dump(data1: dict, data2: dict, time: int, out_path: str):
     outfile = os.path.join(out_path, 'summary.txt')
     with open(outfile, 'w') as f:
         for i in range(2):
@@ -681,11 +696,12 @@ def text_dump(data1: dict, data2: dict, time: str, out_path: str):
             print('{:33}:  {:g}'.format('Ave. Thick Of Layer', np.mean(data2['ThickOfLayer'][i])), file=f)
             print('{:33}:  {:d} / {:d}'
                   .format('Number of false of surface judge',
-                          np.count_nonzero(np.asarray(data2['surf_judge'][i]) == 0), len(data2['surf_judge'][i])), file=f)
+                          np.count_nonzero(np.asarray(data2['surf_judge'][i]) == 0), len(data2['surf_judge'][i])),
+                  file=f)
             flat_top2bottom = np.asarray(list(itertools.chain.from_iterable(data1['top2bottom'][i])))
             print('{:33}:  {:d} / {:d}'.format('Number of thin (bottom-top<16)', np.count_nonzero(flat_top2bottom < 16),
-                                                                       len(data1['top2bottom'][i]) *
-                                                                       len(data1['top2bottom'][i][0])), file=f)
+                                               len(data1['top2bottom'][i]) *
+                                               len(data1['top2bottom'][i][0])), file=f)
             print('', file=f)
 
         base_thickness = np.asarray(data1['fine_z'][1]) - np.asarray(data1['fine_z'][0])
