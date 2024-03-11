@@ -8,13 +8,18 @@ from matplotlib import pyplot as plt
 from matplotlib.colors import Normalize
 from matplotlib.backends.backend_pdf import PdfPages
 
-basepath ='Q:\\minami\\20230928_acrylic_oil_fix'
+if not len(sys.argv) == 2:
+    sys.exit('command error. \"basepath\"')
+
+basepath = sys.argv[1]
+module = 6
+sensor = 12
 
 outpath = os.path.join(basepath, "brightness_data.pdf")
 out_pdf = PdfPages(outpath)
 
-for m in range(2):
-    for s in range(12):
+for m in range(module):
+    for s in range(sensor):
         img_path = os.path.join(basepath, '{}-{}.jpg'.format(m, s))
         if not os.path.join(img_path):
             sys.exit('there are no file: {}'.format(img_path))
@@ -57,7 +62,7 @@ for m in range(2):
 
         out_pdf.savefig()
         # plt.show()
-        plt.close()
+        plt.clf()
         print('Module{}, sensor-{} ended'.format(m, s))
 
 out_pdf.close()
