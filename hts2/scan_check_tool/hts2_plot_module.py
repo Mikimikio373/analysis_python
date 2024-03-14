@@ -98,7 +98,7 @@ def get_option() -> ArgumentParser.parse_args:
     return argparser.parse_args()
 
 
-def copy_notdata(basepath: str, not_path: str, mode):
+def copy_notdata(basepath: str, not_path: str, mode: int):
     if mode == 0:
         module = 6
         sensor = 12
@@ -171,9 +171,11 @@ def initial(vvh_json: dict, not_path: str, flags: dict, layer: int = 2, mode: in
 
     print('Initial')
     print('scanned view num: {}'.format(len(vvh_json)))
-    module = 6
-    sensor = 12
-    if mode == 1:
+
+    if mode == 0:
+        module = 6
+        sensor = 12
+    elif mode == 1:
         module = 2
         sensor = 12
     else:
@@ -287,35 +289,67 @@ def textbox(ax, flat_list, ax_x_max, ax_y_max, under: int, over: int, *, factor:
     ax.text(ax_x_max * factor, ax_y_max * factor, text, bbox=(dict(boxstyle='square', fc='w')))
 
 
-def append_area(input_data: list, scaned_area_view: int, sensor_pos_sorted: dict, step_x_num: int, step_y_num: int,
-                mode: int):
+def append_area(input_data: list, sensor_pos_sorted: dict, step_x_num: int, step_y_num: int,
+                data_type: int, mode: int):
     plot_array = [[], []]
     plot_array[0] = np.zeros((step_y_num * 9, step_x_num * 8))
     plot_array[1] = np.zeros((step_y_num * 9, step_x_num * 8))
-    for i in range(scaned_area_view):
-        # 1/3でY方向を3分割しているため何レーン目かを判断
-        y_lane = math.floor(i / step_x_num) % 3
-        for py in range(9):
-            for px in range(8):
-                pos = py * 8 + px
-                id = sensor_pos_sorted[pos]['id']
-                if id > 23:
-                    continue
-                if mode == 0:
-                    tmp_l0 = input_data[0][id][i]
-                    tmp_l1 = input_data[1][id][i]
-                elif mode == 1:
-                    tmp_l0 = input_data[0][i]
-                    tmp_l1 = input_data[1][i]
-                else:
-                    sys.exit('mode error in \"append_area\"')
-                # 全pcolermesh座標系におけるx,yの計算
-                array_x_l0 = (i % step_x_num) * 8 + px  # xはviewのx座標とpxで計算
-                array_x_l1 = (step_x_num - 1 - (i % step_x_num)) * 8 + px  # l1側はviewの順序を反転
-                array_y = math.floor(
-                    i / (step_x_num * 3)) * 9 + py + y_lane  # yはstep_x_numの三倍の商がフルセンサーのview_y + ３回のうち何回目か
-                plot_array[0][array_y][array_x_l0] = tmp_l0
-                plot_array[1][array_y][array_x_l1] = tmp_l1
+    if mode == 0:   # フルセンサー用
+        # view数の計算
+        if data_type == 0:
+            view_num = len(input_data[0][0])
+        elif data_type == 1:
+            view_num = len(input_data[0])
+        else:
+            sys.exit('data_type error in \"append_area\"')
+
+        for i in range(view_num):
+            for py in range(9):
+                for px in range(8):
+                    pos = py * 8 + px
+                    id = sensor_pos_sorted[pos]['id']
+                    if data_type == 0:
+                        tmp_l0 = input_data[0][id][i]
+                        tmp_l1 = input_data[1][id][i]
+                    elif data_type == 1:
+                        tmp_l0 = input_data[0][i]
+                        tmp_l1 = input_data[1][i]
+                    else:
+                        sys.exit('data_type error in \"append_area\"')
+                    # 全pcolermesh座標系におけるx,yの計算
+                    array_x_l0 = (i % step_x_num) * 8 + px  # xはviewのx座標とpxで計算
+                    array_x_l1 = (step_x_num - 1 - (i % step_x_num)) * 8 + px  # l1側はviewの順序を反転
+                    array_y = math.floor(i / (step_x_num * 2)) * 9 + py  # yはviewに対してstep_x_numの二倍の商×9 + py
+                    plot_array[0][array_y][array_x_l0] = tmp_l0
+                    plot_array[1][array_y][array_x_l1] = tmp_l1
+    elif mode == 1:    # 1/3センサー用
+        scaned_area_view = step_x_num * step_y_num * 3  # step数から計算。1/3モードのため、view数は3倍
+        for i in range(scaned_area_view):
+            # 1/3でY方向を3分割しているため何レーン目かを判断
+            y_lane = math.floor(i / step_x_num) % 3
+            for py in range(9):
+                for px in range(8):
+                    pos = py * 8 + px
+                    id = sensor_pos_sorted[pos]['id']
+                    if id > 23:
+                        continue
+                    if data_type == 0:
+                        tmp_l0 = input_data[0][id][i]
+                        tmp_l1 = input_data[1][id][i]
+                    elif data_type == 1:
+                        tmp_l0 = input_data[0][i]
+                        tmp_l1 = input_data[1][i]
+                    else:
+                        sys.exit('data_type error in \"append_area\"')
+                    # 全pcolermesh座標系におけるx,yの計算
+                    array_x_l0 = (i % step_x_num) * 8 + px  # xはviewのx座標とpxで計算
+                    array_x_l1 = (step_x_num - 1 - (i % step_x_num)) * 8 + px  # l1側はviewの順序を反転
+                    array_y = math.floor(
+                        i / (step_x_num * 3)) * 9 + py + y_lane  # yはstep_x_numの三倍の商がフルセンサーのview_y + ３回のうち何回目か
+                    plot_array[0][array_y][array_x_l0] = tmp_l0
+                    plot_array[1][array_y][array_x_l1] = tmp_l1
+    else:
+        print('scan mode error')
 
     return plot_array
 
@@ -380,16 +414,15 @@ def hist(fig, flat_data: list, pos: int, bins: int, zmin: float, zmax: float, ti
 
 
 def plot_area(input_data: list, zmin: float, zmax: float, step_x_num: int, step_y_num: int, title: str,
-              sensor_pos_sorted: dict or list, out_file: str, startX: float, startY: float, mode: int, *,
+              sensor_pos_sorted: dict or list, out_file: str, startX: float, startY: float, data_type: int, mode: int, *,
               bins: int = 100):
     cmap = copy.copy(plt.get_cmap("jet"))
     cmap.set_under('w', 0.0001)  # 下限以下の色を設定
 
     if zmax - zmin < float(bins):
         bins = int(zmax - zmin)
-    scaned_ara_view = step_x_num * step_y_num * 3  # step数から計算。1/3モードのため、view数は3倍
 
-    plot_array = append_area(input_data, scaned_ara_view, sensor_pos_sorted, step_x_num, step_y_num, mode)
+    plot_array = append_area(input_data, sensor_pos_sorted, step_x_num, step_y_num, data_type, mode)
 
     x = np.arange(step_x_num * 8)
     x = x * step_x / 8 + startX
@@ -419,14 +452,14 @@ def plot_area(input_data: list, zmin: float, zmax: float, step_x_num: int, step_
 
 def plot_base(input_data: list, zmin0: float, zmax0: float, zmin1: float, zmax1: float, basemin: float, basemax: float,
               step_x_num: int,
-              step_y_num: int, title: str, sensor_pos_sorted: dict or list, out_file: str, *, bins: int = 100,
+              step_y_num: int, title: str, sensor_pos_sorted: dict or list, out_file: str, mode: int, *, bins: int = 100,
               basebins: int = 100):
     cmap = copy.copy(plt.get_cmap("jet"))
     cmap.set_under('w', 0.0001)  # 下限以下の色を設定
 
     scaned_ara_view = step_x_num * step_y_num * 3  # step数から計算。1/3モードのため、view数は3倍
 
-    plot_array = append_area(input_data, scaned_ara_view, sensor_pos_sorted, step_x_num, step_y_num, 0)
+    plot_array = append_area(input_data, sensor_pos_sorted, step_x_num, step_y_num, 0, mode)
 
     x = np.arange(step_x_num * 8)
     x = x * step_x / 8
@@ -488,18 +521,21 @@ def plot_sensor(input_data: list, zmin: float, zmax: float, title: str,
     ax1 = meshplot_sensor(fig, 222, x, y, z[1], zmin, zmax, cmap, 'Layer1 array')
 
     ax2 = fig.add_subplot(223, title='Layer0')
-    x = np.arange(24)
+    x = np.arange(len(average_data[0]))
+    x_ticks = np.arange(0, len(average_data[0]) + 1, 4)
+    x_minorticks = np.arange(len(average_data[0]) + 1)
     ax2.plot(x, average_data[0], marker='x', c='r')
     ax2.set_ylim(zmin, zmax)
-    ax2.set_xticks(x)
-    ax2.grid()
+    ax2.set_xticks(x_ticks)
+    ax2.set_xticks(x_minorticks, minor=True)
+    ax2.grid(which="both")
 
     ax3 = fig.add_subplot(224, title='Layer1')
-    x = np.arange(24)
     ax3.plot(x, average_data[1], marker='x', c='b')
     ax3.set_ylim(zmin, zmax)
-    ax3.set_xticks(x)
-    ax3.grid()
+    ax3.set_xticks(x_ticks)
+    ax3.set_xticks(x_minorticks, minor=True)
+    ax3.grid(which="both")
 
     plt.savefig(out_file, dpi=300)
     plt.clf()
@@ -526,22 +562,26 @@ def plot_sensor_not(input_data: list, title: str,
 
     fig = plt.figure(figsize=(8.27 * 1.5, 11.69 * 1.5), tight_layout=True)
     fig.suptitle('Number Of Tracks', fontsize=20)
-    x = np.arange(24)
+    x = np.arange(len(average_data[0]))
+    x_ticks = np.arange(0, len(average_data[0])+1, 4)
+    x_minorticks = np.arange(len(average_data[0]) + 1)
     ax1 = fig.add_subplot(321)
     ax1.plot(x, average_data[0], marker='x', c='r')
     ax1.set_title('Layer0 (absolute)')
-    ax1.set_xticks(x)
+    ax1.set_xticks(x_ticks)
+    ax1.set_xticks(x_minorticks, minor=True)
     ax1.set_xlabel('Imager ID')
     ax1.set_ylim(1, absolute_max)
-    ax1.grid()
+    ax1.grid(which='both')
 
     ax2 = fig.add_subplot(322)
     ax2.plot(x, average_data[1], marker='x', c='b')
     ax2.set_title('Layer1 (absolute)')
-    ax2.set_xticks(x)
+    ax2.set_xticks(x_ticks)
+    ax2.set_xticks(x_minorticks, minor=True)
     ax2.set_xlabel('Imager ID')
     ax2.set_ylim(1, absolute_max)
-    ax2.grid()
+    ax2.grid(which='both')
 
     x = np.arange(8)
     y = np.arange(9)
@@ -553,7 +593,7 @@ def plot_sensor_not(input_data: list, title: str,
     average_data_relative = [[], []]
     average_data_relative[0] = np.asarray(average_data[0]) / not_max[0]
     average_data_relative[1] = np.asarray(average_data[1]) / not_max[1]
-    x = np.arange(24)
+    x = np.arange(len(average_data[0]))
     ax5 = fig.add_subplot(325)
     ax5.plot(x, average_data_relative[0], marker='x', c='r', label='Layer0 (relative)')
     ax5.plot(x, average_data_relative[1], marker='x', c='b', label='Layer1 (relative)')
@@ -667,10 +707,7 @@ def plot_TargetBright(evmg_json: dict, sensor_pos_sorted: dict or list, out_path
     for py in range(9):
         for px in range(8):
             id = sensor_pos_sorted[py * 8 + px]['id']
-            if id > 23:
-                z[py][px] = 0
-            else:
-                z[py][px] = brightlist[id]
+            z[py][px] = brightlist[id]
 
     fig = plt.figure()
     ax0 = plt.subplot(title='Target brightness')
