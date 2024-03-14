@@ -118,7 +118,6 @@ elif mode == 1:
 else:
     step_y_num = None
 
-
 # plot開始
 if flags['ex']:
     outfile = os.path.join(out_path, 'scan_area_excount.png')

@@ -295,7 +295,7 @@ def append_area(input_data: list, sensor_pos_sorted: dict, step_x_num: int, step
     plot_array[0] = np.zeros((step_y_num * 9, step_x_num * 8))
     plot_array[1] = np.zeros((step_y_num * 9, step_x_num * 8))
     if mode == 0:   # フルセンサー用
-        # view数の計算
+        # 片面view数の計算
         if data_type == 0:
             view_num = len(input_data[0][0])
         elif data_type == 1:
@@ -319,7 +319,7 @@ def append_area(input_data: list, sensor_pos_sorted: dict, step_x_num: int, step
                     # 全pcolermesh座標系におけるx,yの計算
                     array_x_l0 = (i % step_x_num) * 8 + px  # xはviewのx座標とpxで計算
                     array_x_l1 = (step_x_num - 1 - (i % step_x_num)) * 8 + px  # l1側はviewの順序を反転
-                    array_y = math.floor(i / (step_x_num * 2)) * 9 + py  # yはviewに対してstep_x_numの二倍の商×9 + py
+                    array_y = math.floor(i / step_x_num) * 9 + py
                     plot_array[0][array_y][array_x_l0] = tmp_l0
                     plot_array[1][array_y][array_x_l1] = tmp_l1
     elif mode == 1:    # 1/3センサー用
