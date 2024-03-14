@@ -9,10 +9,18 @@ from argparse import ArgumentParser
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.colors
 from mpl_toolkits.axes_grid1 import make_axes_locatable
 
 step_x = 9.0
 step_y = 5.0
+# kbirdの定義
+red_bird   = [ 0.2082, 0.0592, 0.0780, 0.0232, 0.1802, 0.5301, 0.8186, 0.9956, 0.9764]
+green_bird = [ 0.1664, 0.3599, 0.5041, 0.6419, 0.7178, 0.7492, 0.7328, 0.7862, 0.9832]
+blue_bird  = [ 0.5293, 0.8684, 0.8385, 0.7914, 0.6425, 0.4662, 0.3499, 0.1968, 0.0539]
+cdict_bird = dict([(key,tuple([(i/8,val,val) for i,val in enumerate(eval(key+"_bird"))])) for key in ["red","green","blue"]])
+cmap_bird = matplotlib.colors.LinearSegmentedColormap('bird', cdict_bird)
+
 index_list1 = ['excount', 'nog_all', 'nog_over_thr', 'start_picnum', 'nog0', 'nog15', 'top2bottom',
                'top5brightness', 'loop1', 'filter1', 'trackingtime', 'fine_z', 'not', 'main_process', 'not_uncrust']
 index_list2 = ['ThickOfLayer', 'repeatTime', 'surf_judge']
@@ -95,6 +103,12 @@ def get_option() -> ArgumentParser.parse_args:
                            metavar='Names',
                            help='plot only given arguments: [ex, nog, nog0, nog15, toptobottom, not, not_un, mainprocess, startpicnum'
                                 ', thickoflayer, base, freq, bright, nog_all, text]')
+    argparser.add_argument('-cmap', '--cmap',
+                           type=str,
+                           choices=['kbird', 'jet', 'rainbow', 'viridis', 'plasma', 'inferno', 'magma', 'cividis'],
+                           default='kbird',
+                           metavar='Names',
+                           help='plot color map. default=\"kbird\" (very recomended)')
     return argparser.parse_args()
 
 
@@ -359,11 +373,12 @@ def append_sensor_array(average_data: list, sensor_pos_sorted: dict, *, mode: in
     for L in range(2):
         z[L] = np.zeros((9, 8))
 
+
     for py in range(9):
         for px in range(8):
             id = sensor_pos_sorted[py * 8 + px]['id']
             for L in range(2):
-                if id > 23:
+                if id > len(average_data[L]):   # imager numよりidが大きかったらスキップ
                     z[L][py][px] = 0
                 else:
                     if mode == 1:
@@ -416,7 +431,11 @@ def hist(fig, flat_data: list, pos: int, bins: int, zmin: float, zmax: float, ti
 def plot_area(input_data: list, zmin: float, zmax: float, step_x_num: int, step_y_num: int, title: str,
               sensor_pos_sorted: dict or list, out_file: str, startX: float, startY: float, data_type: int, mode: int, *,
               bins: int = 100):
-    cmap = copy.copy(plt.get_cmap("jet"))
+    cmap_op = get_option().cmap
+    if cmap_op == 'kbird':
+        cmap = copy.copy(plt.get_cmap(cmap_bird))
+    else:
+        cmap = copy.copy(plt.get_cmap(cmap_op))
     cmap.set_under('w', 0.0001)  # 下限以下の色を設定
 
     if zmax - zmin < float(bins):
@@ -454,7 +473,11 @@ def plot_base(input_data: list, zmin0: float, zmax0: float, zmin1: float, zmax1:
               step_x_num: int,
               step_y_num: int, title: str, sensor_pos_sorted: dict or list, out_file: str, mode: int, *, bins: int = 100,
               basebins: int = 100):
-    cmap = copy.copy(plt.get_cmap("jet"))
+    cmap_op = get_option().cmap
+    if cmap_op == 'kbird':
+        cmap = copy.copy(plt.get_cmap(cmap_bird))
+    else:
+        cmap = copy.copy(plt.get_cmap(cmap_op))
     cmap.set_under('w', 0.0001)  # 下限以下の色を設定
 
     scaned_ara_view = step_x_num * step_y_num * 3  # step数から計算。1/3モードのため、view数は3倍
@@ -506,7 +529,11 @@ def plot_sensor(input_data: list, zmin: float, zmax: float, title: str,
         for L in range(2):
             average_data[L].append(np.average(input_data[L][i]))
 
-    cmap = copy.copy(plt.get_cmap("jet"))
+    cmap_op = get_option().cmap
+    if cmap_op == 'kbird':
+        cmap = copy.copy(plt.get_cmap(cmap_bird))
+    else:
+        cmap = copy.copy(plt.get_cmap(cmap_op))
     cmap.set_under('w', 0.0001)  # 下限以下の色を設定
     x = np.arange(8)
     y = np.arange(9)
@@ -698,7 +725,11 @@ def plot_TargetBright(evmg_json: dict, sensor_pos_sorted: dict or list, out_path
     for i in range(len(evmg_json['ImagerControllerParamList'])):
         brightlist.append(evmg_json['ImagerControllerParamList'][i]['TargetBrightness'])
 
-    cmap = copy.copy(plt.get_cmap("jet"))
+    cmap_op = get_option().cmap
+    if cmap_op == 'kbird':
+        cmap = copy.copy(plt.get_cmap(cmap_bird))
+    else:
+        cmap = copy.copy(plt.get_cmap(cmap_op))
     cmap.set_under('w', 1)  # 下限以下の色を設定
     x = np.arange(8)
     y = np.arange(9)
