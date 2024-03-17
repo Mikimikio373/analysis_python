@@ -772,6 +772,9 @@ def text_dump(data1: dict, data2: dict, time: int, out_path: str):
                                                len(data1['top2bottom'][i][0])), file=f)
             print('', file=f)
 
-        base_thickness = np.asarray(data1['fine_z'][1]) - np.asarray(data1['fine_z'][0])
+        flat0 = list(itertools.chain.from_iterable(data1['fine_z'][0]))
+        flat1 = list(itertools.chain.from_iterable(data1['fine_z'][1]))
+        min_num = min(len(flat0), len(flat1))
+        base_thickness = np.asarray(flat1[:min_num]) - np.asarray(flat0[:min_num])
         print('{:33}:  {:g}'.format('Ave. Thickness of base[um]', np.mean(base_thickness)), file=f)
         print('{:33}:  {}'.format('Total Scanning Time[sec]', time), file=f)
