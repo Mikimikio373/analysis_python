@@ -378,7 +378,7 @@ def append_sensor_array(average_data: list, sensor_pos_sorted: dict, *, mode: in
         for px in range(8):
             id = sensor_pos_sorted[py * 8 + px]['id']
             for L in range(2):
-                if id > len(average_data[L]):   # imager numよりidが大きかったらスキップ
+                if id > len(average_data[L]) - 1:   # imager numよりidが大きかったらスキップ
                     z[L][py][px] = 0
                 else:
                     if mode == 1:
