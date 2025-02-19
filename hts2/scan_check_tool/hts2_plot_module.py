@@ -11,6 +11,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.colors
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+import json
 
 step_x = 9.0
 step_y = 5.0
@@ -27,7 +28,8 @@ index_list2 = ['ThickOfLayer', 'repeatTime', 'surf_judge']
 
 index_list3 = ['repeatTime', 'drivingX', 'drivingY', 'drivingZ', 'DrivingTimePiezo', 'DampingTime',
                'DrivingTimeAll', 'ElapsedTime']
-
+index_list4 = ['not_thick0', 'not_thick1', 'not_thin0', 'not_thin1', 'not_uncrust_thick0', 'not_uncrust_thick1', 'not_uncrust_thin0',
+               'not_uncrust_thin1', 'process_thick0', 'process_thick1', 'process_thin0', 'process_thin1','thread', 'trackhitclash']
 
 def get_option() -> ArgumentParser.parse_args:
     argparser = ArgumentParser()
@@ -60,9 +62,9 @@ def get_option() -> ArgumentParser.parse_args:
                            metavar='max',
                            help='Maximum of not unclusterd (absolute). default=1000000')
     argparser.add_argument('-process', '--main_process_max', type=float,
-                           default=500,
+                           default=1200,
                            metavar='max',
-                           help='Maximum of main time prosess. default=500')
+                           help='Maximum of main time prosess. default=1200')
     argparser.add_argument('-notrmin', '--not_relative_min', type=float,
                            default=0.7,
                            metavar='min',
@@ -108,7 +110,25 @@ def get_option() -> ArgumentParser.parse_args:
                            choices=['kbird', 'jet', 'rainbow', 'viridis', 'plasma', 'inferno', 'magma', 'cividis'],
                            default='kbird',
                            metavar='Names',
-                           help='plot color map. default=\"kbird\" (very recomended)')
+                           help='plot color map. default=\"kbird\" (very recomended). other options are \"jet\", \"rainbow\", \"viridis\", \"plasma\", \"inferno\", \"magma\", \"cividis\"')
+    argparser.add_argument('-not_32thick', '--not_absolute_max_32layer_thick', type=float,
+                           default=30000,
+                           metavar='max',
+                           help='Maximum of not (absolute). default=30000')
+    argparser.add_argument('-not_un_32thick', '--unclust_not_max_32layer_thick', type=float,
+                           default=1600000,
+                           metavar='max',
+                           help='Maximum of not unclusterd (absolute). default=1600000')
+    argparser.add_argument('-not_32thin', '--not_absolute_max_32layer_thin', type=float,
+                           default=60000,
+                           metavar='max',
+                           help='Maximum of not (absolute). default=60000')
+    argparser.add_argument('-not_un_32thin', '--unclust_not_max_32layer_thin', type=float,
+                           default=3200000,
+                           metavar='max',
+                           help='Maximum of not unclusterd (absolute). default=3200000')
+    
+    
     return argparser.parse_args()
 
 
@@ -160,11 +180,38 @@ def read_not(not_path: str, flags: dict, module: int = 6, sensor: int = 12):
                 flags['not'] = False
                 flags['not_un'] = False
                 return txt_data
+    #txt_data[m][s]の中身1行は、'view番号（int） not(int) main_process(float) not_uncrust(int) ・・・の順番
+    #value_data[id] には、txt_data[id]の中身を数値に変換したものを格納. idはrange(imager_num = module * sensor)
+    #その後view番号順に並べ替え
+    value_data = [[] for i in range(module * sensor)]
+    for i in range(module * sensor):
+        for j in range(len(txt_data[i])):
+            tmp = txt_data[i][j].split(' ')
+            value_data[i].append([int(tmp[0]), int(tmp[1]), float(tmp[2]), int(tmp[3])])
+        value_data[i].sort(key=lambda x: x[0])
+    return txt_data, value_data
 
-    return txt_data
+def read_not_json(not_path: str, flags: dict, module: int = 6, sensor: int = 12):
+    json_data = []
+    for m in range(module):
+        for s in range(sensor):
+            notjson_path = os.path.join(not_path, '{:02}_{:02}_TrackHit2_0_99999999_0_000.json'.format(m, s))
+            if os.path.exists(notjson_path):
+                with open(notjson_path, 'r') as f:
+                    data = json.load(f)
+                json_data.append(data)
+            else:
+                print('there is no \"NOT\" file. \"NOT\" plot false.')
+                #flags['not'] = False
+                #flags['not_un'] = False
+                return json_data
+    #view番号順に並べ替え
+    for i in range(module * sensor):
+        json_data[i].sort(key=lambda x: x['View'])
+    return json_data
 
 
-def initial(vvh_json: dict, not_path: str, flags: dict, layer: int = 2, mode: int = 0):
+def initial(vvh_json: dict, not_path: str, flags: dict, layer: int = 2, mode: int = 0, viewList: list = None):
     """
 
     :param vvh_json: ValidViewHistryのjsonデータ
@@ -195,9 +242,13 @@ def initial(vvh_json: dict, not_path: str, flags: dict, layer: int = 2, mode: in
     else:
         sys.exit('未対応modeです')
     imager_num = module * sensor
-
+    
     # txtデータからnot情報の読み取り
-    not_txtdata = read_not(not_path, flags, module=module, sensor=sensor)
+    not_txtdata, not_valuedata = read_not(not_path, flags, module=module, sensor=sensor)
+    # jsonデータからnot情報の読み取り
+    if flags["is32layerScan"]:
+        not_jsondata = read_not_json(not_path, flags, module=module, sensor=sensor)
+
 
     tmp_list1 = []
     tmp_list2 = []
@@ -212,12 +263,16 @@ def initial(vvh_json: dict, not_path: str, flags: dict, layer: int = 2, mode: in
     out3 = {}
     for i in range(len(index_list1)):
         out1[index_list1[i]] = copy.deepcopy(tmp_list1)
+    if flags['is32layerScan']:
+        for i in range(len(index_list4)):
+            out1[index_list4[i]] = copy.deepcopy(tmp_list1)
     for i in range(len(index_list2)):
         out2[index_list2[i]] = copy.deepcopy(tmp_list2)
     for i in range(len(index_list3)):
         out3[index_list3[i]] = []
-
-    for view in range(len(vvh_json)):
+    if viewList is None:
+        viewList = range(len(vvh_json))
+    for view in viewList:
         L = int(vvh_json[view]['Layer'])
         thickness = vvh_json[view]['ScanEachLayerParam']['ThickOfLayer']
         Npicthickness = vvh_json[view]['ScanEachLayerParam']['NPicThickOfLayer']
@@ -236,6 +291,8 @@ def initial(vvh_json: dict, not_path: str, flags: dict, layer: int = 2, mode: in
         for id in range(imager_num):
             StartPicNum = vvh_json[view]['StartAnalysisPicNo'][id]
             EndPicNum = StartPicNum + 15
+            if Npicthickness == 30: # 32枚撮影の場合
+                EndPicNum = StartPicNum + 31
             out1[index_list1[0]][L][id].append(vvh_json[view]['ImagerControllerParam']['ExposureCount'][id])  # excount
             out1[index_list1[1]][L][id].append(vvh_json[view]['Nogs'][id])  # nog all
             out1[index_list1[2]][L][id].append(vvh_json[view]['SurfaceDetail'][id]['NogOverThr'])  # nog_over_thr
@@ -257,13 +314,49 @@ def initial(vvh_json: dict, not_path: str, flags: dict, layer: int = 2, mode: in
                 fine_z = vvh_json[view]['ScanLines']['Z'] * 1000 + (thickness / Npicthickness * StartPicNum)
             out1[index_list1[11]][L][id].append(fine_z)
             if flags['not'] or flags['not_un']:
+                """
                 out1[index_list1[12]][L][id].append(int(not_txtdata[id][view].split(' ')[1]))  # not
                 out1[index_list1[13]][L][id].append(float(not_txtdata[id][view].split(' ')[2]) * 1000)  # main_process
                 out1[index_list1[14]][L][id].append(int(not_txtdata[id][view].split(' ')[3]))  # not_uncrust
+                """
+                out1[index_list1[12]][L][id].append(not_valuedata[id][view][1])  # not
+                out1[index_list1[13]][L][id].append(not_valuedata[id][view][2] * 1000)
+                out1[index_list1[14]][L][id].append(not_valuedata[id][view][3])
             else:
                 out1[index_list1[12]][L][id].append(0)  # not
                 out1[index_list1[13]][L][id].append(0)  # main_process
                 out1[index_list1[14]][L][id].append(0)  # not_uncrust
+            if flags['is32layerScan']:
+                if flags["thick0"]:
+                    out1[index_list4[0]][L][id].append(not_jsondata[id][view]['Not']['Alternate0'][-2])
+                    out1[index_list4[4]][L][id].append(not_jsondata[id][view]['Not']['Alternate0'][0])
+                    out1[index_list4[8]][L][id].append(not_jsondata[id][view]['Elapsed_ms']['Alternate0'][-1])
+                if flags["thick1"]:
+                    out1[index_list4[1]][L][id].append(not_jsondata[id][view]['Not']['Alternate1'][-2])
+                    out1[index_list4[5]][L][id].append(not_jsondata[id][view]['Not']['Alternate1'][0])
+                    out1[index_list4[9]][L][id].append(not_jsondata[id][view]['Elapsed_ms']['Alternate1'][-1])
+                #out1[index_list4[12]][L][id].append(not_jsondata[id][view]['ThreadID'])
+                #out1[index_list4[13]][L][id].append(not_jsondata[id][view]['TrackHitClash'])
+                
+                if L == 0:
+                    if flags["thinOuter"]:
+                        out1[index_list4[2]][L][id].append(not_jsondata[id][view]['Not']['Thin16_0_15'][-2])
+                        out1[index_list4[6]][L][id].append(not_jsondata[id][view]['Not']['Thin16_0_15'][0])
+                        out1[index_list4[10]][L][id].append(not_jsondata[id][view]['Elapsed_ms']['Thin16_0_15'][-1])
+                    if flags["thinBase"]:
+                        out1[index_list4[3]][L][id].append(not_jsondata[id][view]['Not']['Thin16_16_31'][-2])
+                        out1[index_list4[7]][L][id].append(not_jsondata[id][view]['Not']['Thin16_16_31'][0])
+                        out1[index_list4[11]][L][id].append(not_jsondata[id][view]['Elapsed_ms']['Thin16_16_31'][-1])
+                else:
+                    if flags["thinOuter"]:
+                        out1[index_list4[2]][L][id].append(not_jsondata[id][view]['Not']['Thin16_16_31'][-2])
+                        out1[index_list4[6]][L][id].append(not_jsondata[id][view]['Not']['Thin16_16_31'][0])
+                        out1[index_list4[10]][L][id].append(not_jsondata[id][view]['Elapsed_ms']['Thin16_16_31'][-1])
+                    if flags["thinBase"]:
+                        out1[index_list4[3]][L][id].append(not_jsondata[id][view]['Not']['Thin16_0_15'][-2])
+                        out1[index_list4[7]][L][id].append(not_jsondata[id][view]['Not']['Thin16_0_15'][0])
+                        out1[index_list4[11]][L][id].append(not_jsondata[id][view]['Elapsed_ms']['Thin16_0_15'][-1])
+
 
     return out1, out2, out3
 
@@ -588,7 +681,7 @@ def plot_sensor_not(input_data: list, title: str,
     z = append_sensor_array(average_data, sensor_pos_sorted, mode=1, z_max=not_max)
 
     fig = plt.figure(figsize=(8.27 * 1.5, 11.69 * 1.5), tight_layout=True)
-    fig.suptitle('Number Of Tracks', fontsize=20)
+    fig.suptitle(title, fontsize=20)
     x = np.arange(len(average_data[0]))
     x_ticks = np.arange(0, len(average_data[0])+1, 4)
     x_minorticks = np.arange(len(average_data[0]) + 1)
@@ -778,3 +871,19 @@ def text_dump(data1: dict, data2: dict, time: int, out_path: str):
         base_thickness = np.asarray(flat1[:min_num]) - np.asarray(flat0[:min_num])
         print('{:33}:  {:g}'.format('Ave. Thickness of base[um]', np.mean(base_thickness)), file=f)
         print('{:33}:  {}'.format('Total Scanning Time[sec]', time), file=f)
+
+def text_dump32(data1: dict, data2: dict, time: int, out_path: str, flags: dict):
+    outfile = os.path.join(out_path, 'summary32.txt')
+    with open(outfile, 'w') as f:
+        for i in range(2):
+            print('Layer {}'.format(i), file=f)
+            if flags["thick0"]:
+                print('{:33}:  {:g}'.format('Ave. Not of thick0', np.mean(data1['not_thick0'][i])), file=f)
+            if flags["thick1"]:
+                print('{:33}:  {:g}'.format('Ave. Not of thick1', np.mean(data1['not_thick1'][i])), file=f)
+            if flags["thinOuter"]:
+                print('{:33}:  {:g}'.format('Ave. Not of thinOuter', np.mean(data1['not_thin0'][i])), file=f)
+            if flags["thinBase"]:
+                print('{:33}:  {:g}'.format('Ave. Not of thinInner', np.mean(data1['not_thin1'][i])), file=f)
+
+            

@@ -39,6 +39,43 @@ if not os.path.exists(ScanControllParam):
     sys.exit('There is no file: {}'.format(ScanControllParam))
 with open(ScanControllParam, 'rb') as scp:
     scp_json = json.load(scp)
+
+#anyViewStepならstep_x step_yをjsonから取得 2024/4/11 tkawahara
+if 'ViewStepX' in scp_json['ScanAreaParam']:
+    step_x = scp_json['ScanAreaParam']['ViewStepX']
+if 'ViewStepY' in scp_json['ScanAreaParam']:
+    step_y = scp_json['ScanAreaParam']['ViewStepY']
+
+slo_json = None
+#'2Layers_Once_All_Twice_Zigzag_HTS2_AnyViewStep'の場合、ScanLinesOrigin.jsonを読み込む
+if scp_json['ScanAreaParam']['Algorithm'] == '2Layers_Once_All_Twice_Zigzag_HTS2_AnyViewStep':
+    ScanLinesOrigin = os.path.join(basepath, 'ScanLinesOrigin.json')
+    if not os.path.exists(ScanLinesOrigin):
+        sys.exit('There is no file: {}'.format(ScanLinesOrigin))
+    with open(ScanLinesOrigin, 'rb') as slo:
+        slo_json = json.load(slo)
+
+#32層Scanかどうか
+flags['is32layerScan'] = False
+flags['thick0'] = False
+flags['thick1'] = False
+flags['thinOuter'] = False
+flags['thinBase'] = False
+if 'NPicAnalysis' in scp_json['TrackingParam']:
+    if scp_json['TrackingParam']['NPicAnalysis'] == 32:
+        flags['is32layerScan'] = True
+        #TrackingParam[CommonParamArray][0 and 1][Alternate0 and Alternate1 and Thin16Base and Thin16Outer]がTrueの場合、32LayerScan
+        if scp_json['TrackingParam']['CommonParamArray'][0]['Alternate0'] and scp_json['TrackingParam']['CommonParamArray'][1]['Alternate0']:
+            flags['thick0'] = True
+        if scp_json['TrackingParam']['CommonParamArray'][0]['Alternate1'] and scp_json['TrackingParam']['CommonParamArray'][1]['Alternate1']:
+            flags['thick1'] = True
+        if scp_json['TrackingParam']['CommonParamArray'][0]['Thin16Base'] and scp_json['TrackingParam']['CommonParamArray'][1]['Thin16Base']:
+            flags['thinBase'] = True
+        if scp_json['TrackingParam']['CommonParamArray'][0]['Thin16Outer'] and scp_json['TrackingParam']['CommonParamArray'][1]['Thin16Outer']:
+            flags['thinOuter'] = True
+        print('32LayerScan')
+
+
 # スキャンエリア情報
 sideX = scp_json['ScanAreaParam']['SideX']
 centerX = scp_json['ScanAreaParam']['CenterX']
@@ -69,14 +106,19 @@ if 'MinThickness' in scp_json['LayerParam']['CommonParamArray'][0]:
 
 # スキャン方法によるプロットモードの選択
 mode = 0  # 0: フルセンサー, 1: 1/3モード
-if scp_json['ScanAreaParam']['Algorithm'] == 'All_Half_Zigzag_HTS2':
+if scp_json['ScanAreaParam']['Algorithm'] == 'All_Half_Zigzag_HTS2' or scp_json['ScanAreaParam']['Algorithm'] == 'All_Half_Zigzag_HTS2_AnyViewStep'\
+    or scp_json['ScanAreaParam']['Algorithm'] == 'One_Half_Zigzag_HTS2' or scp_json['ScanAreaParam']['Algorithm'] =="All_Half_Zigzag_HTS2_AnyViewStep_WaitTB"\
+        or scp_json['ScanAreaParam']['Algorithm']=="Benchmark_N":
     print('scan algorithm: All_Half_Zigzag_HTS2')
+elif scp_json['ScanAreaParam']['Algorithm'] == '2Layers_Once_All_Twice_Zigzag_HTS2_AnyViewStep':
+    print('scan algorithm: 2Layers_Once_All_Twice_Zigzag_HTS2')    
 elif scp_json['ScanAreaParam']['Algorithm'] == 'One_Third_Half_HTS2':
     mode = 1
     print('scan algorithm: One_Third_Half_HTS2')
 else:
-    print('現在One_Third_Half_HTS2以外対応していません')
-    sys.exit()
+    print(scp_json['ScanAreaParam']['Algorithm'] + "は描画対応していない可能性があります。")
+    #print('現在One_Third_Half_HTS2以外対応していません')
+    #sys.exit()
 
 # ターゲット輝度値分布を書くためにpathとjsonデータを取得
 if 'ImagerControllerParamFilePath' in scp_json['OtherPathParam']:
@@ -110,6 +152,69 @@ mylib.copy_notdata(basepath, not_path, mode)
 # initialプロットするためのデータ取得
 scan_data1, scan_data2, scan_data3 = mylib.initial(vvh_json, not_path, flags, layer, mode)
 
+##'2Layers_Once_All_Twice_Zigzag_HTS2_AnyViewStep'の場合,
+#slo_json[view]['Param']['Direction']が1のみのviewlistを取得
+d1_list = []
+if slo_json is not None:
+    for i in range(len(slo_json)):
+        if (slo_json[i]['Param']['Direction'] == "1" and slo_json[i]['Layer'] == 0) or (slo_json[i]['Param']['Direction'] == "2" and slo_json[i]['Layer'] == 1):
+            d1_list.append(i)
+#print('d1_list:', d1_list)
+#scan_data1, scan_data2, scan_data3をd1_listのみ抽出
+if len(d1_list) > 0:
+    scan_data1, scan_data2, scan_data3 = mylib.initial(vvh_json, not_path, flags, layer, mode, d1_list)
+
+d1_list = []
+if slo_json is not None:
+    count = 0
+    for i in range(len(slo_json)):
+        if (slo_json[i]['Param']['Direction'] == "2" and slo_json[i]['Layer'] == 1) or (slo_json[i]['Param']['Direction'] == "2" and slo_json[i]['Layer'] == 0):
+            break
+        count += 1
+    print('count:', count)
+    for i in range(len(slo_json)):
+        if (slo_json[i]['Param']['Direction'] == "1" and slo_json[i]['Layer'] == 1) or (slo_json[i]['Param']['Direction'] == "1" and slo_json[i]['Layer'] == 0):
+            d1_list.append(i)
+    print('d1_list:', d1_list)
+    d1_list_2 = []
+    for i in range(len(d1_list)//count):
+        temp1 = []
+        temp2 = []
+        for j in range(count):
+            if j % 2 == 0:
+                temp1.append(d1_list[i*count + j])
+                #print("i*count + j:", i*count + j)
+            else:
+                temp2.append(d1_list[(i+1)*count - j])
+                #print("i+1*count - j:", (i+1)*count- j)
+        for j in temp1:
+            d1_list_2.append(j)
+        for j in temp2:
+            d1_list_2.append(j)
+    print('d1_list_2:', d1_list_2)
+    d1_list = d1_list_2
+if len(d1_list) > 0:
+    scan_data1, scan_data2, scan_data3 = mylib.initial(vvh_json, not_path, flags, layer, mode, d1_list)
+
+#'2Layers_Once_All_Once_Zigzag_HTS2_AnyViewStep'の場合、ScanLinesOrigin.jsonを読み込む
+if scp_json['ScanAreaParam']['Algorithm'] == '2Layers_Once_All_Once_Zigzag_HTS2_AnyViewStep':
+    d1_list = []
+    for i in range(step_y_num):
+        temp1 = []
+        temp2 = []
+        for j in range(step_x_num*2):
+                if j % 2 == 0:
+                    temp1.append(i*step_x_num*2 + j)
+                else:
+                    temp2.append((i+1)*step_x_num*2 - j)
+        for j in temp1:
+            d1_list.append(j)
+        for j in temp2:
+            d1_list.append(j)
+    print('d1_list:', d1_list)
+    if len(d1_list) > 0:
+        scan_data1, scan_data2, scan_data3 = mylib.initial(vvh_json, not_path, flags, layer, mode, d1_list)
+
 # 実データから実際のy_step数を計算(Xは端から端までプロット)
 if mode == 0:
     step_y_num = math.floor(len(scan_data1['excount'][1][0]) / step_x_num)
@@ -117,6 +222,7 @@ elif mode == 1:
     step_y_num = math.floor(math.floor(len(scan_data1['excount'][1][0]) / step_x_num) / 3)
 else:
     step_y_num = None
+
 
 # plot開始
 if flags['ex']:
@@ -209,6 +315,71 @@ if flags['nog_all']:
 
 if flags['text']:
     mylib.text_dump(scan_data1, scan_data2, time_total, out_path)
-
+    if flags['is32layerScan']:
+        mylib.text_dump32(scan_data1, scan_data2, time_total, out_path, flags)
+    
 # GRAPHフォルダを開く
 os.startfile(out_path)
+
+if flags['is32layerScan']:
+    #32Layerフォルダの作成
+    if not os.path.exists(os.path.join(out_path, '32LayerScan')):
+        os.makedirs(os.path.join(out_path, '32LayerScan'), exist_ok=True)
+    if flags['not']:
+        if flags["thick0"]:
+            outfile = os.path.join(out_path, "32LayerScan","scan_area_not_thick0.png")
+            mylib.plot_area(scan_data1['not_thick0'], 0.1, args.not_absolute_max_32layer_thick, step_x_num, step_y_num, 'Number of Tracks (not) of Thick0',
+                            y_sorted, outfile, startX, startY, 0, mode)
+            outfile = os.path.join(out_path, "32LayerScan","sensor_not_thick0.png")
+            mylib.plot_sensor_not(scan_data1['not_thick0'], 'Number Of Tracks (not) of Thick0', y_sorted, outfile,
+                                relative_min=args.not_relative_min, absolute_max=args.not_absolute_max_32layer_thick)
+        if flags["thick1"]:
+            outfile = os.path.join(out_path, "32LayerScan","scan_area_not_thick1.png")
+            mylib.plot_area(scan_data1['not_thick1'], 0.1, args.not_absolute_max_32layer_thick, step_x_num, step_y_num, 'Number of Tracks (not) of Thick1',
+                            y_sorted, outfile, startX, startY, 0, mode)
+            outfile = os.path.join(out_path, "32LayerScan","sensor_not_thick1.png")
+            mylib.plot_sensor_not(scan_data1['not_thick1'], 'Number Of Tracks (not) of Thick1', y_sorted, outfile,
+                                relative_min=args.not_relative_min, absolute_max=args.not_absolute_max_32layer_thick)
+        if flags["thinOuter"]:
+            outfile = os.path.join(out_path, "32LayerScan","scan_area_not_thin_outer.png")
+            mylib.plot_area(scan_data1['not_thin0'], 0.1, args.not_absolute_max_32layer_thin, step_x_num, step_y_num, 'Number of Tracks (not) of Thin Outer',
+                            y_sorted, outfile, startX, startY, 0, mode)
+            outfile = os.path.join(out_path, "32LayerScan","sensor_not_thin_outer.png")
+            mylib.plot_sensor_not(scan_data1['not_thin0'], 'Number Of Tracks (not) of Thin Outer', y_sorted, outfile,
+                                relative_min=args.not_relative_min, absolute_max=args.not_absolute_max_32layer_thin)
+        if flags["thinBase"]:
+            outfile = os.path.join(out_path, "32LayerScan","scan_area_not_thin_inner.png")
+            mylib.plot_area(scan_data1['not_thin1'], 0.1, args.not_absolute_max_32layer_thin, step_x_num, step_y_num, 'Number of Tracks (not) of Thin Inner',
+                            y_sorted, outfile, startX, startY, 0, mode)
+            outfile = os.path.join(out_path, "32LayerScan","sensor_not_thin_inner.png")
+            mylib.plot_sensor_not(scan_data1['not_thin1'], 'Number Of Tracks (not) of Thin Inner', y_sorted, outfile,
+                                relative_min=args.not_relative_min, absolute_max=args.not_absolute_max_32layer_thin)
+    if flags['not_un']:
+        if flags["thick0"]:
+            outfile = os.path.join(out_path, "32LayerScan","scan_area_not_unclust_thick0.png")
+            mylib.plot_area(scan_data1['not_uncrust_thick0'], 1, args.unclust_not_max_32layer_thick, step_x_num, step_y_num, 'Unclusterd Number of Tracks of Thick0', y_sorted,
+                            outfile, startX, startY, 0, mode)
+            outfile = os.path.join(out_path, "32LayerScan","sensor_not_unclust_thick0.png")
+            mylib.plot_sensor(scan_data1['not_uncrust_thick0'], 1, args.unclust_not_max_32layer_thick, 'Unclusterd Number of Tracks of Thick0', y_sorted, outfile)
+        if flags["thick1"]:
+            outfile = os.path.join(out_path, "32LayerScan","scan_area_not_unclust_thick1.png")
+            mylib.plot_area(scan_data1['not_uncrust_thick1'], 1, args.unclust_not_max_32layer_thick, step_x_num, step_y_num, 'Unclusterd Number of Tracks of Thick1', y_sorted,
+                            outfile, startX, startY, 0, mode)
+            outfile = os.path.join(out_path, "32LayerScan","sensor_not_unclust_thick1.png")
+            mylib.plot_sensor(scan_data1['not_uncrust_thick1'], 1, args.unclust_not_max_32layer_thick, 'Unclusterd Number of Tracks of Thick1', y_sorted, outfile)
+        if flags["thinOuter"]:
+            outfile = os.path.join(out_path, "32LayerScan","scan_area_not_unclust_thin_outer.png")
+            mylib.plot_area(scan_data1['not_uncrust_thin0'], 1, args.unclust_not_max_32layer_thin, step_x_num, step_y_num, 'Unclusterd Number of Tracks of Thin Outer', y_sorted,
+                            outfile, startX, startY, 0, mode)
+            outfile = os.path.join(out_path, "32LayerScan","sensor_not_unclust_thin_outer.png")
+            mylib.plot_sensor(scan_data1['not_uncrust_thin0'], 1, args.unclust_not_max_32layer_thin, 'Unclusterd Number of Tracks of Thin Outer', y_sorted, outfile)
+        if flags["thinBase"]:
+            outfile = os.path.join(out_path, "32LayerScan","scan_area_not_unclust_thin_inner.png")
+            mylib.plot_area(scan_data1['not_uncrust_thin1'], 1, args.unclust_not_max_32layer_thin, step_x_num, step_y_num, 'Unclusterd Number of Tracks of Thin Inner', y_sorted,
+                            outfile, startX, startY, 0, mode)
+            outfile = os.path.join(out_path, "32LayerScan","sensor_not_unclust_thin_inner.png")
+            mylib.plot_sensor(scan_data1['not_uncrust_thin1'], 1, args.unclust_not_max_32layer_thin, 'Unclusterd Number of Tracks of Thin Inner', y_sorted, outfile)
+
+        
+
+
