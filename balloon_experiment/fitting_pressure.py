@@ -8,7 +8,7 @@ import datetime
 import matplotlib.pyplot as plt
 import time
 
-basepath = '/Users/minamihideyuki/data/lab/for_Australia/pressure_chech/'
+basepath = '/Users/Username/data/lab/for_Australia/pressure_chech/'
 file_data = '20230328'
 out_dir = os.path.join(basepath, 'plot_and_data')
 input_path = os.path.join(out_dir, 'dff_press_edit{}.csv'.format(file_data))

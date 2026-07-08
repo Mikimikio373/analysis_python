@@ -14,7 +14,7 @@ def DeleteNoneLine(line_data):
     return line_data[:-n]
 
 
-base_dir = '/Users/minamihideyuki/data/lab/for_Australia/pressure_chech/'
+base_dir = '/Users/Username/data/lab/for_Australia/pressure_chech/'
 
 dt_now = datetime.datetime.now()
 dt_now_str = dt_now.strftime('%Y%m%d')

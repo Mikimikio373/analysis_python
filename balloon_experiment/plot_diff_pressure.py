@@ -19,7 +19,7 @@ def getNearestValue(input_list, num):
     return list[idx]
 
 
-csvpath = '//Users//minamihideyuki//data//lab//for_Australia//pressure_chech'
+csvpath = '//Users//Username//data//lab//for_Australia//pressure_chech'
 vol_name = 'all_diff_press_20230328.csv'
 atm_ondotori_name = 'all_atm_ondotori.csv'
 temp_ondotori_name = 'all_temp_ondotori.csv'

@@ -2,7 +2,7 @@ import os
 import sys
 import datetime
 
-csv_dir = '/Users/minamihideyuki/data/lab/for_Australia/pressure_chech'
+csv_dir = '/Users/Username/data/lab/for_Australia/pressure_chech'
 
 # input_filename = '20230310_leaktest3.csv'
 # input_filepath = os.path.join(csv_dir, 'logging_data', 'diff_press', input_filename)

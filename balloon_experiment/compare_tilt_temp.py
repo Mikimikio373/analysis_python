@@ -15,7 +15,7 @@ def getNearestValue(input_list, num):
     idx = np.abs(np.asarray(input_list) - num).argmin()
     return input_list[idx]
 
-basepath = '/Users/minamihideyuki/data/lab/for_Australia'
+basepath = '/Users/Username/data/lab/for_Australia'
 press_f_name = 'all_diff_press_20230412in20230412cut_one/dff_press_edit20230412.csv'
 press_path = os.path.join(basepath, 'pressure_chech', 'plot_and_data', press_f_name)
 tilt_f_name = 'all_tilt_from20230403_to20230412with_line/edit_data.csv'

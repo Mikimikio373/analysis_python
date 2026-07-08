@@ -15,7 +15,7 @@ def CheckNoneLine(df):
                 break
     return max(last_line_num) - 1
 
-base_dir = '/Users/minamihideyuki/data/lab/for_Australia/keishakei/'
+base_dir = '/Users/Username/data/lab/for_Australia/keishakei/'
 
 dt_now = datetime.datetime.now()
 dt_now_str = dt_now.strftime('%Y%m%d')

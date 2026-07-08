@@ -85,7 +85,7 @@ def onclick(event):
         plt.close()
 
 
-csvpath = '//Users//minamihideyuki//data//lab//for_Australia//pressure_chech'
+csvpath = '//Users//Username//data//lab//for_Australia//pressure_chech'
 
 dt_now = datetime.datetime.now()
 dt_now_str = dt_now.strftime('%Y%m%d')

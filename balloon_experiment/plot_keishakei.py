@@ -81,7 +81,7 @@ def plot_angle(fig, pdfdata, pndata, index, cmap, cmap_num):
     return cmap_num
 
 
-root_path = '/Users/minamihideyuki/data/lab/lab_project/root/MakeRootFile4Keishakei.C'
+root_path = '/Users/Username/data/lab/lab_project/root/MakeRootFile4Keishakei.C'
 print(len(sys.argv))
 # error処理(コマンドライン引数について)
 if len(sys.argv) != 2:

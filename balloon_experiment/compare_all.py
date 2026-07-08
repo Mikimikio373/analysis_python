@@ -15,7 +15,7 @@ def getNearestValue(input_list, num):
     idx = np.abs(np.asarray(input_list) - num).argmin()
     return input_list[idx]
 
-basepath = '/Users/minamihideyuki/data/lab/for_Australia'
+basepath = '/Users/Username/data/lab/for_Australia'
 ondotori_f_name = '20230403_outpress.csv'
 ondotori_path = os.path.join(basepath, 'pressure_chech', 'logging_data', 'atm_ondotori', ondotori_f_name)
 tilt_f_name = '20230403_tilt_edit.csv'
