@@ -3,7 +3,7 @@ import shutil
 import glob
 import sys
 
-path = 'Q:/minami/20230910_nog2'
+path = 'Q:/Username/20230910_nog2'
 if os.path.exists(path):
     print('This file already exists:{}.\nDo you want to overwrite? y/n'.format(path))
     answer = input()

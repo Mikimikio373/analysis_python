@@ -3,7 +3,7 @@ import subprocess
 import pandas as pd
 import matplotlib.pyplot as plt
 
-basepath = 'Q:/minami/affine_param/marge_test'
+basepath = 'Q:/Username/affine_param/marge_test'
 
 os.chdir(basepath)
 concurrent_path = os.getcwd()

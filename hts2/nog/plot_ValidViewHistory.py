@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 from matplotlib.backends.backend_pdf import PdfPages
 
-base_path = 'Q:/minami/20230910_nog2'
+base_path = 'Q:/Username/20230910_nog2'
 pdf_mode = 0    # 0:off 1:on
 gap = 0.5
 

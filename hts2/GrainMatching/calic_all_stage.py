@@ -1,8 +1,8 @@
 import pandas as pd
 import numpy as np
 
-path = 'Q:/minami/20230914_Ali2/calc_ali/all_stage_list.csv'
-out_path = 'Q:/minami/20230914_Ali2/calc_ali/0-3_all_list_fix.csv'
+path = 'Q:/Username/20230914_Ali2/calc_ali/all_stage_list.csv'
+out_path = 'Q:/Username/20230914_Ali2/calc_ali/0-3_all_list_fix.csv'
 
 ref_pd = pd.read_csv(path)
 

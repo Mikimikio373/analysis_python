@@ -2,8 +2,8 @@ import os.path
 
 import cv2
 
-img1_path = 'Q:/minami/20231204_fakeimg/p-0.0482-z0.404_dilate/IMAGE00_AREA-1/png/L0_VX0000_VY0000/L0_VX0000_VY0000_0.png'
-img2_path = 'Q:/minami/20231204_fakeimg/p-0.0482-z0.404_dilate/IMAGE00_AREA-1/png/L0_VX0000_VY0000/L0_VX0000_VY0000_1.png'
+img1_path = 'Q:/Username/20231204_fakeimg/p-0.0482-z0.404_dilate/IMAGE00_AREA-1/png/L0_VX0000_VY0000/L0_VX0000_VY0000_0.png'
+img2_path = 'Q:/Username/20231204_fakeimg/p-0.0482-z0.404_dilate/IMAGE00_AREA-1/png/L0_VX0000_VY0000/L0_VX0000_VY0000_1.png'
 out_path = 'B:/data/powerpoint/HTS2_data/4master_theisis/fake_img'
 
 img1_gray = cv2.imread(img1_path, 0)

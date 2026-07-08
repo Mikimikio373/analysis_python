@@ -10,7 +10,7 @@ import numpy as np
 # img_base = 'R:/usuda/GRAINE2023_u4/PL088_0906gap4.8um/IMAGE00_AREA-1/png_thr_cubic/png_thr_cubic11_10_zfilt-0.40'
 img_base = 'R:/usuda/GRAINE2023_u4/PL088_0906gap4.8um/IMAGE00_AREA-1/png_thr_noncubic_freq0.08_z0.3/png_thr14_13'
 json_base = 'R:/usuda/GRAINE2023_u4/PL088_0906gap4.8um/IMAGE00_AREA-1'
-out_base = 'Q:/minami/random_img'
+out_base = 'Q:/Username/random_img'
 out_dir_name = 'noncubic1413'
 out_path = os.path.join(out_base, out_dir_name, 'IMAGE00_AREA-1', 'png')
 os.makedirs(out_path, exist_ok=True)

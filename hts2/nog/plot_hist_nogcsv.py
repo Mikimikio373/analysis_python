@@ -14,7 +14,7 @@ def textbox(ax, flat_list, ax_x_max, ax_y_max, *, factor: float = 0.9):
     text = 'Entries: {:d}\nMean: {:4g}\nStd_dev: {:4g}'.format(entries, mean, std_dev)
     ax.text(ax_x_max * factor, ax_y_max * factor, text, bbox=(dict(boxstyle='square', fc='w')))
 
-# basepath = 'Q:/minami/20220429_suganami/006/IMAGE00_AREA-1/png_thr_dilate/png_thr10_9'
+# basepath = 'Q:/Username/20220429_suganami/006/IMAGE00_AREA-1/png_thr_dilate/png_thr10_9'
 # basepath = 'R:/usuda/GRAINE2023_u4/PL088_0904gap4/IMAGE00_AREA-1/png_thr_dilate/png_thr10_9'
 
 if not len(sys.argv) == 2:

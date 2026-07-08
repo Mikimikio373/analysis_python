@@ -2,8 +2,8 @@ import os
 import shutil
 import subprocess
 
-basepath = 'Q:/minami/netscandata/GRAINE2023pl088_0906gap4.8'
-f_dump_path = 'Q:/minami/netscandata/GRAINE2023pl088_0906gap4.8/fvxx_dump2root.bat'
+basepath = 'Q:/Username/netscandata/GRAINE2023pl088_0906gap4.8'
+f_dump_path = 'Q:/Username/netscandata/GRAINE2023pl088_0906gap4.8/fvxx_dump2root.bat'
 
 ori_copy = os.path.join(basepath, '4copy')
 width_list = [2252, 2458, 2662, 2896, 3072]

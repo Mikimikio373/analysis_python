@@ -9,7 +9,7 @@ img_list = []
 nog = []
 z_relate = []
 for i in range(16):
-    path = 'Q:/minami/20231204_fakeimg/noncubic1615/IMAGE00_AREA-1/png/L0_VX0000_VY0000/L0_VX0000_VY0000_{}.png'.format(i)
+    path = 'Q:/Username/20231204_fakeimg/noncubic1615/IMAGE00_AREA-1/png/L0_VX0000_VY0000/L0_VX0000_VY0000_{}.png'.format(i)
 
     img = cv2.imread(path, 0)
     img_list.append(img)

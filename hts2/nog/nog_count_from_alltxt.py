@@ -6,8 +6,8 @@ import pandas as pn
 import yaml
 import itertools
 
-# basepath = 'R:\\minami\\20230213_Reversal\\4-6\\PL005'
-basepath = 'Q:/minami/20230810_ali-z/Module1/sensor-7/pich0.5um-1'
+# basepath = 'R:\\Username\\20230213_Reversal\\4-6\\PL005'
+basepath = 'Q:/Username/20230810_ali-z/Module1/sensor-7/pich0.5um-1'
 
 # for pl in range(5, 8):
 for pl in range(1):

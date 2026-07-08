@@ -5,7 +5,7 @@ import pandas as pn
 from matplotlib import pyplot as plt
 import yaml
 
-basepath = 'R:\\minami\\20230213_Reversal\\4-6\\PL005'
+basepath = 'R:\\Username\\20230213_Reversal\\4-6\\PL005'
 # folder = 'nog_plot_snap'
 folder = 'nog_plot_from_alltxt'
 

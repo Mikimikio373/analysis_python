@@ -2,18 +2,18 @@ import pandas as pd
 from matplotlib import pyplot as plt
 from matplotlib.backends.backend_pdf import PdfPages
 
-pdf = PdfPages('R:/minami/20230531_aff/Module1/sensor-7/pixel2stage/testplot_0-0_10.pdf')
+pdf = PdfPages('R:/Username/20230531_aff/Module1/sensor-7/pixel2stage/testplot_0-0_10.pdf')
 
-path1 = 'R:/minami/20230531_aff/Module1/sensor-7/pixel2stage/0-0_stage.csv'
-path2 = 'R:/minami/20230531_aff/Module1/sensor-7/pixel2stage/0-0_1_stage.csv'
-path3 = 'R:/minami/20230531_aff/Module1/sensor-7/pixel2stage/0-0_2_stage.csv'
-path4 = 'R:/minami/20230531_aff/Module1/sensor-7/pixel2stage/0-0_3_stage.csv'
-path5 = 'R:/minami/20230531_aff/Module1/sensor-7/pixel2stage/0-0_4_stage.csv'
-path6 = 'R:/minami/20230531_aff/Module1/sensor-7/pixel2stage/0-0_5_stage.csv'
-path7 = 'R:/minami/20230531_aff/Module1/sensor-7/pixel2stage/0-0_6_stage.csv'
-path8 = 'R:/minami/20230531_aff/Module1/sensor-7/pixel2stage/0-0_7_stage.csv'
-path9 = 'R:/minami/20230531_aff/Module1/sensor-7/pixel2stage/0-0_8_stage.csv'
-path10 = 'R:/minami/20230531_aff/Module1/sensor-7/pixel2stage/0-0_9_stage.csv'
+path1 = 'R:/Username/20230531_aff/Module1/sensor-7/pixel2stage/0-0_stage.csv'
+path2 = 'R:/Username/20230531_aff/Module1/sensor-7/pixel2stage/0-0_1_stage.csv'
+path3 = 'R:/Username/20230531_aff/Module1/sensor-7/pixel2stage/0-0_2_stage.csv'
+path4 = 'R:/Username/20230531_aff/Module1/sensor-7/pixel2stage/0-0_3_stage.csv'
+path5 = 'R:/Username/20230531_aff/Module1/sensor-7/pixel2stage/0-0_4_stage.csv'
+path6 = 'R:/Username/20230531_aff/Module1/sensor-7/pixel2stage/0-0_5_stage.csv'
+path7 = 'R:/Username/20230531_aff/Module1/sensor-7/pixel2stage/0-0_6_stage.csv'
+path8 = 'R:/Username/20230531_aff/Module1/sensor-7/pixel2stage/0-0_7_stage.csv'
+path9 = 'R:/Username/20230531_aff/Module1/sensor-7/pixel2stage/0-0_8_stage.csv'
+path10 = 'R:/Username/20230531_aff/Module1/sensor-7/pixel2stage/0-0_9_stage.csv'
 
 df1 = pd.read_csv(path1)
 df2 = pd.read_csv(path2)
@@ -64,4 +64,4 @@ pdf.savefig()
 pdf.close()
 
 # plt.show()
-# plt.savefig('R:/minami/20230531_aff/Module1/sensor-7/pixel2stage/testplot_0-0_10.pdf')
+# plt.savefig('R:/Username/20230531_aff/Module1/sensor-7/pixel2stage/testplot_0-0_10.pdf')

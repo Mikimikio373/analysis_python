@@ -3,8 +3,8 @@ import os.path
 
 import cv2
 
-img_path1 = 'Q:/minami/randfake_img/noncubic1413/IMAGE00_AREA-1/png/L0_VX0003_VY0034/L0_VX0003_VY0034_2.png'
-img_path2 = 'Q:/minami/randfake_img/noncubic1413/IMAGE00_AREA-1/png/L0_VX0003_VY0034/L0_VX0003_VY0034_3.png'
+img_path1 = 'Q:/Username/randfake_img/noncubic1413/IMAGE00_AREA-1/png/L0_VX0003_VY0034/L0_VX0003_VY0034_2.png'
+img_path2 = 'Q:/Username/randfake_img/noncubic1413/IMAGE00_AREA-1/png/L0_VX0003_VY0034/L0_VX0003_VY0034_3.png'
 out_path = 'B:/data/powerpoint/master_presen/fig/fake_img_roi'
 os.makedirs(out_path, exist_ok=True)
 img = cv2.imread(img_path1, 0)

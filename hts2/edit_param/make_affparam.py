@@ -6,15 +6,15 @@ import shutil
 import os
 import numpy as np
 
-affparam_path = 'Q:/minami/affine_param/AffineParam.json'
+affparam_path = 'Q:/Username/affine_param/AffineParam.json'
 with open(affparam_path) as f:
     affparam = json.load(f)
 
 # print(affparam)
 
-marge_base = 'Q:/minami/affine_param'
-aff_base = 'Q:/minami/202300912_aff'
-pq_base = 'Q:/minami/20230914_Ali2/calc_ali'
+marge_base = 'Q:/Username/affine_param'
+aff_base = 'Q:/Username/202300912_aff'
+pq_base = 'Q:/Username/20230914_Ali2/calc_ali'
 
 # for i in range(2):
 #     for j in range(12):

@@ -6,8 +6,8 @@ import pandas as pd
 import os
 import shutil
 
-ori_dir = 'Q:/minami/202300912_aff'
-marge_dir = 'Q:/minami/deadpixel'
+ori_dir = 'Q:/Username/202300912_aff'
+marge_dir = 'Q:/Username/deadpixel'
 # for module in range(2):
 #     for sensor in range(12):
 #         ori_csv = os.path.join(ori_dir, 'Module{}'.format(module), 'sensor-{}'.format(sensor), 'deadpixel_list.csv')

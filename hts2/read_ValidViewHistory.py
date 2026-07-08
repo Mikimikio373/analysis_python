@@ -5,8 +5,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from matplotlib.backends.backend_pdf import PdfPages
 
-json_path = 'Q:/minami/20230913_Ali/20230913_oneshot/ValidViewHistory.json'
-pdf_path = 'Q:/minami/20230913_Ali/20230913_oneshot/nog_plot.pdf'
+json_path = 'Q:/Username/20230913_Ali/20230913_oneshot/ValidViewHistory.json'
+pdf_path = 'Q:/Username/20230913_Ali/20230913_oneshot/nog_plot.pdf'
 out_pdf = PdfPages(pdf_path)
 
 with open(json_path, 'rb') as f:

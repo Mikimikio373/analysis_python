@@ -12,9 +12,9 @@ ori_path = 'R:/usuda/GRAINE2023_u4/PL088_0906gap4.8um/IMAGE00_AREA-1/png_thr_cub
 # ori_path = os.path.join('R:/usuda/GRAINE2023_u4/PL088_0906gap4.8um/IMAGE00_AREA-1/png_thr_noncubic_freq0.1_z0.3', 'png_thr{}_{}'.format(i, i-1))
 ori_ymlpath = os.path.join(ori_path, '../AreaScan4Param.yml')
 
-# out_path = 'Q:/minami/20231205_rand_grain2023/img/png'
-out_path = 'Q:/minami/20231205_rand_grain2023/graine2023_thr11-10_cubic/png'
-# out_path = 'Q:/minami/20231205_rand_grain2023/graine2023_noncubic_freq0.1_z0.3-thr{}_{}/png'.format(i, i-1)
+# out_path = 'Q:/Username/20231205_rand_grain2023/img/png'
+out_path = 'Q:/Username/20231205_rand_grain2023/graine2023_thr11-10_cubic/png'
+# out_path = 'Q:/Username/20231205_rand_grain2023/graine2023_noncubic_freq0.1_z0.3-thr{}_{}/png'.format(i, i-1)
 
 topbottom = 47
 rightleft = 88

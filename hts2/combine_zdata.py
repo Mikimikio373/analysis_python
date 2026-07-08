@@ -4,7 +4,7 @@ import pandas as pn
 import numpy as np
 import os
 
-basepath = 'Q:/minami/20230809_ali-z'
+basepath = 'Q:/Username/20230809_ali-z'
 zlist = [[], []]
 for m in range(2):
     for s in range(5, 9):

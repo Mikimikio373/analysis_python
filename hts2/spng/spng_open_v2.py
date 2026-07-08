@@ -5,7 +5,7 @@ import sys
 import os
 import yaml
 
-# basepath = 'R:\\minami\\20230603_ali-z\\Module0\\sensor-6'
+# basepath = 'R:\\Username\\20230603_ali-z\\Module0\\sensor-6'
 if len(sys.argv) != 2:
     sys.exit('command line error. please \"basepath\"')
 

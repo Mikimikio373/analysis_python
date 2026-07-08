@@ -32,9 +32,9 @@ toptottom = int((height_max - height) / 2)
 lefttoright = int((width_max - width) / 2)
 
 algo_name = 'noncubic1312'
-delete_z_path = 'Q:/minami/rand_img/{}/not-z'.format(algo_name)
-z_and_path = 'Q:/minami/rand_img/{}/z_and'.format(algo_name)
-out_path = 'Q:/minami/rand_img/{}'.format(algo_name)
+delete_z_path = 'Q:/Username/rand_img/{}/not-z'.format(algo_name)
+z_and_path = 'Q:/Username/rand_img/{}/z_and'.format(algo_name)
+out_path = 'Q:/Username/rand_img/{}'.format(algo_name)
 
 testmode = False
 

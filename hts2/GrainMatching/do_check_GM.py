@@ -6,7 +6,7 @@ import shutil
 import pandas as pn
 import json
 
-basepath = 'R:\\minami\\20230531_aff\\Module1\\sensor-7'
+basepath = 'R:\\Username\\20230531_aff\\Module1\\sensor-7'
 GMexe_path = 'C:\\Users\\flab\\source\\repos\\myproject\\x64\\Release\\GrainMatching.exe'
 root_macro_path = 'C:\\Users\\flab\\cpp_project\\root\\cut_fit_GM.C'
 out_path_name = 'check_ystep'

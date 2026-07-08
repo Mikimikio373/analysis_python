@@ -10,7 +10,7 @@ import struct
 import matplotlib.pyplot as plt
 
 
-vvh_path = 'Q:/minami/HTS_scandata/unit4-pl88_30-30/ValidViewHistory.json'
+vvh_path = 'Q:/Username/HTS_scandata/unit4-pl88_30-30/ValidViewHistory.json'
 with open(vvh_path, 'rb') as f:
     vvh = json.load(f)
 
@@ -24,7 +24,7 @@ for module in (range(3)):
         noglist = []
         picnum = 0
         for i in range(144):
-            filename = "Q:/minami/HTS_scandata/unit4-pl88_30-30/IMAGE/{:02}_{:02}/ImageFilterWithStream_GPU_2_{:08}_0_024.spng".format(module, sensor, i)
+            filename = "Q:/Username/HTS_scandata/unit4-pl88_30-30/IMAGE/{:02}_{:02}/ImageFilterWithStream_GPU_2_{:08}_0_024.spng".format(module, sensor, i)
             if not os.path.exists(filename):
                 continue
             print(filename)

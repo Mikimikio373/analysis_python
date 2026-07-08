@@ -16,9 +16,9 @@ dilate_mode = True
 cubic_root2_dilate = 146256 / (width * height)
 for p in [cubic_root2_dilate]:
     if dilate_mode:
-        basepath = 'Q:/minami/20231204_fakeimg/IMAGE00_AREA-1-{}_dilate_1.4'.format(p)
+        basepath = 'Q:/Username/20231204_fakeimg/IMAGE00_AREA-1-{}_dilate_1.4'.format(p)
     else:
-        basepath = 'Q:/minami/20231204_fakeimg/IMAGE00_AREA-1-{}'.format(p)
+        basepath = 'Q:/Username/20231204_fakeimg/IMAGE00_AREA-1-{}'.format(p)
     os.makedirs(basepath)
     param_path = os.path.join(basepath, '../AreaScan4Param.yml')
 

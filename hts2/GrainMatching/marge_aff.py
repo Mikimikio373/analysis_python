@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-basepath = 'Q:/minami/affine_param'
+basepath = 'Q:/Username/affine_param'
 shrink_all = []
 shrink_x = []
 shrink_y = []

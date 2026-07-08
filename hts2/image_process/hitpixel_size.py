@@ -6,15 +6,15 @@ import numpy as np
 import cv2
 import matplotlib.pyplot as plt
 
-# basepath = 'Q:/minami/20231204_fakeimg/IMAGE00_AREA-1-0.06/png/L0_VX0000_VY0000'
+# basepath = 'Q:/Username/20231204_fakeimg/IMAGE00_AREA-1-0.06/png/L0_VX0000_VY0000'
 # basepath = 'R:/usuda/GRAINE2023_u4/PL088_0904gap4/IMAGE00_AREA-1/png_thr_nondilate/png_thr10_9'
 # basepath_cubic = 'R:/usuda/GRAINE2023_u4/PL088_0904gap4/IMAGE00_AREA-1/png_thr_nondilate/png_thr_cubic10_9_zfilt-0.15'
-# basepath = 'Q:/minami/20220429_suganami/006/IMAGE00_AREA-1/png_thr_nolilate/png_thr10_9/L0_VX0000_VY0000'
+# basepath = 'Q:/Username/20220429_suganami/006/IMAGE00_AREA-1/png_thr_nolilate/png_thr10_9/L0_VX0000_VY0000'
 
 # basepath = 'R:/usuda/GRAINE2023_u4/PL088_0906gap4.8um/IMAGE00_AREA-1/png_thr_cubic/png_thr_cubic11_10_zfilt-0.40'
 basepath = 'R:/usuda/GRAINE2023_u4/PL088_0906gap4.8um/IMAGE00_AREA-1/png_thr_noncubic_freq0.08_z0.3/png_thr14_13'
 json_path = 'R:/usuda/GRAINE2023_u4/PL088_0906gap4.8um/IMAGE00_AREA-1'
-rand_img_path  = 'Q:/minami/rand_img/noncubic1413'
+rand_img_path  = 'Q:/Username/rand_img/noncubic1413'
 basepath_fake = os.path.join(rand_img_path, 'IMAGE00_AREA-1', 'png')
 out_path = os.path.join(rand_img_path, 'create_data')
 

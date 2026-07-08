@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import yaml
 
-basepath = 'R:\\minami\\20230531_aff\\Module1\\sensor-7'
+basepath = 'R:\\Username\\20230531_aff\\Module1\\sensor-7'
 out_path = os.path.join(basepath, 'check_StartPoint', 'encode.csv')
 
 yaml_path = os.path.join(basepath, 'AreaScan4Param.yml')

@@ -8,7 +8,7 @@ from matplotlib import pyplot as plt
 from matplotlib.colors import Normalize
 from matplotlib.backends.backend_pdf import PdfPages
 
-basepath ='R:\\minami\\20221228_ali'
+basepath ='R:\\Username\\20221228_ali'
 
 
 # f = open(os.path.join('Y:\\Mikio\\mine\\powerpoint\\F2F\\20230106\\data\\test.csv'), 'w')
@@ -23,8 +23,8 @@ basepath ='R:\\minami\\20221228_ali'
 #         img1_mean = img1.mean()
 #         img2_mean = img2.mean()
 #         f.write('sensor1-{},{},{},{},{}\n'.format(n_s, img1.mean(),np.std(img1), img2.mean(), np.std(img2)))
-# img1_1 = cv2.imread('R:\\minami\\20221229_ali-m\\1-0\\Module1\\sensor-1\\IMAGE00_AREA-1\\png\\L0_VX0000_VY0000_4_0.png')
-# img0_9 = cv2.imread('R:\\minami\\20221229_ali-m\\1-0\\Module0\\sensor-9-2\\IMAGE00_AREA-1\\png\\L0_VX0000_VY0000_4_0.png')
+# img1_1 = cv2.imread('R:\\Username\\20221229_ali-m\\1-0\\Module1\\sensor-1\\IMAGE00_AREA-1\\png\\L0_VX0000_VY0000_4_0.png')
+# img0_9 = cv2.imread('R:\\Username\\20221229_ali-m\\1-0\\Module0\\sensor-9-2\\IMAGE00_AREA-1\\png\\L0_VX0000_VY0000_4_0.png')
 # print('img1-1 mean: {}, std:{}, img0-9 mean: {}, std: {}'.format(img1_1.mean(), np.std(img1_1), img0_9.mean(), np.std(img0_9)))
 
 outpath = os.path.join(basepath, "brightness_data.pdf")

@@ -5,8 +5,8 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 
-# basepath = 'Q:/minami/20230811_grain2023_focus/1um/1'
-# basepath = 'Q:/minami/20230811_hts1_shot/1um'
+# basepath = 'Q:/Username/20230811_grain2023_focus/1um/1'
+# basepath = 'Q:/Username/20230811_hts1_shot/1um'
 
 if not len(sys.argv) == 2:
     sys.exit('command line error, please input \"basepath\"')

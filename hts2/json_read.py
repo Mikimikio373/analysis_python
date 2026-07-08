@@ -4,7 +4,7 @@ import sys
 from matplotlib import pyplot as plt
 import numpy as np
 
-basepath = 'Q:/minami/20230810_ali-z/Module1/sensor-7'
+basepath = 'Q:/Username/20230810_ali-z/Module1/sensor-7'
 
 thick = []
 for i in range(1, 51):

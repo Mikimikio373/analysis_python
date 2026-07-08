@@ -6,7 +6,7 @@ import numpy as np
 import cv2
 import yaml
 
-basepath = 'Q:/minami/20231204_fakeimg'
+basepath = 'Q:/Username/20231204_fakeimg'
 # width = 2896
 # height = 1538
 width = 2048

@@ -4,7 +4,7 @@ import os
 import pandas as pn
 from matplotlib import pyplot as plt
 
-working_directly = 'Q:/minami/20220309_GRAINE2018/007'
+working_directly = 'Q:/Username/20220309_GRAINE2018/007'
 # folder = 'nog_plot_snap'
 folder = 'nog_plot_v1.2'
 

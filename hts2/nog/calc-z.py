@@ -6,7 +6,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 for j in range(7, 8):
-    basepath = 'Q:/minami/20230810_ali-z/Module1/sensor-{}'.format(j)
+    basepath = 'Q:/Username/20230810_ali-z/Module1/sensor-{}'.format(j)
     if not os.path.exists(basepath):
         continue
 

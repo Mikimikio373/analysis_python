@@ -7,7 +7,7 @@ import json
 import math
 import yaml
 
-basepath = 'R:\\minami\\20221103_zabuton'
+basepath = 'R:\\Username\\20221103_zabuton'
 rootpath = 'c:\\Users\\flab\\cpp_project\\root\\plot_fitting.C'
 type_max = 1 + 1
 module_max = 2 + 1

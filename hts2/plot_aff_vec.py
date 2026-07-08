@@ -2,8 +2,8 @@ import numpy as np
 import pandas as pn
 import matplotlib.pyplot as plt
 
-csv_path = 'R:/minami/20230531_aff/Module1/sensor-7/GrainMatching_loop/fitdata_edit.csv'
-affdata_path = 'R:/minami/20230531_aff/Module1/sensor-7/aff_data.csv'
+csv_path = 'R:/Username/20230531_aff/Module1/sensor-7/GrainMatching_loop/fitdata_edit.csv'
+affdata_path = 'R:/Username/20230531_aff/Module1/sensor-7/aff_data.csv'
 
 fit_df = pn.read_csv(csv_path)
 fit_df = fit_df.drop(columns=fit_df.columns[0])
@@ -35,7 +35,7 @@ fit_df['pred_sx'] = pred_sx_all
 fit_df['pred_sy'] = pred_sy_all
 fit_df['esx'] = esx_list
 fit_df['esy'] = esy_list
-out_csv = 'R:/minami/20230531_aff/Module1/sensor-7/fitdata_err.csv'
+out_csv = 'R:/Username/20230531_aff/Module1/sensor-7/fitdata_err.csv'
 fit_df.to_csv(out_csv, index=False)
 
 # aff = [[aff_df['a'][0], aff_df['b'][0]], [aff_df['c'][0], aff_df['d'][0]]]

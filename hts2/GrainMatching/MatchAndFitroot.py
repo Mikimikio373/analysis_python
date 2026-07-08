@@ -3,8 +3,8 @@ import sys
 import yaml
 import time
 
-# pythonpath = 'R:\\minami\\20221002_forGrainMaching0.025\\analysis_python'
-basepath = 'R:\\minami\\20221103_zabuton'
+# pythonpath = 'R:\\Username\\20221002_forGrainMaching0.025\\analysis_python'
+basepath = 'R:\\Username\\20221103_zabuton'
 exepath = 'C:\\Users\\flab\\source\\repos\\myproject\\x64\\Release\\GrainMatching_v2.exe'
 shift_X = 40
 shift_Y = 20
@@ -13,9 +13,9 @@ module_max = 2 + 1
 ver_max = 5 + 1
 minus = 45
 # if(mode == 0):
-#     rootpath = 'R:\\minami\\20221002_forGrainMaching0.025\\root\\cut_fit_csv.C'
+#     rootpath = 'R:\\Username\\20221002_forGrainMaching0.025\\root\\cut_fit_csv.C'
 # else:
-#     rootpath = 'R:\\minami\\20221002_forGrainMaching0.025\\root\\cut_fit_root.C'
+#     rootpath = 'R:\\Username\\20221002_forGrainMaching0.025\\root\\cut_fit_root.C'
 rootpath = 'C:\\Users\\flab\\cpp_project\\root\\cut_fit_FastReadCSV.C'
 
 # for n_t in range(1, type_max):

@@ -1,7 +1,7 @@
 import json
 import os
 
-basepath = 'Q:/minami/EVMG'
+basepath = 'Q:/Username/EVMG'
 
 ori_json = os.path.join(basepath, 'default.json')
 

@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 
 
 basepath = 'R:/usuda/GRAINE2023_u4/PL088_0906gap4.8um/IMAGE00_AREA-1/png_thr_cubic/png_thr_cubic10_9_zfilt-0.40'
-basepath_fake = 'Q:/minami/rand_img/cubic109'
+basepath_fake = 'Q:/Username/rand_img/cubic109'
 basepath_fakepng = os.path.join(basepath_fake, 'test_png')
 basepath_fakefig = os.path.join(basepath_fake, 'test_data')
 

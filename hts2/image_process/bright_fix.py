@@ -1,8 +1,8 @@
 import cv2
 import numpy as np
 
-img_path = 'Q:/minami/graine_u4/PL089/L0_VX0009_VY0043_2d/fft/L0_VX0009_VY0043_10_2d.png'
-out_path = 'Q:/minami/graine_u4/PL089/L0_VX0009_VY0043_2d/fft/L0_VX0009_VY0043_10_2d_edit.png'
+img_path = 'Q:/Username/graine_u4/PL089/L0_VX0009_VY0043_2d/fft/L0_VX0009_VY0043_10_2d.png'
+out_path = 'Q:/Username/graine_u4/PL089/L0_VX0009_VY0043_2d/fft/L0_VX0009_VY0043_10_2d_edit.png'
 
 img = cv2.imread(img_path, 0)
 

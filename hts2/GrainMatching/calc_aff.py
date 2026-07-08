@@ -7,7 +7,7 @@ import json
 import math
 import yaml
 
-basepath = 'R:\\minami\\20221103_zabuton'
+basepath = 'R:\\Username\\20221103_zabuton'
 type_max = 1 + 1
 module_max = 2 + 1
 ver_max = 5 + 1

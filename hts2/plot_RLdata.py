@@ -4,7 +4,7 @@ import sys
 import matplotlib.pyplot as plt
 import numpy as np
 
-basepath = 'R:/minami/HTS1_GRAINE2018_accuracy/accuracy_a5_B18-03_unit1'
+basepath = 'R:/Username/HTS1_GRAINE2018_accuracy/accuracy_a5_B18-03_unit1'
 
 radial_list = []
 lateral_list = []
@@ -33,7 +33,7 @@ print(lateral1)
 # sys.exit()
 
 
-hts2file = 'R:/minami/HTS1_GRAINE2018_accuracy/accdata_RL_hts2.dat'
+hts2file = 'R:/Username/HTS1_GRAINE2018_accuracy/accdata_RL_hts2.dat'
 with open(hts2file, 'r') as f:
     txt = f.readlines()
 x2 = []

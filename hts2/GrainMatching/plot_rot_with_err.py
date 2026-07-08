@@ -17,7 +17,7 @@ def calc_rot_err(a, b, c, d, a_err, b_err, c_err, d_err):
     return out
 
 
-basepath = 'Q:/minami/affine_param'
+basepath = 'Q:/Username/affine_param'
 rot = []
 rot_err = []
 module = 0

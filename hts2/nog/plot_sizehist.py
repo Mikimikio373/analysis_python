@@ -2,11 +2,11 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-csv_path1 = 'Q:/minami/20220429_suganami/006/IMAGE00_AREA-1/png_thr_dilate/png_thr10_9/area_list_l0.csv'
+csv_path1 = 'Q:/Username/20220429_suganami/006/IMAGE00_AREA-1/png_thr_dilate/png_thr10_9/area_list_l0.csv'
 csv_path2 = 'R:/usuda/GRAINE2023_u4/PL088_0904gap4/IMAGE00_AREA-1/png_thr_dilate/png_thr10_9/area_list_l0.csv'
 csv_path3 = 'R:/usuda/GRAINE2023_u4/PL088_0904gap4/IMAGE00_AREA-1/png_thr_dilate/png_thr_cubic10_9_zfilt-0.15/area_list_l0.csv'
 
-# csv_path1 = 'Q:/minami/20220429_suganami/006/IMAGE00_AREA-1/png_thr_nolilate/png_thr10_9/area_list_l0.csv'
+# csv_path1 = 'Q:/Username/20220429_suganami/006/IMAGE00_AREA-1/png_thr_nolilate/png_thr10_9/area_list_l0.csv'
 # csv_path2 = 'R:/usuda/GRAINE2023_u4/PL088_0904gap4/IMAGE00_AREA-1/png_thr_nogdilate/png_thr10_9/area_list_l0.csv'
 # csv_path3 = 'R:/usuda/GRAINE2023_u4/PL088_0904gap4/IMAGE00_AREA-1/png_thr_nogdilate/png_thr_cubic10_9_zfilt-0.15/area_list_l0.csv'
 

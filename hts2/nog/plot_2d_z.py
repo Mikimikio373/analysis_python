@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt
 import os
 import matplotlib.cm as cm
 
-basepath = 'Q:/minami/20230911_nog_NRKR_tilt'
+basepath = 'Q:/Username/20230911_nog_NRKR_tilt'
 csv_path = os.path.join(basepath, 'xyz_fit.csv')
 surf_fit = os.path.join(basepath, 'fit_surf.csv')
 

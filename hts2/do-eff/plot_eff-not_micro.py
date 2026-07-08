@@ -14,7 +14,7 @@ def rms(rms_list: list):
     return math.sqrt(sum(square))
 
 
-basepath = 'Q:/minami/netscandata/GRAINE2023pl088_0906gap4.8'
+basepath = 'Q:/Username/netscandata/GRAINE2023pl088_0906gap4.8'
 out_path = 'B:/data/powerpoint/master_presen/fig/eff-not_micro'
 area = 3.0 * 2.4
 

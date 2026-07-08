@@ -2,9 +2,9 @@ import os
 import shutil
 import subprocess
 
-basepath = 'Q:/minami/netscandata/GRAINE2023pl088_0906gap4.8'
+basepath = 'Q:/Username/netscandata/GRAINE2023pl088_0906gap4.8'
 tracking_base = 'R:/usuda/GRAINE2023_u4/PL088_0906gap4.8um/IMAGE00_AREA-1'
-f_filter_path = 'Q:/minami/netscandata/GRAINE2023pl088_0906gap4.8/f-filter_end.bat'
+f_filter_path = 'Q:/Username/netscandata/GRAINE2023pl088_0906gap4.8/f-filter_end.bat'
 
 ori_copy = os.path.join(basepath, '4copy')
 width_list = [2252, 2458, 2662, 3072]

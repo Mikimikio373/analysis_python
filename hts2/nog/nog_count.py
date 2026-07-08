@@ -6,7 +6,7 @@ import pandas as pn
 import yaml
 
 working_direc = 'IMAGE00_AREA-1/png'
-pythonpath = 'Q:/minami/20220309_GRAINE2018/analysis_python'
+pythonpath = 'Q:/Username/20220309_GRAINE2018/analysis_python'
 
 for pl in reversed(range(7, 9)):
     os.chdir(pythonpath)

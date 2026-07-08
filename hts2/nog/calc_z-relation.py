@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 # basepath = 'R:/usuda/GRAINE2023_u4/PL088_0906gap4.8um/IMAGE00_AREA-1/png_thr_noncubic_freq0.08_z0.3/png_thr14_13'
 # basepath = 'R:/usuda/GRAINE2023_u4/PL088_0906gap4.8um/IMAGE00_AREA-1/png_thr_cubic9_8_zfilt-0.40'
 # basepath = 'R:/usuda/GRAINE2023_u4/PL088_0906gap4.8um/IMAGE00_AREA-1/png_thr_noncubic_freq0.08_z0.3/png_thr16_15'
-# basepath = 'Q:/minami/20231204_fakeimg/noncubic1514/IMAGE00_AREA-1/png'
+# basepath = 'Q:/Username/20231204_fakeimg/noncubic1514/IMAGE00_AREA-1/png'
 
 if len(sys.argv) != 2:
     sys.exit('error. [basepath]')

@@ -5,7 +5,7 @@ import sys
 import os
 import yaml
 
-# basepath = 'R:\\minami\\20230531_aff'
+# basepath = 'R:\\Username\\20230531_aff'
 mode = 0  # 0:最後だけ、1:全画像 2:最初の画像
 
 image = 'IMAGE00_AREA-1'

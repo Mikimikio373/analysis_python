@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import pandas as pd
 
-csv_path = 'Q:/minami/20230912_aff/Module0/sensor-3/fitdata_edit.csv'
+csv_path = 'Q:/Username/20230912_aff/Module0/sensor-3/fitdata_edit.csv'
 df = pd.read_csv(csv_path)
 print(df)
 

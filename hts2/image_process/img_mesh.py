@@ -21,8 +21,8 @@ print(mesh_num_w, mesh_num_w)
 
 # basepath = 'R:/usuda/GRAINE2023_u4/PL088_0904gap4/IMAGE00_AREA-1/png_thr_dilate/png_thr10_9'
 basepath = 'R:/usuda/GRAINE2023_u4/PL088_0904gap4/IMAGE00_AREA-1/png_thr_nondilate/png_thr10_9'
-# basepath = 'Q:/minami/20231204_fakeimg/IMAGE00_AREA-1-0.015_dilate/png'
-# basepath = 'Q:/minami/20231204_fakeimg/IMAGE00_AREA-1-0.06/png'
+# basepath = 'Q:/Username/20231204_fakeimg/IMAGE00_AREA-1-0.015_dilate/png'
+# basepath = 'Q:/Username/20231204_fakeimg/IMAGE00_AREA-1-0.06/png'
 
 hit_num = []
 for vx in range(10):

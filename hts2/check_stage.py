@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as ticker
 from matplotlib.backends.backend_pdf import PdfPages
 
-basepath = 'Q:/minami/20230912_Ali2/Module0/sensor-3'
+basepath = 'Q:/Username/20230912_Ali2/Module0/sensor-3'
 x_path = os.path.join(basepath, 'chech_sage_x.csv')
 y_path = os.path.join(basepath, 'chech_sage_y.csv')
 pdf_path = os.path.join(basepath, 'chech_step.pdf')

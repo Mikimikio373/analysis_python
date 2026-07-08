@@ -9,7 +9,7 @@ import itertools
 import matplotlib.pyplot as plt
 import time
 
-basedir = 'Q:/minami/202300912_aff'
+basedir = 'Q:/Username/202300912_aff'
 
 if not len(sys.argv):
     sys.exit('please command number of module and number of sensor')

@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 
-basepath = 'R:\\minami\\20221228_aff'
+basepath = 'R:\\Username\\20221228_aff'
 bright_all = []
 num = []
 fit = []

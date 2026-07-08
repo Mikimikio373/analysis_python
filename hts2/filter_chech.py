@@ -6,7 +6,7 @@ from matplotlib import pyplot as plt
 import json
 import pandas as pn
 
-basepath = 'Q:/minami/20230809_ali-z/Module1/sensor-7/pich0.5um'
+basepath = 'Q:/Username/20230809_ali-z/Module1/sensor-7/pich0.5um'
 def plot_write(z_all, nog_all, thr):
     fig = plt.figure()
     ax = fig.add_subplot(111, xlabel='z [mm]', ylabel='nog')

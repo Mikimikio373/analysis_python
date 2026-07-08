@@ -1,15 +1,15 @@
 import pandas as pd
 
-path1 = 'R:/minami/20230531_aff/Module1/sensor-7/pixel2stage/0-0_stage.csv'
-path2 = 'R:/minami/20230531_aff/Module1/sensor-7/pixel2stage/0-0_1_stage.csv'
-path3 = 'R:/minami/20230531_aff/Module1/sensor-7/pixel2stage/0-0_2_stage.csv'
-path4 = 'R:/minami/20230531_aff/Module1/sensor-7/pixel2stage/0-0_3_stage.csv'
-path5 = 'R:/minami/20230531_aff/Module1/sensor-7/pixel2stage/0-0_4_stage.csv'
-path6 = 'R:/minami/20230531_aff/Module1/sensor-7/pixel2stage/0-0_5_stage.csv'
-path7 = 'R:/minami/20230531_aff/Module1/sensor-7/pixel2stage/0-0_6_stage.csv'
-path8 = 'R:/minami/20230531_aff/Module1/sensor-7/pixel2stage/0-0_7_stage.csv'
-path9 = 'R:/minami/20230531_aff/Module1/sensor-7/pixel2stage/0-0_8_stage.csv'
-path10 = 'R:/minami/20230531_aff/Module1/sensor-7/pixel2stage/0-0_9_stage.csv'
+path1 = 'R:/Username/20230531_aff/Module1/sensor-7/pixel2stage/0-0_stage.csv'
+path2 = 'R:/Username/20230531_aff/Module1/sensor-7/pixel2stage/0-0_1_stage.csv'
+path3 = 'R:/Username/20230531_aff/Module1/sensor-7/pixel2stage/0-0_2_stage.csv'
+path4 = 'R:/Username/20230531_aff/Module1/sensor-7/pixel2stage/0-0_3_stage.csv'
+path5 = 'R:/Username/20230531_aff/Module1/sensor-7/pixel2stage/0-0_4_stage.csv'
+path6 = 'R:/Username/20230531_aff/Module1/sensor-7/pixel2stage/0-0_5_stage.csv'
+path7 = 'R:/Username/20230531_aff/Module1/sensor-7/pixel2stage/0-0_6_stage.csv'
+path8 = 'R:/Username/20230531_aff/Module1/sensor-7/pixel2stage/0-0_7_stage.csv'
+path9 = 'R:/Username/20230531_aff/Module1/sensor-7/pixel2stage/0-0_8_stage.csv'
+path10 = 'R:/Username/20230531_aff/Module1/sensor-7/pixel2stage/0-0_9_stage.csv'
 
 
 df1 = pd.read_csv(path1)

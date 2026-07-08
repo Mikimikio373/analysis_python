@@ -20,7 +20,7 @@ def calc_z(nog_diff, z, num):
 
 
 
-basepath = 'Q:/minami/20230911_nog_NRKR_tilt'
+basepath = 'Q:/Username/20230911_nog_NRKR_tilt'
 json_path = os.path.join(basepath, '0000', 'ValidViewHistory.json')
 view_path = os.path.join(basepath, '0000', 'EachViewParam.json')
 param_path = os.path.join(basepath, '0000', 'PARAMS', 'UserParam.json')

@@ -1,7 +1,7 @@
 import os.path
 import subprocess
 
-basepath = 'Q:\\minami\\202300912_aff'
+basepath = 'Q:\\Username\\202300912_aff'
 python_path = 'c:\\Users\\flab\\analysis_python\\hts2\\GrainMatching\\do_calc_aff.py'
 minus = 45
 mode = 0

@@ -6,7 +6,7 @@ import os
 import numpy as np
 import pandas as pd
 
-basepath = 'Q:/minami/20230811_dip/1-7/0.5um'
+basepath = 'Q:/Username/20230811_dip/1-7/0.5um'
 
 for i in range(1, 51):
     tar_dir = os.path. join(basepath, '{}'.format(i))
